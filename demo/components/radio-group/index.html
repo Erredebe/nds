@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="nds-dist-path" content="../../dist/index.js" />
-    <title>no-dep-ds | Box</title>
+    <title>no-dep-ds | Radio group</title>
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="../../assets/site.css" />
     <link rel="stylesheet" href="../../dist/styles.css" />
@@ -26,11 +26,6 @@
           <a data-nav-link href="../select/index.html">Select</a>
           <a data-nav-link href="../checkbox/index.html">Checkbox</a>
           <a data-nav-link href="../radio-group/index.html">Radio group</a>
-          <a data-nav-link href="../text/index.html">Text</a>
-          <a data-nav-link href="../heading/index.html">Heading</a>
-          <a data-nav-link href="../box/index.html">Box</a>
-          <a data-nav-link href="../stack/index.html">Stack</a>
-          <a data-nav-link href="../card/index.html">Card</a>
           <a data-nav-link href="../badge/index.html">Badge</a>
           <a data-nav-link href="../alert/index.html">Alert</a>
           <a data-nav-link href="../dialog/index.html">Dialog</a>
@@ -48,64 +43,60 @@
     <main class="page-shell">
       <section class="hero">
         <div class="meta-row">
-          <span class="pill">nds-box</span>
-          <span class="pill">surface / padding / radius</span>
+          <span class="pill">nds-radio-group</span>
+          <span class="pill">Event: nds-change</span>
         </div>
         <div class="section-heading">
-          <h1>Box</h1>
-          <p>Contenedor ligero para aplicar fondo, borde, padding y radio desde tokens semanticos.</p>
+          <h1>Radio group</h1>
+          <p>Seleccion unica para preferencias de stack, tipo de despliegue o decisiones excluyentes del flujo.</p>
         </div>
       </section>
+
+      <p class="demo-error" data-demo-error hidden></p>
 
       <section class="section two-column">
         <article class="demo-panel">
           <div class="section-heading">
-            <h2>Superficies</h2>
-            <p><code>surface</code> resuelve fondos transparent, subtle y accent sin logica adicional en runtime.</p>
+            <h2>Opciones serializadas</h2>
+            <p>El grupo genera inputs nativos manteniendo el valor seleccionado en el host y soporte para formularios.</p>
           </div>
           <div class="demo-preview">
             <nds-stack gap="4">
-              <nds-box surface="transparent" padding="4" radius="lg">
-                <nds-text>Transparent box</nds-text>
-              </nds-box>
-              <nds-box surface="subtle" padding="4" radius="lg">
-                <nds-text>Subtle box</nds-text>
-              </nds-box>
-              <nds-box surface="accent" padding="4" radius="lg">
-                <nds-text weight="medium">Accent box</nds-text>
-              </nds-box>
+              <nds-radio-group
+                label="Prioridad de integracion"
+                name="priority"
+                value="astro"
+                options="html:HTML base|react:React app|vue:Vue dashboard|astro:Astro marketing"
+                data-demo-events="nds-change"
+                data-demo-log="#radio-event-log"
+              ></nds-radio-group>
+              <nds-radio-group
+                label="Canal de rollout"
+                name="rollout"
+                value="gradual"
+                options="pilot:Piloto|gradual:Gradual|full:Full rollout"
+              ></nds-radio-group>
             </nds-stack>
           </div>
           <div class="snippet-toolbar">
             <span class="pill">Markup</span>
-            <button class="copy-button" type="button" data-copy-target="box-snippet">Copiar</button>
+            <button class="copy-button" type="button" data-copy-target="radio-snippet">Copiar</button>
           </div>
-          <pre class="snippet" id="box-snippet"><code>&lt;nds-box surface="subtle" padding="4" radius="lg"&gt;
-  &lt;nds-text&gt;Subtle box&lt;/nds-text&gt;
-&lt;/nds-box&gt;
-
-&lt;nds-box surface="accent" padding="4" radius="lg"&gt;
-  &lt;nds-text weight="medium"&gt;Accent box&lt;/nds-text&gt;
-&lt;/nds-box&gt;</code></pre>
+          <pre class="snippet" id="radio-snippet"><code>&lt;nds-radio-group
+  label="Prioridad de integracion"
+  name="priority"
+  value="astro"
+  options="html:HTML base|react:React app|vue:Vue dashboard|astro:Astro marketing"
+&gt;&lt;/nds-radio-group&gt;</code></pre>
         </article>
 
         <article class="demo-panel">
           <div class="section-heading">
-            <h2>Radios tokenizados</h2>
-            <p>Puede usarse para chips, contenedores o bloques informativos sin CSS local adicional.</p>
+            <h2>Eventos</h2>
+            <p><code>nds-change</code> expone el valor elegido desde el host del grupo.</p>
           </div>
-          <div class="demo-preview">
-            <nds-stack direction="row" gap="3" align="center">
-              <nds-box surface="subtle" padding="3" radius="pill">
-                <nds-text variant="label">pill</nds-text>
-              </nds-box>
-              <nds-box surface="subtle" padding="3" radius="md">
-                <nds-text variant="label">md</nds-text>
-              </nds-box>
-              <nds-box surface="subtle" padding="3" radius="lg">
-                <nds-text variant="label">lg</nds-text>
-              </nds-box>
-            </nds-stack>
+          <div class="demo-log" id="radio-event-log">
+            <div data-log-placeholder>Selecciona una opcion en el primer grupo para ver el valor emitido.</div>
           </div>
         </article>
       </section>

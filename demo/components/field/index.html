@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="nds-dist-path" content="../../dist/index.js" />
-    <title>no-dep-ds | Box</title>
+    <title>no-dep-ds | Field</title>
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="../../assets/site.css" />
     <link rel="stylesheet" href="../../dist/styles.css" />
@@ -26,11 +26,6 @@
           <a data-nav-link href="../select/index.html">Select</a>
           <a data-nav-link href="../checkbox/index.html">Checkbox</a>
           <a data-nav-link href="../radio-group/index.html">Radio group</a>
-          <a data-nav-link href="../text/index.html">Text</a>
-          <a data-nav-link href="../heading/index.html">Heading</a>
-          <a data-nav-link href="../box/index.html">Box</a>
-          <a data-nav-link href="../stack/index.html">Stack</a>
-          <a data-nav-link href="../card/index.html">Card</a>
           <a data-nav-link href="../badge/index.html">Badge</a>
           <a data-nav-link href="../alert/index.html">Alert</a>
           <a data-nav-link href="../dialog/index.html">Dialog</a>
@@ -48,65 +43,62 @@
     <main class="page-shell">
       <section class="hero">
         <div class="meta-row">
-          <span class="pill">nds-box</span>
-          <span class="pill">surface / padding / radius</span>
+          <span class="pill">nds-field</span>
+          <span class="pill">Light DOM wrapper</span>
         </div>
         <div class="section-heading">
-          <h1>Box</h1>
-          <p>Contenedor ligero para aplicar fondo, borde, padding y radio desde tokens semanticos.</p>
+          <h1>Field</h1>
+          <p>Wrapper composable para label, descripcion, error y atributos ARIA sobre controles nativos o componentes de formulario.</p>
         </div>
       </section>
+
+      <p class="demo-error" data-demo-error hidden></p>
 
       <section class="section two-column">
         <article class="demo-panel">
           <div class="section-heading">
-            <h2>Superficies</h2>
-            <p><code>surface</code> resuelve fondos transparent, subtle y accent sin logica adicional en runtime.</p>
+            <h2>Composicion de formularios</h2>
+            <p>El componente conecta label, descripcion y error con el control hijo para simplificar formularios consistentes.</p>
           </div>
           <div class="demo-preview">
             <nds-stack gap="4">
-              <nds-box surface="transparent" padding="4" radius="lg">
-                <nds-text>Transparent box</nds-text>
-              </nds-box>
-              <nds-box surface="subtle" padding="4" radius="lg">
-                <nds-text>Subtle box</nds-text>
-              </nds-box>
-              <nds-box surface="accent" padding="4" radius="lg">
-                <nds-text weight="medium">Accent box</nds-text>
-              </nds-box>
+              <nds-field label="Email de equipo" required description="Se usa para compartir temas y tokens.">
+                <nds-input type="email" placeholder="team@example.com"></nds-input>
+              </nds-field>
+              <nds-field
+                label="Entorno objetivo"
+                description="Selecciona donde desplegarias primero el sistema."
+                error="Selecciona un entorno antes de continuar."
+                invalid
+              >
+                <nds-select placeholder="Selecciona un entorno" options="prod:Produccion|staging:Staging|docs:Documentacion"></nds-select>
+              </nds-field>
             </nds-stack>
           </div>
           <div class="snippet-toolbar">
             <span class="pill">Markup</span>
-            <button class="copy-button" type="button" data-copy-target="box-snippet">Copiar</button>
+            <button class="copy-button" type="button" data-copy-target="field-snippet">Copiar</button>
           </div>
-          <pre class="snippet" id="box-snippet"><code>&lt;nds-box surface="subtle" padding="4" radius="lg"&gt;
-  &lt;nds-text&gt;Subtle box&lt;/nds-text&gt;
-&lt;/nds-box&gt;
+          <pre class="snippet" id="field-snippet"><code>&lt;nds-field label="Email de equipo" required description="Se usa para compartir temas y tokens."&gt;
+  &lt;nds-input type="email" placeholder="team@example.com"&gt;&lt;/nds-input&gt;
+&lt;/nds-field&gt;
 
-&lt;nds-box surface="accent" padding="4" radius="lg"&gt;
-  &lt;nds-text weight="medium"&gt;Accent box&lt;/nds-text&gt;
-&lt;/nds-box&gt;</code></pre>
+&lt;nds-field label="Entorno objetivo" error="Selecciona un entorno antes de continuar." invalid&gt;
+  &lt;nds-select options="prod:Produccion|staging:Staging|docs:Documentacion"&gt;&lt;/nds-select&gt;
+&lt;/nds-field&gt;</code></pre>
         </article>
 
         <article class="demo-panel">
           <div class="section-heading">
-            <h2>Radios tokenizados</h2>
-            <p>Puede usarse para chips, contenedores o bloques informativos sin CSS local adicional.</p>
+            <h2>Por que importa</h2>
+            <p><code>nds-field</code> deja la composicion en HTML y mantiene accesibilidad, mensajes y estado cerca del control.</p>
           </div>
-          <div class="demo-preview">
-            <nds-stack direction="row" gap="3" align="center">
-              <nds-box surface="subtle" padding="3" radius="pill">
-                <nds-text variant="label">pill</nds-text>
-              </nds-box>
-              <nds-box surface="subtle" padding="3" radius="md">
-                <nds-text variant="label">md</nds-text>
-              </nds-box>
-              <nds-box surface="subtle" padding="3" radius="lg">
-                <nds-text variant="label">lg</nds-text>
-              </nds-box>
-            </nds-stack>
-          </div>
+          <ul class="component-list">
+            <li>Asocia label y descripcion con el control hijo.</li>
+            <li>Propaga <code>required</code>, <code>invalid</code> y <code>error</code>.</li>
+            <li>Funciona con <code>input</code>, <code>textarea</code> y <code>select</code>.</li>
+            <li>Encaja en light DOM para integrarse con formularios authored por la app.</li>
+          </ul>
         </article>
       </section>
     </main>

@@ -198,6 +198,204 @@ const bindAlertPlayground = () => {
   updateStatus();
 };
 
+const bindHomeDemo = () => {
+  const form = document.querySelector('[data-home-demo-form]');
+  const submitButton = document.querySelector('[data-home-demo-submit]');
+  const dialogButton = document.querySelector('[data-home-demo-dialog-open]');
+  const dialog = document.querySelector('#home-adoption-dialog');
+  const alert = document.querySelector('#home-adoption-alert');
+  const stackBadge = document.querySelector('#home-stack-badge');
+  const teamBadge = document.querySelector('#home-team-badge');
+  const summary = document.querySelector('#home-adoption-summary');
+  const log = document.querySelector('#home-event-log');
+
+  if (
+    !(form instanceof HTMLFormElement) ||
+    !(submitButton instanceof HTMLElement) ||
+    !(dialogButton instanceof HTMLElement) ||
+    !(dialog instanceof HTMLElement) ||
+    !(alert instanceof HTMLElement) ||
+    !(stackBadge instanceof HTMLElement) ||
+    !(teamBadge instanceof HTMLElement) ||
+    !(summary instanceof HTMLElement) ||
+    !(log instanceof HTMLElement)
+  ) {
+    return;
+  }
+
+  const email = form.querySelector('nds-input[name="email"]');
+  const team = form.querySelector('nds-select[name="team"]');
+  const stack = form.querySelector('nds-radio-group[name="stack"]');
+  const notes = form.querySelector('nds-textarea[name="notes"]');
+  const updates = form.querySelector('nds-checkbox[name="updates"]');
+
+  if (!email || !team || !stack || !notes || !updates) {
+    return;
+  }
+
+  const teamLabels = {
+    growth: 'Growth',
+    ops: 'Operations',
+    platform: 'Platform',
+    product: 'Product'
+  };
+  const stackLabels = {
+    astro: 'Astro',
+    html: 'HTML',
+    react: 'React',
+    vue: 'Vue'
+  };
+
+  const readState = () => {
+    const teamValue = team.value || 'platform';
+    const stackValue = stack.value || 'astro';
+
+    return {
+      email: email.value || '',
+      notes: notes.value || '',
+      stackLabel: stackLabels[stackValue] ?? stackValue,
+      teamLabel: teamLabels[teamValue] ?? teamValue,
+      updatesRequested: Boolean(updates.checked)
+    };
+  };
+
+  const renderSummary = (items) => {
+    summary.replaceChildren(
+      ...items.map((item) => {
+        const element = document.createElement('li');
+        element.textContent = item;
+        return element;
+      })
+    );
+  };
+
+  const renderState = (mode = 'preview') => {
+    const state = readState();
+    const hasEmail = state.email.trim().length > 0;
+
+    stackBadge.textContent = `Stack: ${state.stackLabel}`;
+    teamBadge.textContent = `Team: ${state.teamLabel}`;
+
+    if (!hasEmail) {
+      alert.setAttribute('tone', 'warning');
+      alert.setAttribute('title', 'Falta una pieza minima para arrancar');
+      alert.setAttribute('message', 'Completa un email de equipo y podras simular una primera adopcion multi-stack.');
+      alert.setAttribute('features', 'Integracion gradual|Contrato estable|Sin runtime extra');
+      renderSummary([
+        'Email de equipo: pendiente',
+        `Equipo principal: ${state.teamLabel}`,
+        `Stack prioritario: ${state.stackLabel}`,
+        `Guia multi-stack: ${state.updatesRequested ? 'solicitada' : 'no solicitada'}`
+      ]);
+      return;
+    }
+
+    const shortNotes = state.notes.trim().slice(0, 88) || 'Sin notas adicionales.';
+
+    if (mode === 'submitted') {
+      alert.setAttribute('tone', 'success');
+      alert.setAttribute('title', 'Listo para una primera integracion');
+      alert.setAttribute(
+        'message',
+        `El mismo paquete puede arrancar en ${state.stackLabel} y mantenerse util para mas equipos sin rehacer la UI base.`
+      );
+      alert.setAttribute(
+        'features',
+        [
+          `Team ${state.teamLabel}`,
+          `Stack ${state.stackLabel}`,
+          state.updatesRequested ? 'Guia solicitada' : 'Integracion autonoma'
+        ].join('|')
+      );
+      renderSummary([
+        `Email de equipo: ${state.email}`,
+        `Equipo principal: ${state.teamLabel}`,
+        `Stack prioritario: ${state.stackLabel}`,
+        `Contexto: ${shortNotes}`,
+        `Guia multi-stack: ${state.updatesRequested ? 'solicitada' : 'no solicitada'}`
+      ]);
+      appendLogEntry(log, `adoption-ready -> ${state.teamLabel} / ${state.stackLabel}`);
+      return;
+    }
+
+    alert.setAttribute('tone', 'info');
+    alert.setAttribute('title', 'Preview de adopcion portable');
+    alert.setAttribute(
+      'message',
+      `Reutiliza la misma base visual para ${state.teamLabel} sin cambiar de design system cuando cambie el stack.`
+    );
+    alert.setAttribute('features', [`Stack ${state.stackLabel}`, 'Zero runtime deps', 'Shadow or light DOM'].join('|'));
+    renderSummary([
+      `Email de equipo: ${state.email}`,
+      `Equipo principal: ${state.teamLabel}`,
+      `Stack prioritario: ${state.stackLabel}`,
+      `Guia multi-stack: ${state.updatesRequested ? 'solicitada' : 'no solicitada'}`
+    ]);
+  };
+
+  const handleLiveUpdate = () => {
+    renderState();
+  };
+
+  for (const element of [email, team, stack, notes, updates]) {
+    element.addEventListener('nds-input', handleLiveUpdate);
+    element.addEventListener('nds-change', handleLiveUpdate);
+  }
+
+  submitButton.addEventListener('nds-click', (event) => {
+    event.preventDefault();
+    renderState('submitted');
+  });
+
+  dialogButton.addEventListener('nds-click', (event) => {
+    event.preventDefault();
+    dialog.open = true;
+  });
+
+  form.addEventListener('reset', () => {
+    window.setTimeout(() => {
+      renderState();
+      appendLogEntry(log, 'demo-reset');
+    }, 0);
+  });
+
+  renderState();
+};
+
+const bindDialogDemos = () => {
+  document.querySelectorAll('[data-dialog-demo-action]').forEach((element) => {
+    const selector = element.getAttribute('data-dialog-demo-target');
+    const target = selector ? document.querySelector(selector) : null;
+
+    if (!(element instanceof HTMLElement) || !(target instanceof HTMLElement)) {
+      return;
+    }
+
+    const applyAction = () => {
+      const action = element.getAttribute('data-dialog-demo-action');
+
+      if (action === 'open') {
+        target.open = true;
+      }
+
+      if (action === 'close') {
+        target.open = false;
+      }
+
+      if (action === 'toggle') {
+        target.open = !target.open;
+      }
+    };
+
+    if (element.tagName === 'NDS-BUTTON') {
+      element.addEventListener('nds-click', applyAction);
+      return;
+    }
+
+    element.addEventListener('click', applyAction);
+  });
+};
+
 const resolveDefineConfig = () => {
   const domMode = document.body.dataset.ndsDomMode;
 
@@ -254,6 +452,8 @@ const bootstrap = async () => {
   bindThemeToggle(setTheme);
   bindDemoEventLogs();
   bindAlertPlayground();
+  bindHomeDemo();
+  bindDialogDemos();
 
   document.documentElement.classList.add('nds-demo-ready');
 };

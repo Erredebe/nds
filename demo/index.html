@@ -4,7 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="nds-dist-path" content="./dist/index.js" />
-    <title>no-dep-ds demo</title>
+    <title>no-dep-ds | Design system portable entre stacks</title>
+    <meta
+      name="description"
+      content="Design system ESM-only con Web Components y cero dependencias runtime. Reutiliza el mismo paquete en HTML, SPAs y despliegues estaticos sin lock-in de framework."
+    />
+    <meta property="og:title" content="no-dep-ds | Design system portable entre stacks" />
+    <meta
+      property="og:description"
+      content="Web Components ESM-only, zero runtime deps y soporte shadow/light DOM para integrar una sola vez y reutilizar en varios entornos."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://nds1.netlify.app/" />
     <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="./assets/site.css" />
     <link rel="stylesheet" href="./dist/styles.css" />
@@ -20,15 +31,12 @@
 
         <nav class="site-nav" aria-label="Catalogo principal">
           <a data-nav-link href="./index.html">Inicio</a>
-          <a data-nav-link href="./components/button/index.html">Button</a>
-          <a data-nav-link href="./components/input/index.html">Input</a>
-          <a data-nav-link href="./components/text/index.html">Text</a>
-          <a data-nav-link href="./components/heading/index.html">Heading</a>
-          <a data-nav-link href="./components/box/index.html">Box</a>
-          <a data-nav-link href="./components/stack/index.html">Stack</a>
-          <a data-nav-link href="./components/card/index.html">Card</a>
+          <a href="#product-demo">Demo real</a>
+          <a href="#why-nds">Por que NDS</a>
+          <a href="#catalogo">Catalogo</a>
           <a data-nav-link href="./components/alert/index.html">Alert</a>
           <a data-nav-link href="./dom-modes/index.html">DOM modes</a>
+          <a href="https://github.com/Erredebe/nds" target="_blank" rel="noreferrer">GitHub</a>
         </nav>
 
         <div class="header-actions">
@@ -43,98 +51,356 @@
     <main class="page-shell">
       <section class="hero">
         <div class="meta-row">
-          <span class="pill">ESM only</span>
-          <span class="pill">Web Components</span>
+          <span class="pill">Portable entre stacks</span>
           <span class="pill">Zero runtime deps</span>
+          <span class="pill">Web Components ESM-only</span>
         </div>
 
         <div class="showcase-grid">
           <div class="section-heading">
-            <h1>Design system sin dependencias runtime listo para publicar en Netlify.</h1>
+            <h1>Un design system portable entre stacks, sin dependencias runtime.</h1>
             <p>
-              Esta demo consume directamente el build publicado del paquete y sirve como catalogo navegable para
-              revisar componentes, atributos, eventos y cobertura de <code>shadow</code> / <code>light</code> DOM.
+              Construye con Web Components ESM-only y reutiliza el mismo paquete en HTML, apps SPA y despliegues
+              estaticos sin wrappers obligatorios ni lock-in de framework.
             </p>
+            <div class="hero-proof">
+              <div>
+                <strong>1 paquete</strong>
+                <span>para varios entornos</span>
+              </div>
+              <div>
+                <strong>0 deps runtime</strong>
+                <span>menos coste oculto</span>
+              </div>
+              <div>
+                <strong>shadow / light</strong>
+                <span>aislamiento o integracion</span>
+              </div>
+            </div>
             <div class="hero-actions">
-              <a class="action-link action-link--primary" href="./components/button/index.html">Abrir catalogo</a>
+              <a class="action-link action-link--primary" href="#product-demo">Ver demo real</a>
+              <a class="action-link" href="#quickstart">Copiar quickstart</a>
               <a class="action-link" href="./dom-modes/index.html">Ver DOM modes</a>
+              <a class="action-link" href="https://github.com/Erredebe/nds" target="_blank" rel="noreferrer">Ver GitHub</a>
             </div>
           </div>
 
-          <div class="panel">
-            <nds-stack gap="4">
-              <nds-heading level="3">Preview rapido</nds-heading>
-              <nds-text variant="muted">
-                El sitio monta los mismos custom elements que se publican en <code>dist/</code>.
-              </nds-text>
-              <nds-card elevated>
-                <nds-stack gap="4">
-                  <nds-heading level="4">Signup compacta</nds-heading>
-                  <nds-input label="Email" placeholder="hello@example.com" type="email"></nds-input>
-                  <nds-stack direction="row" gap="3" align="center">
-                    <nds-button>Crear cuenta</nds-button>
-                    <nds-button variant="outline">Ver docs</nds-button>
-                  </nds-stack>
-                </nds-stack>
-              </nds-card>
-            </nds-stack>
+          <div class="panel hero-panel">
+            <div class="hero-panel__header">
+              <span class="pill">Mismo contrato de uso</span>
+              <span class="hero-panel__caption">HTML, React, Vue, Astro o donde lo necesites</span>
+            </div>
+            <div class="hero-stack-grid">
+              <article class="stack-chip-card">
+                <strong>HTML</strong>
+                <span>Define componentes y listo.</span>
+              </article>
+              <article class="stack-chip-card">
+                <strong>SPA</strong>
+                <span>Usa el mismo paquete sin wrappers obligatorios.</span>
+              </article>
+              <article class="stack-chip-card">
+                <strong>Static hosting</strong>
+                <span>Publica la demo y el paquete con el mismo build.</span>
+              </article>
+              <article class="stack-chip-card">
+                <strong>Design tokens</strong>
+                <span>Temas y estilos publicados desde <code>styles.css</code>.</span>
+              </article>
+            </div>
+            <div class="hero-inline-snippet">
+              <span class="pill">npm</span>
+              <code>npm install no-dep-ds</code>
+            </div>
           </div>
         </div>
       </section>
 
       <p class="demo-error" data-demo-error hidden></p>
 
-      <section class="section">
-        <div class="section-heading">
-          <h2>Catalogo de componentes</h2>
-          <p>Entradas dedicadas para revisar API visible, combinaciones frecuentes y snippets listos para copiar.</p>
+      <section class="section trust-strip">
+        <article class="trust-card">
+          <h2>Portabilidad real</h2>
+          <p>Un solo paquete para varios proyectos y stacks, sin rehacer el DS por framework.</p>
+        </article>
+        <article class="trust-card">
+          <h2>Menos peso operativo</h2>
+          <p>Cero dependencias runtime para reducir superficie de fallo y dependencias transitivas.</p>
+        </article>
+        <article class="trust-card">
+          <h2>Control del DOM</h2>
+          <p><code>shadow</code> por defecto y <code>light</code> cuando la integracion del host lo pide.</p>
+        </article>
+      </section>
+
+      <section class="section" id="product-demo">
+        <div class="section-heading section-heading--wide">
+          <h2>Demo real: onboarding portable</h2>
+          <p>
+            No es una galeria de piezas sueltas. Este flujo muestra formularios, estado, feedback y dialogos con el
+            mismo paquete que luego publicas.
+          </p>
         </div>
 
-        <div class="catalog-grid">
-          <a class="demo-panel" href="./components/button/index.html">
-            <h3>Button</h3>
-            <p>Variantes, tamanos, disabled y evento <code>nds-click</code>.</p>
-          </a>
-          <a class="demo-panel" href="./components/input/index.html">
-            <h3>Input</h3>
-            <p>Tipos, placeholder, valor controlado y eventos <code>nds-input</code> / <code>nds-change</code>.</p>
-          </a>
-          <a class="demo-panel" href="./components/text/index.html">
-            <h3>Text</h3>
-            <p>Jerarquia de copy, alineacion y pesos tipograficos.</p>
-          </a>
-          <a class="demo-panel" href="./components/heading/index.html">
-            <h3>Heading</h3>
-            <p>Niveles semanticos y alineacion para titulares.</p>
-          </a>
-          <a class="demo-panel" href="./components/box/index.html">
-            <h3>Box</h3>
-            <p>Superficies, padding y radios tokenizados.</p>
-          </a>
-          <a class="demo-panel" href="./components/stack/index.html">
-            <h3>Stack</h3>
-            <p>Layout unidimensional con gap, align y justify.</p>
-          </a>
-          <a class="demo-panel" href="./components/card/index.html">
-            <h3>Card</h3>
-            <p>Superficie para agrupacion de contenido con elevacion opcional.</p>
-          </a>
-          <a class="demo-panel" href="./components/alert/index.html">
-            <h3>Alert</h3>
-            <p>Mensajes destacados con dismissal, listas y HTML explicito confiable.</p>
-          </a>
-          <a class="demo-panel" href="./dom-modes/index.html">
-            <h3>DOM modes</h3>
-            <p>Comparativa visual entre shadow por defecto y registro mixed/light.</p>
-          </a>
+        <div class="product-demo-grid">
+          <article class="demo-panel product-demo-panel">
+            <div class="section-heading">
+              <h3>Configura un espacio nuevo</h3>
+              <p>Simula un flujo de adopcion y revisa eventos, estado visual y combinacion de componentes.</p>
+            </div>
+
+            <form class="adoption-form" data-home-demo-form>
+              <nds-field label="Work email" required description="Usa un email de equipo para compartir tokens y temas.">
+                <nds-input
+                  name="email"
+                  type="email"
+                  placeholder="team@example.com"
+                  value="platform@example.com"
+                  data-demo-events="nds-input,nds-change"
+                  data-demo-log="#home-event-log"
+                ></nds-input>
+              </nds-field>
+
+              <nds-field label="Equipo principal" description="Selecciona donde desplegarias primero el sistema.">
+                <nds-select
+                  name="team"
+                  value="platform"
+                  options="platform:Platform|product:Product|growth:Growth|ops:Operations"
+                  data-demo-events="nds-input,nds-change"
+                  data-demo-log="#home-event-log"
+                ></nds-select>
+              </nds-field>
+
+              <nds-radio-group
+                label="Stack prioritario"
+                name="stack"
+                value="astro"
+                options="html:HTML|react:React|vue:Vue|astro:Astro"
+                data-demo-events="nds-change"
+                data-demo-log="#home-event-log"
+              ></nds-radio-group>
+
+              <nds-field label="Contexto de adopcion" description="Que necesitas resolver en la primera integracion.">
+                <nds-textarea
+                  name="notes"
+                  rows="4"
+                  placeholder="Design system para marketing, producto y app interna."
+                  value="Queremos unificar formularios y superficies sin acoplarnos a un framework unico."
+                  data-demo-events="nds-input,nds-change"
+                  data-demo-log="#home-event-log"
+                ></nds-textarea>
+              </nds-field>
+
+              <nds-checkbox
+                name="updates"
+                value="yes"
+                checked
+                label="Quiero la guia de integracion multi-stack"
+                description="Incluye quickstart, theming y decision tree para shadow/light DOM."
+                data-demo-events="nds-input,nds-change"
+                data-demo-log="#home-event-log"
+              ></nds-checkbox>
+
+              <div class="hero-actions hero-actions--compact">
+                <nds-button data-home-demo-submit data-demo-events="nds-click" data-demo-log="#home-event-log">
+                  Simular adopcion
+                </nds-button>
+                <nds-button
+                  variant="outline"
+                  data-home-demo-dialog-open
+                  data-demo-events="nds-click"
+                  data-demo-log="#home-event-log"
+                >
+                  Ver comparativa
+                </nds-button>
+                <button class="copy-button" type="reset">Reset</button>
+              </div>
+            </form>
+          </article>
+
+          <article class="demo-panel product-status-panel">
+            <div class="section-heading">
+              <h3>Lo que esta vendiendo el producto</h3>
+              <p>La UI responde con el mismo contrato que usaria una app consumidora del paquete.</p>
+            </div>
+
+            <div class="demo-badge-row">
+              <nds-badge id="home-stack-badge" tone="info" emphasis="solid">Stack: Astro</nds-badge>
+              <nds-badge tone="success">Zero runtime deps</nds-badge>
+              <nds-badge id="home-team-badge" tone="neutral">Team: Platform</nds-badge>
+            </div>
+
+            <div class="demo-preview demo-preview--dense">
+              <nds-alert
+                id="home-adoption-alert"
+                title="Listo para una primera integracion"
+                tone="success"
+                message="El mismo paquete puede cubrir marketing, producto y apps internas sin cambiar de DS."
+                features="Un solo contrato|Menos lock-in|Build publicable"
+              ></nds-alert>
+            </div>
+
+            <div class="proof-card">
+              <h4>Resumen de adopcion</h4>
+              <ul class="component-list" id="home-adoption-summary">
+                <li>Email de equipo: platform@example.com</li>
+                <li>Equipo principal: Platform</li>
+                <li>Stack prioritario: Astro</li>
+                <li>Guia multi-stack: solicitada</li>
+              </ul>
+            </div>
+
+            <div class="snippet-toolbar">
+              <span class="pill">Eventos del host</span>
+              <span class="visually-muted">Sin listeners sobre nodos internos</span>
+            </div>
+            <div class="demo-log" id="home-event-log">
+              <div data-log-placeholder>Interactua con el flujo para ver eventos de componentes reales.</div>
+            </div>
+          </article>
+        </div>
+
+        <nds-dialog
+          id="home-adoption-dialog"
+          title="Por que gana fuera de un solo framework"
+          description="Mismo paquete, mismo estilo de uso y menos coste de mantenimiento entre proyectos."
+          data-demo-events="nds-open,nds-close"
+          data-demo-log="#home-event-log"
+        >
+          <div class="dialog-proof-grid">
+            <article class="stack-chip-card">
+              <strong>HTML</strong>
+              <span>Componentes listos para sitios estaticos y prototipos.</span>
+            </article>
+            <article class="stack-chip-card">
+              <strong>React / Vue</strong>
+              <span>El equipo comparte tokens y componentes sin duplicar implementaciones.</span>
+            </article>
+            <article class="stack-chip-card">
+              <strong>Astro / Netlify</strong>
+              <span>El build publicado sirve igual para demo, docs y consumo real.</span>
+            </article>
+          </div>
+        </nds-dialog>
+      </section>
+
+      <section class="section" id="why-nds">
+        <div class="section-heading">
+          <h2>Por que elegir no-dep-ds</h2>
+          <p>La ventaja no es solo tecnica. Es operacional: menos lock-in, menos duplicacion y mas control.</p>
+        </div>
+
+        <div class="compare-grid">
+          <article class="demo-panel compare-card">
+            <h3>Un solo paquete para varios stacks</h3>
+            <p>Evita mantener varios kits visuales segun framework o contexto de despliegue.</p>
+          </article>
+          <article class="demo-panel compare-card">
+            <h3>Cero deps runtime</h3>
+            <p>Menos dependencias transitivas, menos peso operativo y menos superficie de fallo.</p>
+          </article>
+          <article class="demo-panel compare-card">
+            <h3>Aislamiento o integracion</h3>
+            <p><code>shadow</code> cuando prima el encapsulamiento, <code>light</code> cuando el host necesita control.</p>
+          </article>
+          <article class="demo-panel compare-card">
+            <h3>Build publicable</h3>
+            <p>La demo consume el mismo build que publicas, en lugar de depender de una maqueta separada.</p>
+          </article>
         </div>
       </section>
 
-      <section class="section two-column">
+      <section class="section two-column" id="catalogo">
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Catalogo del producto</h2>
+            <p>La home enseña el valor; el catalogo te deja inspeccionar piezas, API y comportamiento visible.</p>
+          </div>
+
+          <div class="family-grid">
+            <a class="family-card" href="./components/button/index.html">
+              <strong>Actions</strong>
+              <span>Button, button variants y eventos del host.</span>
+            </a>
+            <a class="family-card" href="./components/input/index.html">
+              <strong>Forms</strong>
+              <span>Input, field, textarea, select, checkbox y radio-group.</span>
+            </a>
+            <a class="family-card" href="./components/alert/index.html">
+              <strong>Feedback</strong>
+              <span>Alert, badge y dialog para estados, aviso y confirmacion.</span>
+            </a>
+            <a class="family-card" href="./components/card/index.html">
+              <strong>Layout</strong>
+              <span>Box, stack y card para composicion y superficies reutilizables.</span>
+            </a>
+            <a class="family-card" href="./components/text/index.html">
+              <strong>Content</strong>
+              <span>Text y heading para jerarquia editorial consistente.</span>
+            </a>
+            <a class="family-card" href="./dom-modes/index.html">
+              <strong>DOM modes</strong>
+              <span>Prueba visual de <code>shadow</code> y <code>light</code> segun integracion.</span>
+            </a>
+          </div>
+
+          <div class="section-heading section-heading--compact">
+            <h3>Demos disponibles</h3>
+            <p>Cobertura directa para todos los componentes publicados hoy.</p>
+          </div>
+
+          <div class="component-link-grid">
+            <a class="component-link-card" href="./components/button/index.html">Button</a>
+            <a class="component-link-card" href="./components/input/index.html">Input</a>
+            <a class="component-link-card" href="./components/field/index.html">Field</a>
+            <a class="component-link-card" href="./components/textarea/index.html">Textarea</a>
+            <a class="component-link-card" href="./components/select/index.html">Select</a>
+            <a class="component-link-card" href="./components/checkbox/index.html">Checkbox</a>
+            <a class="component-link-card" href="./components/radio-group/index.html">Radio group</a>
+            <a class="component-link-card" href="./components/text/index.html">Text</a>
+            <a class="component-link-card" href="./components/heading/index.html">Heading</a>
+            <a class="component-link-card" href="./components/box/index.html">Box</a>
+            <a class="component-link-card" href="./components/stack/index.html">Stack</a>
+            <a class="component-link-card" href="./components/card/index.html">Card</a>
+            <a class="component-link-card" href="./components/badge/index.html">Badge</a>
+            <a class="component-link-card" href="./components/alert/index.html">Alert</a>
+            <a class="component-link-card" href="./components/dialog/index.html">Dialog</a>
+            <a class="component-link-card" href="./dom-modes/index.html">DOM modes</a>
+          </div>
+        </article>
+
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Funciona donde trabajas</h2>
+            <p>La integracion no cambia de filosofia segun el stack: defines componentes, cargas estilos y ya estas dentro.</p>
+          </div>
+
+          <div class="stack-proof-grid">
+            <article class="mini-swatch">
+              <strong>HTML</strong>
+              <p class="visually-muted">Sitios estaticos, CMS y prototipos funcionales.</p>
+            </article>
+            <article class="mini-swatch">
+              <strong>React</strong>
+              <p class="visually-muted">Apps de producto sin rehacer la libreria visual.</p>
+            </article>
+            <article class="mini-swatch">
+              <strong>Vue</strong>
+              <p class="visually-muted">Mismo lenguaje visual entre equipos distintos.</p>
+            </article>
+            <article class="mini-swatch">
+              <strong>Astro</strong>
+              <p class="visually-muted">Ideal para marketing y docs con el mismo paquete.</p>
+            </article>
+          </div>
+        </article>
+      </section>
+
+      <section class="section two-column" id="quickstart">
         <article class="demo-panel">
           <div class="section-heading">
             <h2>Instalacion y uso minimo</h2>
-            <p>La demo usa el build publicado. El mismo contrato sirve para Netlify, examples y consumidores del paquete.</p>
+            <p>El contrato de arranque es pequeno: importas el paquete, registras componentes y aplicas tema.</p>
           </div>
           <div class="snippet-toolbar">
             <span class="pill">Quick start</span>
@@ -149,8 +415,8 @@ setTheme('light');
 document.body.innerHTML = `
   &lt;nds-card elevated&gt;
     &lt;nds-stack gap="4"&gt;
-      &lt;nds-heading level="3"&gt;Hello&lt;/nds-heading&gt;
-      &lt;nds-text&gt;Build once, publish anywhere.&lt;/nds-text&gt;
+      &lt;nds-heading level="3"&gt;Portable UI&lt;/nds-heading&gt;
+      &lt;nds-text&gt;Mismo paquete para marketing, producto y apps internas.&lt;/nds-text&gt;
       &lt;nds-button&gt;Primary action&lt;/nds-button&gt;
     &lt;/nds-stack&gt;
   &lt;/nds-card&gt;
@@ -159,17 +425,30 @@ document.body.innerHTML = `
 
         <article class="demo-panel">
           <div class="section-heading">
-            <h2>Que valida esta demo</h2>
-            <p>El objetivo es que el despliegue sea util para quien consume el DS, no solo para una smoke test interna.</p>
+            <h2>Lo que demuestra esta landing</h2>
+            <p>La propuesta no se queda en slogans: hay una demo viva, familias de componentes y una historia clara de adopcion.</p>
           </div>
           <ul class="component-list">
-            <li>Todas las paginas cargan componentes reales desde <code>/dist</code>.</li>
-            <li>El selector de tema persiste entre paginas con <code>localStorage</code>.</li>
-            <li>Los snippets muestran markup tal como se escribiria en HTML.</li>
-            <li>Las demos interactivas registran eventos publicos del host.</li>
-            <li>La seccion DOM modes separa el registro por pagina para evitar redefiniciones.</li>
+            <li>Mismo paquete para demo, integracion y despliegue.</li>
+            <li>Portabilidad entre HTML, SPA y hosting estatico.</li>
+            <li>Eventos publicos del host, no listeners sobre implementaciones internas.</li>
+            <li>Soporte visible para formularios, feedback, layout y contenido.</li>
+            <li>Prueba dedicada de <code>shadow</code> y <code>light</code> DOM en <a href="./dom-modes/index.html">DOM modes</a>.</li>
           </ul>
         </article>
+      </section>
+
+      <section class="section final-cta">
+        <div class="section-heading">
+          <h2>Construye una vez. Reutiliza en varios contextos.</h2>
+          <p>Si evaluas un design system para equipos externos, aqui puedes ver el producto, entender por que gana y empezar a integrarlo.</p>
+        </div>
+
+        <div class="hero-actions">
+          <a class="action-link action-link--primary" href="#product-demo">Abrir demo real</a>
+          <a class="action-link" href="#catalogo">Explorar catalogo</a>
+          <a class="action-link" href="https://github.com/Erredebe/nds" target="_blank" rel="noreferrer">Revisar codigo</a>
+        </div>
       </section>
     </main>
   </body>

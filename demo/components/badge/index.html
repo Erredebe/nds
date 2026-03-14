@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="nds-dist-path" content="../../dist/index.js" />
-    <title>no-dep-ds | Box</title>
+    <title>no-dep-ds | Badge</title>
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="../../assets/site.css" />
     <link rel="stylesheet" href="../../dist/styles.css" />
@@ -26,11 +26,6 @@
           <a data-nav-link href="../select/index.html">Select</a>
           <a data-nav-link href="../checkbox/index.html">Checkbox</a>
           <a data-nav-link href="../radio-group/index.html">Radio group</a>
-          <a data-nav-link href="../text/index.html">Text</a>
-          <a data-nav-link href="../heading/index.html">Heading</a>
-          <a data-nav-link href="../box/index.html">Box</a>
-          <a data-nav-link href="../stack/index.html">Stack</a>
-          <a data-nav-link href="../card/index.html">Card</a>
           <a data-nav-link href="../badge/index.html">Badge</a>
           <a data-nav-link href="../alert/index.html">Alert</a>
           <a data-nav-link href="../dialog/index.html">Dialog</a>
@@ -48,64 +43,63 @@
     <main class="page-shell">
       <section class="hero">
         <div class="meta-row">
-          <span class="pill">nds-box</span>
-          <span class="pill">surface / padding / radius</span>
+          <span class="pill">nds-badge</span>
+          <span class="pill">Tone + emphasis</span>
         </div>
         <div class="section-heading">
-          <h1>Box</h1>
-          <p>Contenedor ligero para aplicar fondo, borde, padding y radio desde tokens semanticos.</p>
+          <h1>Badge</h1>
+          <p>Etiqueta compacta para estados, categorias y señales de producto dentro de cards, tablas o dashboards.</p>
         </div>
       </section>
 
       <section class="section two-column">
         <article class="demo-panel">
           <div class="section-heading">
-            <h2>Superficies</h2>
-            <p><code>surface</code> resuelve fondos transparent, subtle y accent sin logica adicional en runtime.</p>
+            <h2>Tonos y enfasis</h2>
+            <p>Combina <code>tone</code> y <code>emphasis</code> para balancear visibilidad sin introducir componentes mas pesados.</p>
           </div>
           <div class="demo-preview">
             <nds-stack gap="4">
-              <nds-box surface="transparent" padding="4" radius="lg">
-                <nds-text>Transparent box</nds-text>
-              </nds-box>
-              <nds-box surface="subtle" padding="4" radius="lg">
-                <nds-text>Subtle box</nds-text>
-              </nds-box>
-              <nds-box surface="accent" padding="4" radius="lg">
-                <nds-text weight="medium">Accent box</nds-text>
-              </nds-box>
+              <div class="demo-badge-row">
+                <nds-badge>Neutral</nds-badge>
+                <nds-badge tone="info">Info</nds-badge>
+                <nds-badge tone="success">Success</nds-badge>
+                <nds-badge tone="warning">Warning</nds-badge>
+                <nds-badge tone="danger">Danger</nds-badge>
+              </div>
+              <div class="demo-badge-row">
+                <nds-badge emphasis="solid">Neutral solid</nds-badge>
+                <nds-badge tone="info" emphasis="solid">Info solid</nds-badge>
+                <nds-badge tone="success" emphasis="solid">Ready</nds-badge>
+                <nds-badge tone="warning" emphasis="solid">Review</nds-badge>
+                <nds-badge tone="danger" emphasis="solid">Blocked</nds-badge>
+              </div>
             </nds-stack>
           </div>
           <div class="snippet-toolbar">
             <span class="pill">Markup</span>
-            <button class="copy-button" type="button" data-copy-target="box-snippet">Copiar</button>
+            <button class="copy-button" type="button" data-copy-target="badge-snippet">Copiar</button>
           </div>
-          <pre class="snippet" id="box-snippet"><code>&lt;nds-box surface="subtle" padding="4" radius="lg"&gt;
-  &lt;nds-text&gt;Subtle box&lt;/nds-text&gt;
-&lt;/nds-box&gt;
-
-&lt;nds-box surface="accent" padding="4" radius="lg"&gt;
-  &lt;nds-text weight="medium"&gt;Accent box&lt;/nds-text&gt;
-&lt;/nds-box&gt;</code></pre>
+          <pre class="snippet" id="badge-snippet"><code>&lt;nds-badge tone="success" emphasis="solid"&gt;Ready&lt;/nds-badge&gt;
+&lt;nds-badge tone="warning"&gt;Review&lt;/nds-badge&gt;</code></pre>
         </article>
 
         <article class="demo-panel">
           <div class="section-heading">
-            <h2>Radios tokenizados</h2>
-            <p>Puede usarse para chips, contenedores o bloques informativos sin CSS local adicional.</p>
+            <h2>Uso en producto</h2>
+            <p>Ideal para estados compactos dentro de interfaces mas densas.</p>
           </div>
           <div class="demo-preview">
-            <nds-stack direction="row" gap="3" align="center">
-              <nds-box surface="subtle" padding="3" radius="pill">
-                <nds-text variant="label">pill</nds-text>
-              </nds-box>
-              <nds-box surface="subtle" padding="3" radius="md">
-                <nds-text variant="label">md</nds-text>
-              </nds-box>
-              <nds-box surface="subtle" padding="3" radius="lg">
-                <nds-text variant="label">lg</nds-text>
-              </nds-box>
-            </nds-stack>
+            <nds-card elevated>
+              <nds-stack gap="4">
+                <div class="demo-badge-row">
+                  <nds-badge tone="success" emphasis="solid">Live</nds-badge>
+                  <nds-badge tone="info">Marketing</nds-badge>
+                </div>
+                <nds-heading level="4">Landing publicada con el build real</nds-heading>
+                <nds-text variant="muted">Mismo paquete para demo publica, docs y consumo en producto.</nds-text>
+              </nds-stack>
+            </nds-card>
           </div>
         </article>
       </section>

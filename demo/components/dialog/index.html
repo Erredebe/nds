@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="nds-dist-path" content="../../dist/index.js" />
+    <title>no-dep-ds | Dialog</title>
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../../assets/site.css" />
+    <link rel="stylesheet" href="../../dist/styles.css" />
+    <script type="module" src="../../assets/site.js"></script>
+  </head>
+  <body data-theme="light">
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="../../index.html">
+          <span class="site-brand__mark">NDS</span>
+          <span>no-dep-ds</span>
+        </a>
+        <nav class="site-nav" aria-label="Catalogo principal">
+          <a data-nav-link href="../../index.html">Inicio</a>
+          <a data-nav-link href="../button/index.html">Button</a>
+          <a data-nav-link href="../input/index.html">Input</a>
+          <a data-nav-link href="../field/index.html">Field</a>
+          <a data-nav-link href="../textarea/index.html">Textarea</a>
+          <a data-nav-link href="../select/index.html">Select</a>
+          <a data-nav-link href="../checkbox/index.html">Checkbox</a>
+          <a data-nav-link href="../radio-group/index.html">Radio group</a>
+          <a data-nav-link href="../badge/index.html">Badge</a>
+          <a data-nav-link href="../alert/index.html">Alert</a>
+          <a data-nav-link href="../dialog/index.html">Dialog</a>
+          <a data-nav-link href="../../dom-modes/index.html">DOM modes</a>
+        </nav>
+        <div class="header-actions">
+          <button class="theme-toggle" type="button" data-theme-toggle>
+            Tema
+            <span data-theme-label>light</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="hero">
+        <div class="meta-row">
+          <span class="pill">nds-dialog</span>
+          <span class="pill">Events: nds-open / nds-close / nds-cancel</span>
+        </div>
+        <div class="section-heading">
+          <h1>Dialog</h1>
+          <p>Overlay modal para confirmaciones, explicaciones de valor o pasos que necesitan foco temporal.</p>
+        </div>
+      </section>
+
+      <p class="demo-error" data-demo-error hidden></p>
+
+      <section class="section two-column">
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Controlado por el host</h2>
+            <p>Abre, cierra o alterna el dialogo usando atributos y eventos del custom element.</p>
+          </div>
+          <div class="demo-preview">
+            <nds-stack gap="4">
+              <nds-text variant="muted">Prueba la apertura, cierre y cancelacion sin depender de una capa extra.</nds-text>
+              <div class="hero-actions hero-actions--compact">
+                <nds-button
+                  data-dialog-demo-action="open"
+                  data-dialog-demo-target="#dialog-demo-default"
+                  data-demo-events="nds-click"
+                  data-demo-log="#dialog-event-log"
+                >Abrir dialog</nds-button>
+                <nds-button
+                  variant="outline"
+                  data-dialog-demo-action="close"
+                  data-dialog-demo-target="#dialog-demo-default"
+                  data-demo-events="nds-click"
+                  data-demo-log="#dialog-event-log"
+                >Cerrar dialog</nds-button>
+              </div>
+            </nds-stack>
+          </div>
+          <div class="snippet-toolbar">
+            <span class="pill">Markup</span>
+            <button class="copy-button" type="button" data-copy-target="dialog-snippet">Copiar</button>
+          </div>
+          <pre class="snippet" id="dialog-snippet"><code>&lt;nds-button data-dialog-demo-action="open" data-dialog-demo-target="#dialog-demo-default"&gt;
+  Abrir dialog
+&lt;/nds-button&gt;
+
+&lt;nds-dialog id="dialog-demo-default" title="Confirmar rollout" description="Comparte el mismo paquete entre stacks."&gt;
+  &lt;nds-text&gt;El dialogo emite eventos publicos del host.&lt;/nds-text&gt;
+&lt;/nds-dialog&gt;</code></pre>
+        </article>
+
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Eventos</h2>
+            <p>Escucha <code>nds-open</code>, <code>nds-close</code> y <code>nds-cancel</code> directamente sobre <code>&lt;nds-dialog&gt;</code>.</p>
+          </div>
+          <div class="demo-log" id="dialog-event-log">
+            <div data-log-placeholder>Abre el dialogo y pulsa Escape o el cierre para ver el log.</div>
+          </div>
+        </article>
+      </section>
+
+      <section class="section two-column">
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Dialogo dismissible</h2>
+            <p>Patron para confirmaciones ligeras o explicaciones de producto.</p>
+          </div>
+          <div class="demo-preview">
+            <nds-dialog
+              id="dialog-demo-default"
+              title="Comparte un solo design system"
+              description="Mismo build para marketing, producto y apps internas."
+              data-demo-events="nds-open,nds-close,nds-cancel"
+              data-demo-log="#dialog-event-log"
+            >
+              <nds-stack gap="4">
+                <nds-text>Abre este dialogo desde cualquier pagina para explicar una decision o confirmar un paso.</nds-text>
+                <nds-alert tone="info" message="Los eventos salen desde el host del componente."></nds-alert>
+              </nds-stack>
+            </nds-dialog>
+          </div>
+        </article>
+
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Control programatico</h2>
+            <p>Tambien puedes abrir y cerrar el dialogo desde botones externos para flujos guiados.</p>
+          </div>
+          <div class="demo-preview">
+            <div class="hero-actions hero-actions--compact">
+              <nds-button data-dialog-demo-action="open" data-dialog-demo-target="#dialog-demo-locked">Abrir version guiada</nds-button>
+              <nds-button variant="outline" data-dialog-demo-action="close" data-dialog-demo-target="#dialog-demo-locked">Cerrar programaticamente</nds-button>
+            </div>
+
+            <nds-dialog
+              id="dialog-demo-locked"
+              title="Revision de rollout"
+              description="El host puede controlar el estado abierto y cerrado del dialogo."
+              data-demo-events="nds-open,nds-close"
+              data-demo-log="#dialog-event-log"
+            >
+              <nds-stack gap="4">
+                <nds-text>Util para flujos donde el estado del overlay se coordina desde otra parte de la interfaz.</nds-text>
+                <nds-badge tone="warning" emphasis="solid">Review required</nds-badge>
+              </nds-stack>
+            </nds-dialog>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>
