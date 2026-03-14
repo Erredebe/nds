@@ -88,7 +88,7 @@ Ejemplo de markup:
 - `nds-box`: contenedor liviano con `surface`, `padding` y `radius`.
 - `nds-stack`: layout flex con `direction`, `gap`, `align` y `justify`.
 - `nds-card`: superficie agrupadora con `tag`, `padding` y `elevated`.
-- `nds-alert`: feedback con `tone`, `title`, `message`, `message-html` sanitizado y deprecado, `features`, `dismissible` y evento `nds-dismiss`.
+- `nds-alert`: feedback con `tone`, `title`, `message`, `features`, `dismissible` y evento `nds-dismiss`.
 
 ## Theming
 
@@ -111,7 +111,7 @@ console.log(themes.dark.color.background.canvas);
 - `[innerHTML]` sanea strings antes de renderizar y elimina markup/atributos inseguros.
 - El runtime de templates ya no depende de `unsafe-eval`; las expresiones se interpretan dentro de un scope acotado al componente, locals y `$event`.
 - `nds-input` mantiene `value` como propiedad reactiva, pero no lo refleja de vuelta al atributo host; para `type="password"` tampoco reexpone el valor en `nds-input`/`nds-change`.
-- `nds-alert[message-html]` queda deprecado; usa `message` para texto simple o slot/default content para markup authored por la app.
+- `nds-alert` usa `message` para texto simple y slot/default content para markup authored por la app.
 
 ## Compatibilidad
 

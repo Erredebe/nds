@@ -1,6 +1,6 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
-import { NDSAlertElement, resetAlertDeprecationWarningsForTesting } from '../dist/components/alert/component.js';
+import { NDSAlertElement } from '../dist/components/alert/component.js';
 import { NDSBoxElement } from '../dist/components/box/component.js';
 import { NDSButtonElement } from '../dist/components/button/component.js';
 import { NDSCardElement } from '../dist/components/card/component.js';
@@ -244,39 +244,22 @@ describe('nds-input', () => {
 });
 
 describe('nds-alert', () => {
-  it('renders sanitized rich content and trackBy keys in shadow dom', () => {
+  it('renders message text and trackBy keys in shadow dom', () => {
     const element = document.createElement(tags.shadowAlert);
     element.setAttribute('title', 'Deploy notice');
-    element.setAttribute('message-html', '<p><strong>Heads up</strong> before release.</p><img src="x" onerror="alert(1)">');
+    element.setAttribute('message', 'Heads up before release.');
     element.setAttribute('features', 'Preview build|Smoke tests|Rollback plan');
     document.body.append(element);
 
     const root = element.shadowRoot;
     const features = Array.from(root?.querySelectorAll<HTMLLIElement>('.nds-alert__feature') ?? []);
 
-    expect(root?.querySelector('.nds-alert__message strong')?.textContent).toBe('Heads up');
-    expect(root?.querySelector('.nds-alert__message img')).toBeNull();
+    expect(root?.querySelector('.nds-alert__message')?.textContent).toContain('Heads up before release.');
     expect(features.map((item) => item.getAttribute('data-nds-key'))).toEqual([
       '0-Preview build',
       '1-Smoke tests',
       '2-Rollback plan'
     ]);
-  });
-
-  it('warns once that message-html is deprecated', () => {
-    resetAlertDeprecationWarningsForTesting();
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    const first = document.createElement(tags.shadowAlert);
-    const second = document.createElement(tags.lightAlert);
-
-    first.setAttribute('message-html', '<p>First</p>');
-    second.setAttribute('message-html', '<p>Second</p>');
-    document.body.append(first, second);
-
-    expect(warnSpy).toHaveBeenCalledTimes(1);
-    expect(warnSpy.mock.calls[0]?.[0]).toContain('message-html');
-
-    warnSpy.mockRestore();
   });
 
   it('reuses keyed list nodes when trackBy order changes', () => {

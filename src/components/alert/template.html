@@ -16,7 +16,7 @@
         </button>
       </div>
 
-      <div class="nds-alert__message" *if="message || messageHtml" [innerHTML]="messageMarkup()"></div>
+      <div class="nds-alert__message" *if="message">{{ message }}</div>
 
       <ul class="nds-alert__features" *if="featureItems().length > 0">
         <li class="nds-alert__feature" *for="item, index in featureItems(); trackBy: `${index}-${item}`">{{ item }}</li>
