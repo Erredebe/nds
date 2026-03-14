@@ -1,5 +1,4 @@
-export const buttonShadowStyles = `
-:host {
+export const shadowStyles = `:host {
   display: inline-flex;
   vertical-align: middle;
   font-family: var(--nds-typography-font-family-sans);
@@ -78,26 +77,23 @@ export const buttonShadowStyles = `
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
-}
-`.trim();
-
-export const buttonLightStyles = `
-nds-button {
-  display: inline-flex;
+}`;
+export const lightStyles = `nds-button {
+display: inline-flex;
   vertical-align: middle;
   font-family: var(--nds-typography-font-family-sans);
 }
 
 nds-button[hidden] {
-  display: none;
+display: none;
 }
 
 nds-button .nds-button__root {
-  display: inline-flex;
+display: inline-flex;
 }
 
 nds-button .nds-button__control {
-  display: inline-flex;
+display: inline-flex;
   align-items: center;
   justify-content: center;
   min-height: 2.75rem;
@@ -121,45 +117,44 @@ nds-button .nds-button__control {
 }
 
 nds-button .nds-button__control:hover {
-  transform: translateY(-1px);
+transform: translateY(-1px);
   box-shadow: var(--nds-shadows-md);
 }
 
 nds-button[variant="outline"] .nds-button__control {
-  background: transparent;
+background: transparent;
   color: var(--nds-component-button-outline-foreground);
   border-color: var(--nds-color-border);
   box-shadow: none;
 }
 
 nds-button[variant="ghost"] .nds-button__control {
-  background: transparent;
+background: transparent;
   color: var(--nds-component-button-outline-foreground);
   box-shadow: none;
 }
 
 nds-button[variant="ghost"] .nds-button__control:hover {
-  background: var(--nds-component-button-ghost-hover-background);
+background: var(--nds-component-button-ghost-hover-background);
   transform: none;
 }
 
 nds-button[size="sm"] .nds-button__control {
-  min-height: 2.25rem;
+min-height: 2.25rem;
   padding-inline: var(--nds-spacing-3);
   font-size: var(--nds-typography-font-size-sm);
 }
 
 nds-button[size="lg"] .nds-button__control {
-  min-height: 3.25rem;
+min-height: 3.25rem;
   padding-inline: var(--nds-spacing-5);
   font-size: var(--nds-typography-font-size-lg);
 }
 
 nds-button[disabled] .nds-button__control,
 nds-button .nds-button__control:disabled {
-  opacity: 0.56;
+opacity: 0.56;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
-}
-`.trim();
+}`;

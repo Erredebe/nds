@@ -1,15 +1,32 @@
-import { NDSComponentElement, type NDSComponentDefinition } from '../../foundation/component.js';
-import { stringAttribute } from '../../utils/attributes.js';
-import { textShadowStyles } from './styles.js';
-import { renderTextTemplate } from './template.js';
+import { type DomMode, NDSComponentElement, attr, component } from '../../foundation/index.js';
+import { escapeHtml } from '../../utils/dom.js';
 
+const textAlignments = ['left', 'center', 'right'] as const;
+const textVariants = ['body', 'caption', 'label', 'muted'] as const;
+const textWeights = ['regular', 'medium', 'semibold', 'bold'] as const;
+
+@component({
+  defaultDomMode: 'shadow',
+  stylePath: './styles.css',
+  tagName: 'nds-text'
+})
 export class NDSTextElement extends NDSComponentElement {
-  static definition: NDSComponentDefinition<NDSTextElement> = {
-    tagName: 'nds-text',
-    observedAttributes: ['align', 'text', 'variant', 'weight'],
-    shadowStyles: textShadowStyles,
-    defaultDomMode: 'shadow',
-    renderTemplate: renderTextTemplate,
-    getDefaultSlotFallbackText: (element) => stringAttribute(element, 'text')
-  };
+  @attr.enum(textAlignments) accessor align: (typeof textAlignments)[number] = 'left';
+  @attr.string() accessor text = '';
+  @attr.enum(textVariants) accessor variant: (typeof textVariants)[number] = 'body';
+  @attr.enum(textWeights) accessor weight: (typeof textWeights)[number] = 'regular';
+
+  protected override renderTemplate(mode: DomMode): string {
+    const fallbackText = escapeHtml(this.defaultSlotFallbackText());
+    const content =
+      mode === 'shadow'
+        ? `<slot>${fallbackText}</slot>`
+        : `<span data-nds-slot-target="default">${fallbackText}</span>`;
+
+    return `<p part="text" class="nds-text__content">${content}</p>`;
+  }
+
+  protected override defaultSlotFallbackText(): string {
+    return this.text;
+  }
 }

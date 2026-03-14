@@ -5,15 +5,24 @@ export interface NDSComponentDefinition<T extends HTMLElement = NDSComponentElem
   observedAttributes: string[];
   shadowStyles: string;
   defaultDomMode: DomMode;
+  stylePath?: string;
   renderTemplate: (element: T, mode: DomMode) => string;
   getDefaultSlotFallbackText?: (element: T) => string;
   afterRender?: (element: T) => void;
+}
+
+export interface NDSListenerDefinition {
+  eventName: string;
+  methodName: string;
+  selector?: string;
+  target: 'host' | 'renderRoot';
 }
 
 export interface NDSComponentClass<T extends NDSComponentElement = NDSComponentElement>
   extends CustomElementConstructor {
   new (...args: any[]): T;
   definition: NDSComponentDefinition<T>;
+  listeners?: readonly NDSListenerDefinition[];
   domMode: DomMode;
   shadowStyles: string;
   observedAttributes: string[];
@@ -28,10 +37,42 @@ export class NDSComponentElement extends NDSBaseElement {
     renderTemplate: () => ''
   };
 
+  #listenerCleanup = new Map<EventTarget, Array<{ eventName: string; handler: EventListener }>>();
+
   protected get definition(): NDSComponentDefinition<this> {
     const componentClass = this.constructor as NDSComponentClass<this>;
 
     return componentClass.definition;
+  }
+
+  protected renderTemplate(_mode: DomMode): string {
+    return '';
+  }
+
+  protected defaultSlotFallbackText(): string {
+    return '';
+  }
+
+  protected rendered(): void {}
+
+  protected get renderRoot(): ShadowRoot | this {
+    return (this.shadowRoot ?? this) as ShadowRoot | this;
+  }
+
+  protected emit<T>(
+    type: string,
+    detail?: T,
+    options: Omit<CustomEventInit<T>, 'detail'> = {}
+  ): boolean {
+    return this.dispatchEvent(
+      new CustomEvent(type, {
+        bubbles: true,
+        cancelable: false,
+        composed: true,
+        ...options,
+        detail
+      })
+    );
   }
 
   protected override renderShadowTemplate(): string {
@@ -47,7 +88,66 @@ export class NDSComponentElement extends NDSBaseElement {
   }
 
   protected override afterRender(): void {
+    this.rebindDeclaredListeners();
     this.definition.afterRender?.(this);
+  }
+
+  disconnectedCallback(): void {
+    this.removeDeclaredListeners();
+  }
+
+  private rebindDeclaredListeners(): void {
+    this.removeDeclaredListeners();
+
+    const componentClass = this.constructor as NDSComponentClass<this>;
+    const listeners = componentClass.listeners ?? [];
+
+    for (const definition of listeners) {
+      const handler = ((event: Event) => {
+        const method = this[definition.methodName as keyof this];
+
+        if (typeof method === 'function') {
+          method.call(this, event);
+        }
+      }) as EventListener;
+
+      const targets = this.resolveListenerTargets(definition);
+
+      for (const target of targets) {
+        target.addEventListener(definition.eventName, handler);
+        const registeredHandlers = this.#listenerCleanup.get(target) ?? [];
+        registeredHandlers.push({ eventName: definition.eventName, handler });
+        this.#listenerCleanup.set(target, registeredHandlers);
+      }
+    }
+  }
+
+  private removeDeclaredListeners(): void {
+    for (const [target, handlers] of this.#listenerCleanup.entries()) {
+      for (const { eventName, handler } of handlers) {
+        target.removeEventListener(eventName, handler);
+      }
+    }
+
+    this.#listenerCleanup.clear();
+  }
+
+  private resolveListenerTargets(definition: NDSListenerDefinition): EventTarget[] {
+    if (definition.target === 'host') {
+      return [this];
+    }
+
+    const root = this.renderRoot;
+
+    if (!definition.selector) {
+      return [root];
+    }
+
+    if ('querySelectorAll' in root) {
+      return Array.from(root.querySelectorAll(definition.selector));
+    }
+
+    return [];
   }
 }
 

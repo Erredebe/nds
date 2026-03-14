@@ -1,11 +1,5 @@
-import { boxLightStyles } from './components/box/styles.js';
-import { buttonLightStyles } from './components/button/styles.js';
-import { cardLightStyles } from './components/card/styles.js';
-import { headingLightStyles } from './components/heading/styles.js';
-import { inputLightStyles } from './components/input/styles.js';
-import { stackLightStyles } from './components/stack/styles.js';
-import { textLightStyles } from './components/text/styles.js';
 import { createThemeCss, createTokenCss } from './foundation/css-vars.js';
+import { generatedLightStyles } from './generated/component-styles.generated.js';
 
 const globalBaseStyles = `
 *,
@@ -29,15 +23,4 @@ body {
 `.trim();
 
 export const createDesignSystemCss = (): string =>
-  [
-    createTokenCss(),
-    createThemeCss(),
-    globalBaseStyles,
-    boxLightStyles,
-    buttonLightStyles,
-    cardLightStyles,
-    headingLightStyles,
-    inputLightStyles,
-    stackLightStyles,
-    textLightStyles
-  ].join('\n\n');
+  [createTokenCss(), createThemeCss(), globalBaseStyles, ...generatedLightStyles].join('\n\n');

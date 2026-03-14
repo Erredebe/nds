@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { NDSButtonElement } from '../src/components/button/component.js';
-import { NDSInputElement } from '../src/components/input/component.js';
-import { configureComponentClass } from '../src/foundation/component.js';
+import { NDSButtonElement } from '../dist/components/button/component.js';
+import { NDSInputElement } from '../dist/components/input/component.js';
+import { configureComponentClass } from '../dist/foundation/component.js';
 
 const lightButtonTag = 'nds-test-button-light';
 const shadowButtonTag = 'nds-test-button-shadow';
@@ -53,6 +53,24 @@ describe('nds-button', () => {
     expect(element.querySelector('.nds-button__control')).not.toBeNull();
     expect(element.textContent).toContain('Ghost action');
   });
+
+  it('emits nds-click from the host and survives rerenders', () => {
+    const element = document.createElement(shadowButtonTag);
+    const receivedTargets: EventTarget[] = [];
+
+    element.addEventListener('nds-click', (event) => {
+      receivedTargets.push(event.target as EventTarget);
+    });
+
+    document.body.append(element);
+    element.shadowRoot?.querySelector<HTMLButtonElement>('.nds-button__control')?.click();
+    element.setAttribute('label', 'Updated');
+    element.shadowRoot?.querySelector<HTMLButtonElement>('.nds-button__control')?.click();
+
+    expect(receivedTargets).toHaveLength(2);
+    expect(receivedTargets[0]).toBe(element);
+    expect(receivedTargets[1]).toBe(element);
+  });
 });
 
 describe('nds-input', () => {
@@ -85,5 +103,41 @@ describe('nds-input', () => {
     input.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
 
     expect(element.getAttribute('value')).toBe('typed@example.com');
+  });
+
+  it('emits nds-input and nds-change with the host as target', () => {
+    const element = document.createElement(lightInputTag);
+    const received = {
+      change: [] as string[],
+      input: [] as string[]
+    };
+
+    element.addEventListener('nds-input', (event) => {
+      received.input.push((event as CustomEvent<{ value: string }>).detail.value);
+      expect(event.target).toBe(element);
+    });
+
+    element.addEventListener('nds-change', (event) => {
+      received.change.push((event as CustomEvent<{ value: string }>).detail.value);
+      expect(event.target).toBe(element);
+    });
+
+    document.body.append(element);
+
+    const input = element.querySelector<HTMLInputElement>('.nds-input__control');
+
+    expect(input).not.toBeNull();
+
+    if (!input) {
+      return;
+    }
+
+    input.value = 'one@example.com';
+    input.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+    input.value = 'two@example.com';
+    input.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+
+    expect(received.input).toEqual(['one@example.com']);
+    expect(received.change).toEqual(['two@example.com']);
   });
 });

@@ -1,27 +1,37 @@
-import { NDSComponentElement, type NDSComponentDefinition } from '../../foundation/component.js';
-import { booleanAttribute } from '../../utils/attributes.js';
+import { type DomMode, NDSComponentElement, attr, component } from '../../foundation/index.js';
 import { resolveShadowValue, resolveSpaceValue } from '../../utils/style-values.js';
-import { cardShadowStyles } from './styles.js';
-import { renderCardTemplate } from './template.js';
 
 const applyCardStyles = (element: NDSCardElement): void => {
-  element.style.setProperty(
-    '--nds-card-padding',
-    resolveSpaceValue(element.getAttribute('padding'), 'var(--nds-spacing-5)')
-  );
+  element.style.setProperty('--nds-card-padding', resolveSpaceValue(element.padding || null, 'var(--nds-spacing-5)'));
   element.style.setProperty(
     '--nds-card-shadow',
-    booleanAttribute(element.getAttribute('elevated')) ? resolveShadowValue('md') : resolveShadowValue('sm')
+    element.elevated ? resolveShadowValue('md') : resolveShadowValue('sm')
   );
 };
 
+@component({
+  defaultDomMode: 'shadow',
+  stylePath: './styles.css',
+  tagName: 'nds-card'
+})
 export class NDSCardElement extends NDSComponentElement {
-  static definition: NDSComponentDefinition<NDSCardElement> = {
-    tagName: 'nds-card',
-    observedAttributes: ['elevated', 'padding'],
-    shadowStyles: cardShadowStyles,
-    defaultDomMode: 'shadow',
-    renderTemplate: renderCardTemplate,
-    afterRender: applyCardStyles
-  };
+  @attr.boolean() accessor elevated = false;
+  @attr.string() accessor padding = '';
+
+  protected override renderTemplate(mode: DomMode): string {
+    const content =
+      mode === 'shadow'
+        ? '<slot></slot>'
+        : '<div part="content" class="nds-card__content" data-nds-slot-target="default"></div>';
+
+    return `
+      <article part="surface" class="nds-card__surface">
+        ${content}
+      </article>
+    `.trim();
+  }
+
+  protected override rendered(): void {
+    applyCardStyles(this);
+  }
 }

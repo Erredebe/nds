@@ -1,5 +1,4 @@
-export const stackShadowStyles = `
-:host {
+export const shadowStyles = `:host {
   display: block;
 }
 
@@ -13,23 +12,19 @@ export const stackShadowStyles = `
   align-items: var(--nds-stack-align, stretch);
   justify-content: var(--nds-stack-justify, flex-start);
   gap: var(--nds-stack-gap, var(--nds-spacing-3));
-}
-`.trim();
-
-export const stackLightStyles = `
-nds-stack {
-  display: block;
+}`;
+export const lightStyles = `nds-stack {
+display: block;
 }
 
 nds-stack[hidden] {
-  display: none;
+display: none;
 }
 
 nds-stack .nds-stack__container {
-  display: flex;
+display: flex;
   flex-direction: var(--nds-stack-direction, column);
   align-items: var(--nds-stack-align, stretch);
   justify-content: var(--nds-stack-justify, flex-start);
   gap: var(--nds-stack-gap, var(--nds-spacing-3));
-}
-`.trim();
+}`;

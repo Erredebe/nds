@@ -1,16 +1,13 @@
-import { NDSComponentElement, type NDSComponentDefinition } from '../../foundation/component.js';
-import { enumAttribute } from '../../utils/attributes.js';
+import { type DomMode, NDSComponentElement, attr, component } from '../../foundation/index.js';
 import { resolveRadiusValue, resolveSpaceValue } from '../../utils/style-values.js';
-import { boxShadowStyles } from './styles.js';
-import { renderBoxTemplate } from './template.js';
 
 const boxSurfaces = ['accent', 'subtle', 'transparent'] as const;
 
 const applyBoxStyles = (element: NDSBoxElement): void => {
-  element.style.setProperty('--nds-box-padding', resolveSpaceValue(element.getAttribute('padding')));
-  element.style.setProperty('--nds-box-radius', resolveRadiusValue(element.getAttribute('radius')));
+  element.style.setProperty('--nds-box-padding', resolveSpaceValue(element.padding || null));
+  element.style.setProperty('--nds-box-radius', resolveRadiusValue(element.radius || null));
 
-  const surface = enumAttribute(element, 'surface', boxSurfaces, 'transparent');
+  const surface = boxSurfaces.includes(element.surface) ? element.surface : 'transparent';
 
   if (surface === 'subtle') {
     element.style.setProperty('--nds-box-background', 'var(--nds-component-box-subtle-background)');
@@ -28,13 +25,30 @@ const applyBoxStyles = (element: NDSBoxElement): void => {
   element.style.setProperty('--nds-box-border', '0 solid transparent');
 };
 
+@component({
+  defaultDomMode: 'shadow',
+  stylePath: './styles.css',
+  tagName: 'nds-box'
+})
 export class NDSBoxElement extends NDSComponentElement {
-  static definition: NDSComponentDefinition<NDSBoxElement> = {
-    tagName: 'nds-box',
-    observedAttributes: ['padding', 'radius', 'surface'],
-    shadowStyles: boxShadowStyles,
-    defaultDomMode: 'shadow',
-    renderTemplate: renderBoxTemplate,
-    afterRender: applyBoxStyles
-  };
+  @attr.string() accessor padding = '';
+  @attr.string() accessor radius = '';
+  @attr.enum(boxSurfaces) accessor surface: (typeof boxSurfaces)[number] = 'transparent';
+
+  protected override renderTemplate(mode: DomMode): string {
+    const content =
+      mode === 'shadow'
+        ? '<slot></slot>'
+        : '<div part="content" class="nds-box__content" data-nds-slot-target="default"></div>';
+
+    return `
+      <div part="container" class="nds-box__container">
+        ${content}
+      </div>
+    `.trim();
+  }
+
+  protected override rendered(): void {
+    applyBoxStyles(this);
+  }
 }

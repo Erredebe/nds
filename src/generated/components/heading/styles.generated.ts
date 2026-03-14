@@ -1,5 +1,4 @@
-export const headingShadowStyles = `
-:host {
+export const shadowStyles = `:host {
   display: block;
   color: var(--nds-color-text);
   font-family: var(--nds-typography-font-family-sans);
@@ -43,53 +42,49 @@ export const headingShadowStyles = `
 
 :host([align="right"]) .nds-heading__content {
   text-align: right;
-}
-`.trim();
-
-export const headingLightStyles = `
-nds-heading {
-  display: block;
+}`;
+export const lightStyles = `nds-heading {
+display: block;
   color: var(--nds-color-text);
   font-family: var(--nds-typography-font-family-sans);
 }
 
 nds-heading[hidden] {
-  display: none;
+display: none;
 }
 
 nds-heading .nds-heading__content {
-  margin: 0;
+margin: 0;
   color: inherit;
   line-height: var(--nds-typography-line-height-tight);
   font-weight: var(--nds-typography-font-weight-bold);
 }
 
 nds-heading[level="1"] .nds-heading__content {
-  font-size: var(--nds-typography-font-size-4xl);
+font-size: var(--nds-typography-font-size-4xl);
 }
 
 nds-heading[level="2"] .nds-heading__content {
-  font-size: var(--nds-typography-font-size-3xl);
+font-size: var(--nds-typography-font-size-3xl);
 }
 
 nds-heading[level="3"] .nds-heading__content {
-  font-size: var(--nds-typography-font-size-2xl);
+font-size: var(--nds-typography-font-size-2xl);
 }
 
 nds-heading[level="4"] .nds-heading__content {
-  font-size: var(--nds-typography-font-size-xl);
+font-size: var(--nds-typography-font-size-xl);
 }
 
 nds-heading[level="5"] .nds-heading__content,
 nds-heading[level="6"] .nds-heading__content {
-  font-size: var(--nds-typography-font-size-lg);
+font-size: var(--nds-typography-font-size-lg);
 }
 
 nds-heading[align="center"] .nds-heading__content {
-  text-align: center;
+text-align: center;
 }
 
 nds-heading[align="right"] .nds-heading__content {
-  text-align: right;
-}
-`.trim();
+text-align: right;
+}`;

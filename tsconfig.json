@@ -5,6 +5,7 @@
     "moduleResolution": "NodeNext",
     "lib": [
       "ES2022",
+      "ESNext.Decorators",
       "DOM",
       "DOM.Iterable"
     ],

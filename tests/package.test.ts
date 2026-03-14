@@ -29,6 +29,7 @@ describe('package contract', () => {
     );
 
     const packageJson = JSON.parse(await readFile(resolve(process.cwd(), 'package.json'), 'utf8'));
+    const generatedStyles = await readFile(resolve(process.cwd(), 'src/generated/component-styles.generated.ts'), 'utf8');
     const css = await readFile(resolve(process.cwd(), 'dist/styles.css'), 'utf8');
 
     expect(Object.keys(packageJson.exports)).toEqual([
@@ -43,6 +44,8 @@ describe('package contract', () => {
       './styles.css',
       './package.json'
     ]);
+    expect(generatedStyles).toContain("export const generatedLightStyles = [");
+    expect(generatedStyles).toContain("'nds-button'");
     expect(css).toContain('nds-button');
     expect(css).toContain('[data-nds-theme="dark"]');
   });

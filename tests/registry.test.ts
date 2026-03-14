@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { defineButton } from '../src/components/button/index.js';
-import { defineInput } from '../src/components/input/index.js';
+import { defineButton } from '../dist/components/button/index.js';
+import { defineInput } from '../dist/components/input/index.js';
 
 describe('component registration', () => {
   it('defines nds-button once', () => {

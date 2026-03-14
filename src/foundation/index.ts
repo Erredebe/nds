@@ -5,6 +5,7 @@ export {
   type NDSComponentClass,
   type NDSComponentDefinition
 } from './component.js';
+export { attr, component, listen } from './decorators.js';
 export { createThemeCss, createTokenCss, setTheme } from './css-vars.js';
 export {
   defineComponent,

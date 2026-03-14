@@ -1,25 +1,22 @@
-import { NDSComponentElement, type NDSComponentDefinition } from '../../foundation/component.js';
-import { inputShadowStyles } from './styles.js';
-import { renderInputTemplate } from './template.js';
+import { type DomMode, NDSComponentElement, attr, component, listen } from '../../foundation/index.js';
+import { escapeHtml } from '../../utils/dom.js';
 
+const inputTypes = ['email', 'number', 'password', 'search', 'tel', 'text', 'url'] as const;
+
+@component({
+  defaultDomMode: 'shadow',
+  stylePath: './styles.css',
+  tagName: 'nds-input'
+})
 export class NDSInputElement extends NDSComponentElement {
-  static definition: NDSComponentDefinition<NDSInputElement> = {
-    tagName: 'nds-input',
-    observedAttributes: ['disabled', 'label', 'name', 'placeholder', 'type', 'value'],
-    shadowStyles: inputShadowStyles,
-    defaultDomMode: 'shadow',
-    renderTemplate: renderInputTemplate
-  };
+  @attr.boolean() accessor disabled = false;
+  @attr.string() accessor label = '';
+  @attr.string() accessor name = '';
+  @attr.string() accessor placeholder = '';
+  @attr.enum(inputTypes) accessor type: (typeof inputTypes)[number] = 'text';
+  @attr.string() accessor value = '';
 
   #control: HTMLInputElement | null = null;
-
-  get value(): string {
-    return this.getAttribute('value') ?? '';
-  }
-
-  set value(nextValue: string) {
-    this.setAttribute('value', nextValue);
-  }
 
   override attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
     if (oldValue === newValue) {
@@ -37,9 +34,32 @@ export class NDSInputElement extends NDSComponentElement {
     super.attributeChangedCallback(name, oldValue, newValue);
   }
 
-  protected override afterRender(): void {
-    const root = this.shadowRoot ?? this;
-    const nextControl = root.querySelector<HTMLInputElement>('.nds-input__control');
+  protected override renderTemplate(_mode: DomMode): string {
+    const label = escapeHtml(this.label || 'Field');
+    const name = escapeHtml(this.name);
+    const placeholder = escapeHtml(this.placeholder);
+    const value = escapeHtml(this.value);
+
+    return `
+      <div class="nds-input__root">
+        <label part="field" class="nds-input__field">
+          <span part="label" class="nds-input__label">${label}</span>
+          <input
+            part="input"
+            class="nds-input__control"
+            type="${this.type}"
+            value="${value}"
+            placeholder="${placeholder}"
+            name="${name}"
+            ${this.disabled ? 'disabled' : ''}
+          />
+        </label>
+      </div>
+    `.trim();
+  }
+
+  protected override rendered(): void {
+    const nextControl = this.renderRoot.querySelector<HTMLInputElement>('.nds-input__control');
 
     if (!nextControl) {
       this.#control = null;
@@ -47,17 +67,28 @@ export class NDSInputElement extends NDSComponentElement {
     }
 
     this.#control = nextControl;
-    this.#control.removeEventListener('input', this.handleSyncValue);
-    this.#control.removeEventListener('change', this.handleSyncValue);
-    this.#control.addEventListener('input', this.handleSyncValue);
-    this.#control.addEventListener('change', this.handleSyncValue);
+    this.#control.value = this.value;
   }
 
-  private readonly handleSyncValue = (event: Event): void => {
+  @listen('input', { selector: '.nds-input__control' })
+  protected handleSyncValue(event: Event): void {
     const target = event.currentTarget as HTMLInputElement;
 
-    if (this.getAttribute('value') !== target.value) {
-      this.setAttribute('value', target.value);
+    if (this.value !== target.value) {
+      this.value = target.value;
     }
-  };
+
+    this.emit('nds-input', { value: target.value });
+  }
+
+  @listen('change', { selector: '.nds-input__control' })
+  protected handleCommitValue(event: Event): void {
+    const target = event.currentTarget as HTMLInputElement;
+
+    if (this.value !== target.value) {
+      this.value = target.value;
+    }
+
+    this.emit('nds-change', { value: target.value });
+  }
 }

@@ -26,3 +26,6 @@ document.body.innerHTML = `
     </nds-card>
   </div>
 `;
+document.querySelector('nds-button')?.addEventListener('nds-click', () => {
+  console.log('mixed-dom button -> nds-click');
+});

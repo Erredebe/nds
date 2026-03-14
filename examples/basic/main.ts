@@ -67,3 +67,11 @@ toggleButton?.addEventListener('click', () => {
   currentTheme = currentTheme === 'light' ? 'dark' : 'light';
   setTheme(currentTheme);
 });
+
+document.querySelector('nds-button')?.addEventListener('nds-click', () => {
+  console.log('nds-button -> nds-click');
+});
+
+document.querySelector('nds-input')?.addEventListener('nds-change', (event) => {
+  console.log('nds-input -> nds-change', (event as CustomEvent<{ value: string }>).detail.value);
+});

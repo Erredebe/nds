@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { NDSButtonElement } from '../src/components/button/component.js';
-import type { DomMode } from '../src/foundation/base-element.js';
+import { NDSButtonElement } from '../dist/components/button/component.js';
+import type { DomMode } from '../dist/foundation/base-element.js';
 import {
   configureComponentClass,
   NDSComponentElement,
   type NDSComponentDefinition
-} from '../src/foundation/component.js';
-import { createThemeCss, createTokenCss, defineComponent, setTheme } from '../src/foundation/index.js';
+} from '../dist/foundation/component.js';
+import { createThemeCss, createTokenCss, defineComponent, setTheme } from '../dist/foundation/index.js';
 
 let componentCounter = 0;
 
@@ -50,6 +50,13 @@ describe('foundation css output', () => {
 });
 
 describe('foundation component configuration', () => {
+  it('normalizes decorator metadata into a component definition', () => {
+    expect(NDSButtonElement.definition.tagName).toBe('nds-button');
+    expect(NDSButtonElement.definition.observedAttributes).toEqual(['disabled', 'label', 'size', 'type', 'variant']);
+    expect(NDSButtonElement.definition.shadowStyles).toContain(':host');
+    expect(NDSButtonElement.definition.stylePath).toBe('./styles.css');
+  });
+
   it('caches configured classes by base class and dom mode', () => {
     const lightClassA = configureComponentClass(NDSButtonElement, 'light');
     const lightClassB = configureComponentClass(NDSButtonElement, 'light');
