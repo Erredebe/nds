@@ -1,0 +1,32 @@
+<label part="root" class="nds-checkbox__root" [attr.for]="controlId">
+  <input
+    ref="control"
+    part="input"
+    class="nds-checkbox__control"
+    type="checkbox"
+    [attr.id]="controlId"
+    [checked]="checked"
+    [disabled]="disabled"
+    [required]="required"
+    [value]="value"
+    [attr.name]="name || null"
+    [attr.aria-describedby]="description ? descriptionId() : describedBy || null"
+    [attr.aria-invalid]="invalid ? 'true' : null"
+    [attr.aria-label]="ariaLabel || null"
+    [attr.aria-labelledby]="ariaLabelledBy || null"
+    (input)="handleInput($event)"
+    (change)="handleChange($event)"
+  />
+
+  <span class="nds-checkbox__copy">
+    <span part="label" class="nds-checkbox__label">{{ label }}</span>
+    <span
+      part="description"
+      class="nds-checkbox__description"
+      *if="description"
+      [attr.id]="descriptionId()"
+    >
+      {{ description }}
+    </span>
+  </span>
+</label>

@@ -86,7 +86,7 @@ Notas importantes:
 - Usa atributos ARIA solo para nombre, descripcion o estado cuando HTML nativo no cubre el caso completo.
 - Todo control interactivo debe tener nombre accesible explicito: texto visible, `label`, `aria-label` o `aria-labelledby` segun corresponda.
 - No metas fallbacks genericos como `Button` o `Field`; si falta nombre accesible, el authoring esta incompleto.
-- `nds-button` y `nds-input` usan `light` DOM por defecto para preservar semantica de formularios. Si se fuerzan a `shadow`, cualquier comportamiento extra debe seguir alineado con HTML nativo y con la documentacion WAI-ARIA/APG.
+- `nds-button`, `nds-input`, `nds-field`, `nds-textarea`, `nds-select`, `nds-checkbox` y `nds-radio-group` usan `light` DOM por defecto para preservar semantica y comportamiento de formularios. Si se fuerzan a `shadow`, cualquier comportamiento extra debe seguir alineado con HTML nativo y con la documentacion WAI-ARIA/APG.
 - `nds-text` no fuerza ya un `<p>`; el tag semantico debe ser explicito segun el contenido.
 - `nds-card` no fuerza ya un `<article>`; usa un tag de seccion solo cuando el contenido realmente sea una unidad autonoma.
 
@@ -105,6 +105,12 @@ Notas importantes:
 - Convencion actual para interactivos:
   - `nds-button` emite `nds-click`
   - `nds-input` emite `nds-input` y `nds-change`
+  - `nds-textarea` emite `nds-input` y `nds-change`
+  - `nds-select` emite `nds-input` y `nds-change`
+  - `nds-checkbox` emite `nds-input` y `nds-change`
+  - `nds-radio-group` emite `nds-change`
+  - `nds-alert` emite `nds-dismiss`
+  - `nds-dialog` emite `nds-open`, `nds-close` y `nds-cancel`
 
 ## Crear un componente nuevo
 

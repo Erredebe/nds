@@ -1,0 +1,48 @@
+:host {
+  display: inline-block;
+  font-family: var(--nds-typography-font-family-sans);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.nds-checkbox__root {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--nds-spacing-3);
+  color: var(--nds-color-text);
+  cursor: pointer;
+}
+
+.nds-checkbox__control {
+  inline-size: 1rem;
+  block-size: 1rem;
+  margin: 0.125rem 0 0;
+  accent-color: var(--nds-color-accent);
+}
+
+.nds-checkbox__control:focus {
+  outline: 2px solid var(--nds-color-focus);
+  outline-offset: 2px;
+}
+
+.nds-checkbox__copy {
+  display: grid;
+  gap: var(--nds-spacing-1);
+}
+
+.nds-checkbox__label {
+  font-size: var(--nds-typography-font-size-md);
+  font-weight: var(--nds-typography-font-weight-medium);
+}
+
+.nds-checkbox__description {
+  color: var(--nds-color-text-muted);
+  font-size: var(--nds-typography-font-size-sm);
+}
+
+:host([disabled]) .nds-checkbox__root {
+  opacity: 0.56;
+  cursor: not-allowed;
+}

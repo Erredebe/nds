@@ -1,0 +1,45 @@
+:host {
+  --nds-badge-accent: var(--nds-color-border);
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.nds-badge__root {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.5rem;
+  padding-inline: var(--nds-spacing-2);
+  border-radius: var(--nds-radius-pill);
+  background: color-mix(in srgb, var(--nds-badge-accent) 14%, var(--nds-color-surface, #ffffff));
+  color: var(--nds-color-text);
+  font-size: var(--nds-typography-font-size-xs);
+  font-weight: var(--nds-typography-font-weight-semibold);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+:host([emphasis="solid"]) .nds-badge__root {
+  background: var(--nds-badge-accent);
+  color: var(--nds-color-surface, #ffffff);
+}
+
+:host([tone="info"]) {
+  --nds-badge-accent: var(--nds-color-accent);
+}
+
+:host([tone="success"]) {
+  --nds-badge-accent: #15803d;
+}
+
+:host([tone="warning"]) {
+  --nds-badge-accent: #b45309;
+}
+
+:host([tone="danger"]) {
+  --nds-badge-accent: #b91c1c;
+}

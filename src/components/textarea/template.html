@@ -1,0 +1,23 @@
+<div class="nds-textarea__root">
+  <label part="label" class="nds-textarea__label" *if="label" [attr.for]="controlId">{{ label }}</label>
+  <textarea
+    ref="control"
+    part="textarea"
+    class="nds-textarea__control"
+    [attr.id]="controlId"
+    [value]="value"
+    [disabled]="disabled"
+    [required]="required"
+    [rows]="rows"
+    [attr.name]="name || null"
+    [attr.placeholder]="placeholder || null"
+    [attr.readonly]="readOnly ? '' : null"
+    [attr.aria-describedby]="describedBy || null"
+    [attr.aria-errormessage]="errorMessage || null"
+    [attr.aria-invalid]="invalid ? 'true' : null"
+    [attr.aria-label]="ariaLabel || null"
+    [attr.aria-labelledby]="ariaLabelledBy || null"
+    (input)="handleSyncValue($event)"
+    (change)="handleCommitValue($event)"
+  ></textarea>
+</div>

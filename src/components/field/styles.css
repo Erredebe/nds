@@ -1,0 +1,43 @@
+:host {
+  display: block;
+  color: var(--nds-color-text);
+  font-family: var(--nds-typography-font-family-sans);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.nds-field__root {
+  display: grid;
+  gap: var(--nds-spacing-2);
+}
+
+.nds-field__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nds-spacing-1);
+  color: var(--nds-color-text);
+  font-size: var(--nds-typography-font-size-sm);
+  font-weight: var(--nds-typography-font-weight-medium);
+}
+
+.nds-field__required,
+.nds-field__error {
+  color: var(--nds-color-accent);
+}
+
+.nds-field__control {
+  display: block;
+}
+
+.nds-field__description,
+.nds-field__error {
+  margin: 0;
+  font-size: var(--nds-typography-font-size-sm);
+  line-height: var(--nds-typography-line-height-normal);
+}
+
+.nds-field__description {
+  color: var(--nds-color-text-muted);
+}

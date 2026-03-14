@@ -1,0 +1,22 @@
+<div class="nds-select__root">
+  <label part="label" class="nds-select__label" *if="label" [attr.for]="controlId">{{ label }}</label>
+  <select
+    ref="control"
+    part="select"
+    class="nds-select__control"
+    [attr.id]="controlId"
+    [disabled]="disabled"
+    [required]="required"
+    [attr.name]="name || null"
+    [attr.aria-describedby]="describedBy || null"
+    [attr.aria-errormessage]="errorMessage || null"
+    [attr.aria-invalid]="invalid ? 'true' : null"
+    [attr.aria-label]="ariaLabel || null"
+    [attr.aria-labelledby]="ariaLabelledBy || null"
+    (input)="handleSyncValue($event)"
+    (change)="handleCommitValue($event)"
+  >
+    <option *if="showPlaceholderOption()" value="">{{ placeholder }}</option>
+    <option *for="item in optionItems(); trackBy: item.value" [value]="item.value">{{ item.label }}</option>
+  </select>
+</div>

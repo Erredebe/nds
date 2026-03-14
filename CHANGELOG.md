@@ -8,6 +8,6 @@ The format follows Keep a Changelog and the project uses Semantic Versioning.
 
 ### Added
 - Initial V1 release candidate for the ESM-only Web Components design system.
-- Public component exports for button, input, text, heading, box, stack, card and alert.
+- Public component exports for button, input, text, heading, box, stack, card, alert, field, textarea, select, checkbox, radio-group, badge and dialog.
 - Build pipeline for generated templates, generated styles, package CSS and demo site.
-- Contract validation, package metadata and CI automation for release readiness.
+- Contract validation, package metadata and release checks for package contract, site build and tests.

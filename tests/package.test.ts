@@ -16,6 +16,13 @@ describe('package contract', () => {
       'dist/index.d.ts',
       'dist/components/button/index.d.ts',
       'dist/components/input/index.d.ts',
+      'dist/components/field/index.d.ts',
+      'dist/components/textarea/index.d.ts',
+      'dist/components/select/index.d.ts',
+      'dist/components/checkbox/index.d.ts',
+      'dist/components/radio-group/index.d.ts',
+      'dist/components/badge/index.d.ts',
+      'dist/components/dialog/index.d.ts',
       'dist/components/text/index.d.ts',
       'dist/components/heading/index.d.ts',
       'dist/components/box/index.d.ts',
@@ -44,6 +51,13 @@ describe('package contract', () => {
       './stack',
       './card',
       './alert',
+      './field',
+      './textarea',
+      './select',
+      './checkbox',
+      './radio-group',
+      './badge',
+      './dialog',
       './styles.css',
       './package.json'
     ]);
@@ -77,11 +91,15 @@ describe('package contract', () => {
     const buttonModule = await import(resolve(process.cwd(), 'dist/components/button/index.js'));
     const inputModule = await import(resolve(process.cwd(), 'dist/components/input/index.js'));
     const alertModule = await import(resolve(process.cwd(), 'dist/components/alert/index.js'));
+    const fieldModule = await import(resolve(process.cwd(), 'dist/components/field/index.js'));
+    const dialogModule = await import(resolve(process.cwd(), 'dist/components/dialog/index.js'));
 
     expect(typeof rootModule.defineAllComponents).toBe('function');
     expect(typeof rootModule.setTheme).toBe('function');
     expect(typeof buttonModule.defineButton).toBe('function');
     expect(typeof inputModule.defineInput).toBe('function');
     expect(typeof alertModule.defineAlert).toBe('function');
+    expect(typeof fieldModule.defineField).toBe('function');
+    expect(typeof dialogModule.defineDialog).toBe('function');
   });
 });

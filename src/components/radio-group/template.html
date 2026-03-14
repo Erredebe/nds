@@ -1,0 +1,26 @@
+<fieldset
+  part="root"
+  class="nds-radio-group__root"
+  [disabled]="disabled"
+  [attr.aria-describedby]="describedBy || (optionItems().length > 0 ? descriptionId() : null)"
+  [attr.aria-errormessage]="errorMessage || null"
+  [attr.aria-invalid]="invalid ? 'true' : null"
+>
+  <legend part="legend" class="nds-radio-group__legend">{{ label }}</legend>
+  <div class="nds-radio-group__options">
+    <label class="nds-radio-group__option" *for="item in optionItems(); trackBy: item.value">
+      <input
+        class="nds-radio-group__control"
+        type="radio"
+        [attr.id]="item.id"
+        [attr.name]="name || null"
+        [value]="item.value"
+        [checked]="value === item.value"
+        [disabled]="disabled"
+        [required]="required"
+        (change)="handleChange($event)"
+      />
+      <span class="nds-radio-group__label">{{ item.label }}</span>
+    </label>
+  </div>
+</fieldset>

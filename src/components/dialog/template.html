@@ -1,0 +1,41 @@
+<dialog
+  ref="dialog"
+  part="root"
+  class="nds-dialog__root"
+  [attr.aria-label]="title ? null : ariaLabel || null"
+  [attr.aria-labelledby]="dialogLabelledBy()"
+  [attr.aria-describedby]="dialogDescribedBy()"
+  (cancel)="handleCancel($event)"
+  (close)="handleClose()"
+>
+  <div class="nds-dialog__panel">
+    <div class="nds-dialog__header" *if="title || dismissible">
+      <div class="nds-dialog__heading-group">
+        <h2 part="title" class="nds-dialog__title" *if="title" [attr.id]="dialogLabelledBy()">{{ title }}</h2>
+        <p
+          part="description"
+          class="nds-dialog__description"
+          *if="description"
+          [attr.id]="dialogDescribedBy()"
+        >
+          {{ description }}
+        </p>
+      </div>
+
+      <button
+        part="dismiss"
+        class="nds-dialog__dismiss"
+        type="button"
+        *if="dismissible"
+        [attr.aria-label]="closeLabel"
+        (click)="handleDismiss()"
+      >
+        x
+      </button>
+    </div>
+
+    <div part="body" class="nds-dialog__body">
+      <slot></slot>
+    </div>
+  </div>
+</dialog>

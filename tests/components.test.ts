@@ -1,12 +1,19 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { NDSAlertElement } from '../dist/components/alert/component.js';
+import { NDSBadgeElement } from '../dist/components/badge/component.js';
 import { NDSBoxElement } from '../dist/components/box/component.js';
 import { NDSButtonElement } from '../dist/components/button/component.js';
 import { NDSCardElement } from '../dist/components/card/component.js';
+import { NDSCheckboxElement } from '../dist/components/checkbox/component.js';
+import { NDSDialogElement } from '../dist/components/dialog/component.js';
+import { NDSFieldElement } from '../dist/components/field/component.js';
 import { NDSHeadingElement } from '../dist/components/heading/component.js';
 import { NDSInputElement } from '../dist/components/input/component.js';
+import { NDSRadioGroupElement } from '../dist/components/radio-group/component.js';
+import { NDSSelectElement } from '../dist/components/select/component.js';
 import { NDSStackElement } from '../dist/components/stack/component.js';
+import { NDSTextareaElement } from '../dist/components/textarea/component.js';
 import { NDSTextElement } from '../dist/components/text/component.js';
 import { configureComponentClass, type NDSComponentClass } from '../dist/foundation/component.js';
 
@@ -24,28 +31,44 @@ const registerTestElement = <T extends NDSComponentClass<any>>(
 
 const tags = {
   lightAlert: 'nds-test-alert-light',
+  shadowBadge: 'nds-test-badge-shadow',
   shadowAlert: 'nds-test-alert-shadow',
   lightBox: 'nds-test-box-light',
   shadowButton: 'nds-test-button-shadow',
   lightButton: 'nds-test-button-light',
   lightCard: 'nds-test-card-light',
+  lightCheckbox: 'nds-test-checkbox-light',
+  shadowCheckbox: 'nds-test-checkbox-shadow',
+  shadowDialog: 'nds-test-dialog-shadow',
+  lightField: 'nds-test-field-light',
   shadowHeading: 'nds-test-heading-shadow',
   lightInput: 'nds-test-input-light',
+  lightRadioGroup: 'nds-test-radio-group-light',
+  shadowSelect: 'nds-test-select-shadow',
   shadowInput: 'nds-test-input-shadow',
   lightStack: 'nds-test-stack-light',
+  shadowTextarea: 'nds-test-textarea-shadow',
   shadowText: 'nds-test-text-shadow'
 } as const;
 
 registerTestElement(NDSAlertElement, tags.lightAlert, 'light');
 registerTestElement(NDSAlertElement, tags.shadowAlert, 'shadow');
+registerTestElement(NDSBadgeElement, tags.shadowBadge, 'shadow');
 registerTestElement(NDSBoxElement, tags.lightBox, 'light');
 registerTestElement(NDSButtonElement, tags.lightButton, 'light');
 registerTestElement(NDSButtonElement, tags.shadowButton, 'shadow');
 registerTestElement(NDSCardElement, tags.lightCard, 'light');
+registerTestElement(NDSCheckboxElement, tags.lightCheckbox, 'light');
+registerTestElement(NDSCheckboxElement, tags.shadowCheckbox, 'shadow');
+registerTestElement(NDSDialogElement, tags.shadowDialog, 'shadow');
+registerTestElement(NDSFieldElement, tags.lightField, 'light');
 registerTestElement(NDSHeadingElement, tags.shadowHeading, 'shadow');
 registerTestElement(NDSInputElement, tags.lightInput, 'light');
+registerTestElement(NDSRadioGroupElement, tags.lightRadioGroup, 'light');
+registerTestElement(NDSSelectElement, tags.shadowSelect, 'shadow');
 registerTestElement(NDSInputElement, tags.shadowInput, 'shadow');
 registerTestElement(NDSStackElement, tags.lightStack, 'light');
+registerTestElement(NDSTextareaElement, tags.shadowTextarea, 'shadow');
 registerTestElement(NDSTextElement, tags.shadowText, 'shadow');
 
 afterEach(() => {
@@ -240,6 +263,148 @@ describe('nds-input', () => {
     expect(element.getAttribute('value')).toBe('initial@example.com');
     expect(resetInput?.value).toBe('initial@example.com');
     expect(resetFallback?.value).toBe('initial@example.com');
+  });
+});
+
+describe('accessible form additions', () => {
+  it('wires field descriptions to the first slotted control', () => {
+    const element = document.createElement(tags.lightField);
+    const input = document.createElement('input');
+
+    element.setAttribute('label', 'Project name');
+    element.setAttribute('description', 'Visible to your team.');
+    input.setAttribute('name', 'projectName');
+    element.append(input);
+    document.body.append(element);
+
+    const label = element.querySelector<HTMLLabelElement>('.nds-field__label');
+    const description = element.querySelector<HTMLElement>('.nds-field__description');
+
+    expect(label?.htmlFor).toBe(input.id);
+    expect(input.getAttribute('aria-describedby')).toContain(description?.id ?? '');
+  });
+
+  it('syncs textarea value and fallback form control in shadow dom', () => {
+    const form = document.createElement('form');
+    const element = document.createElement(tags.shadowTextarea);
+    element.setAttribute('name', 'notes');
+    element.setAttribute('label', 'Notes');
+    element.setAttribute('value', 'Initial note');
+    form.append(element);
+    document.body.append(form);
+
+    const textarea = element.shadowRoot?.querySelector<HTMLTextAreaElement>('.nds-textarea__control');
+    const fallback = element.querySelector<HTMLTextAreaElement>('textarea[data-nds-textarea-fallback="true"]');
+
+    expect(textarea?.value).toBe('Initial note');
+    expect(fallback?.value).toBe('Initial note');
+
+    textarea!.value = 'Updated note';
+    textarea!.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+
+    expect(new FormData(form).get('notes')).toBe('Updated note');
+  });
+
+  it('renders select options and emits host-facing change events', () => {
+    const element = document.createElement(tags.shadowSelect);
+    let received = 0;
+
+    element.setAttribute('label', 'Status');
+    element.setAttribute('options', 'draft:Draft|live:Live');
+    element.addEventListener('nds-change', (event) => {
+      received += 1;
+      expect(event.target).toBe(element);
+    });
+    document.body.append(element);
+
+    const select = element.shadowRoot?.querySelector<HTMLSelectElement>('.nds-select__control');
+
+    expect(Array.from(select?.options ?? []).map((option) => option.value)).toEqual(['draft', 'live']);
+
+    element.setAttribute('value', 'live');
+
+    const rerenderedSelect = element.shadowRoot?.querySelector<HTMLSelectElement>('.nds-select__control');
+
+    rerenderedSelect!.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+
+    expect(rerenderedSelect?.value).toBe('live');
+    expect(received).toBe(1);
+  });
+
+  it('syncs checkbox state with host events and form value', () => {
+    const form = document.createElement('form');
+    const element = document.createElement(tags.shadowCheckbox);
+    const received: boolean[] = [];
+
+    element.setAttribute('name', 'terms');
+    element.setAttribute('label', 'Accept terms');
+    element.addEventListener('nds-change', (event) => {
+      received.push((event as CustomEvent<{ checked: boolean }>).detail.checked);
+    });
+    form.append(element);
+    document.body.append(form);
+
+    const input = element.shadowRoot?.querySelector<HTMLInputElement>('.nds-checkbox__control');
+
+    input!.checked = true;
+    input!.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+
+    expect(received).toEqual([true]);
+    expect(new FormData(form).get('terms')).toBe('on');
+  });
+
+  it('submits radio-group selected value through the form', () => {
+    const form = document.createElement('form');
+    const element = document.createElement(tags.lightRadioGroup);
+
+    element.setAttribute('label', 'Plan');
+    element.setAttribute('name', 'plan');
+    element.setAttribute('options', 'starter:Starter|pro:Pro');
+    form.append(element);
+    document.body.append(form);
+
+    const radios = Array.from(element.querySelectorAll<HTMLInputElement>('.nds-radio-group__control'));
+
+    radios[1]!.checked = true;
+    radios[1]!.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+
+    expect(new FormData(form).get('plan')).toBe('pro');
+  });
+});
+
+describe('status and overlay additions', () => {
+  it('renders badge content in shadow dom', () => {
+    const element = document.createElement(tags.shadowBadge);
+    element.setAttribute('tone', 'success');
+    element.setAttribute('text', 'Shipped');
+    document.body.append(element);
+
+    expect(element.shadowRoot?.querySelector('.nds-badge__root')?.textContent).toContain('Shipped');
+  });
+
+  it('opens and closes dialog through host state', () => {
+    const element = document.createElement(tags.shadowDialog);
+    const events: string[] = [];
+
+    element.setAttribute('title', 'Delete project');
+    element.setAttribute('description', 'This action cannot be undone.');
+    element.addEventListener('nds-open', () => events.push('open'));
+    element.addEventListener('nds-close', () => events.push('close'));
+    document.body.append(element);
+
+    element.setAttribute('open', '');
+
+    const dialog = element.shadowRoot?.querySelector<HTMLDialogElement>('.nds-dialog__root');
+    const dismiss = element.shadowRoot?.querySelector<HTMLButtonElement>('.nds-dialog__dismiss');
+
+    expect(dialog?.getAttribute('aria-labelledby')).toBeTruthy();
+    expect(dialog?.open || dialog?.hasAttribute('open')).toBe(true);
+
+    dismiss?.click();
+
+    expect(events).toContain('open');
+    expect(events).toContain('close');
+    expect(element.hasAttribute('open')).toBe(false);
   });
 });
 

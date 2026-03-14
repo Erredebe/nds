@@ -1,0 +1,23 @@
+<div part="root" class="nds-field__root">
+  <label part="label" class="nds-field__label" *if="label" ref="label">
+    {{ label }}
+    <span class="nds-field__required" *if="required" aria-hidden="true">*</span>
+  </label>
+
+  <div part="control" class="nds-field__control">
+    <slot ref="controlSlot"></slot>
+  </div>
+
+  <p
+    part="description"
+    class="nds-field__description"
+    *if="description"
+    [attr.id]="descriptionId"
+  >
+    {{ description }}
+  </p>
+
+  <p part="error" class="nds-field__error" *if="error" [attr.id]="errorId">
+    {{ error }}
+  </p>
+</div>
