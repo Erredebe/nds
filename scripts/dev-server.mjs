@@ -69,4 +69,5 @@ server.listen(port, () => {
   console.log(`no-dep-ds dev server running at http://localhost:${port}`);
   console.log(`basic example: http://localhost:${port}/examples/basic/`);
   console.log(`mixed dom example: http://localhost:${port}/examples/mixed-dom/`);
+  console.log(`site demo: http://localhost:${port}/site-dist/`);
 });

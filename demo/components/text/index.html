@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="nds-dist-path" content="../../dist/index.js" />
+    <title>no-dep-ds | Text</title>
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../../assets/site.css" />
+    <link rel="stylesheet" href="../../dist/styles.css" />
+    <script type="module" src="../../assets/site.js"></script>
+  </head>
+  <body data-theme="light">
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="../../index.html">
+          <span class="site-brand__mark">NDS</span>
+          <span>no-dep-ds</span>
+        </a>
+        <nav class="site-nav" aria-label="Catalogo principal">
+          <a data-nav-link href="../../index.html">Inicio</a>
+          <a data-nav-link href="../button/index.html">Button</a>
+          <a data-nav-link href="../input/index.html">Input</a>
+          <a data-nav-link href="../text/index.html">Text</a>
+          <a data-nav-link href="../heading/index.html">Heading</a>
+          <a data-nav-link href="../box/index.html">Box</a>
+          <a data-nav-link href="../stack/index.html">Stack</a>
+          <a data-nav-link href="../card/index.html">Card</a>
+          <a data-nav-link href="../../dom-modes/index.html">DOM modes</a>
+        </nav>
+        <div class="header-actions">
+          <button class="theme-toggle" type="button" data-theme-toggle>
+            Tema
+            <span data-theme-label>light</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="hero">
+        <div class="meta-row">
+          <span class="pill">nds-text</span>
+          <span class="pill">Variants and weights</span>
+        </div>
+        <div class="section-heading">
+          <h1>Text</h1>
+          <p>Tipografia base para copy, captions, labels y texto secundario.</p>
+        </div>
+      </section>
+
+      <section class="section two-column">
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Variantes</h2>
+            <p>La jerarquia cambia con <code>variant</code> y puede combinarse con <code>weight</code>.</p>
+          </div>
+          <div class="demo-preview">
+            <nds-stack gap="4">
+              <nds-text>Body por defecto para parrafos generales.</nds-text>
+              <nds-text variant="muted">Muted para informacion secundaria.</nds-text>
+              <nds-text variant="caption">Caption para metadata o labels auxiliares.</nds-text>
+              <nds-text variant="label" weight="semibold">Label para UI compacta.</nds-text>
+            </nds-stack>
+          </div>
+          <div class="snippet-toolbar">
+            <span class="pill">Markup</span>
+            <button class="copy-button" type="button" data-copy-target="text-snippet">Copiar</button>
+          </div>
+          <pre class="snippet" id="text-snippet"><code>&lt;nds-text&gt;Body por defecto&lt;/nds-text&gt;
+&lt;nds-text variant="muted"&gt;Muted&lt;/nds-text&gt;
+&lt;nds-text variant="caption"&gt;Caption&lt;/nds-text&gt;
+&lt;nds-text variant="label" weight="semibold"&gt;Label&lt;/nds-text&gt;</code></pre>
+        </article>
+
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Alineacion</h2>
+            <p>El atributo <code>align</code> se refleja directamente en el host.</p>
+          </div>
+          <div class="demo-preview">
+            <nds-stack gap="4">
+              <nds-text align="left">Left aligned text.</nds-text>
+              <nds-text align="center">Centered helper copy.</nds-text>
+              <nds-text align="right">Right aligned note.</nds-text>
+            </nds-stack>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

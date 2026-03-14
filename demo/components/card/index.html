@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="nds-dist-path" content="../../dist/index.js" />
+    <title>no-dep-ds | Card</title>
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../../assets/site.css" />
+    <link rel="stylesheet" href="../../dist/styles.css" />
+    <script type="module" src="../../assets/site.js"></script>
+  </head>
+  <body data-theme="light">
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="../../index.html">
+          <span class="site-brand__mark">NDS</span>
+          <span>no-dep-ds</span>
+        </a>
+        <nav class="site-nav" aria-label="Catalogo principal">
+          <a data-nav-link href="../../index.html">Inicio</a>
+          <a data-nav-link href="../button/index.html">Button</a>
+          <a data-nav-link href="../input/index.html">Input</a>
+          <a data-nav-link href="../text/index.html">Text</a>
+          <a data-nav-link href="../heading/index.html">Heading</a>
+          <a data-nav-link href="../box/index.html">Box</a>
+          <a data-nav-link href="../stack/index.html">Stack</a>
+          <a data-nav-link href="../card/index.html">Card</a>
+          <a data-nav-link href="../../dom-modes/index.html">DOM modes</a>
+        </nav>
+        <div class="header-actions">
+          <button class="theme-toggle" type="button" data-theme-toggle>
+            Tema
+            <span data-theme-label>light</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="hero">
+        <div class="meta-row">
+          <span class="pill">nds-card</span>
+          <span class="pill">padding / elevated</span>
+        </div>
+        <div class="section-heading">
+          <h1>Card</h1>
+          <p>Superficie principal para agrupar contenido con padding configurable y elevacion opcional.</p>
+        </div>
+      </section>
+
+      <section class="section two-column">
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Card base</h2>
+            <p>La variante base mantiene una sombra discreta y sirve para bloques informativos de lectura.</p>
+          </div>
+          <div class="demo-preview">
+            <nds-card>
+              <nds-stack gap="4">
+                <nds-heading level="3">Resumen semanal</nds-heading>
+                <nds-text variant="muted">La API permanece estable y la demo publica consume el build real.</nds-text>
+              </nds-stack>
+            </nds-card>
+          </div>
+          <div class="snippet-toolbar">
+            <span class="pill">Markup</span>
+            <button class="copy-button" type="button" data-copy-target="card-snippet">Copiar</button>
+          </div>
+          <pre class="snippet" id="card-snippet"><code>&lt;nds-card&gt;
+  &lt;nds-stack gap="4"&gt;
+    &lt;nds-heading level="3"&gt;Resumen semanal&lt;/nds-heading&gt;
+    &lt;nds-text variant="muted"&gt;La API permanece estable.&lt;/nds-text&gt;
+  &lt;/nds-stack&gt;
+&lt;/nds-card&gt;</code></pre>
+        </article>
+
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Elevated</h2>
+            <p>Activa <code>elevated</code> para piezas de onboarding, highlights o paneles destacados.</p>
+          </div>
+          <div class="demo-preview">
+            <nds-card elevated>
+              <nds-stack gap="4">
+                <nds-heading level="3">Deploy listo</nds-heading>
+                <nds-text>Netlify sirve la demo en la raiz y el paquete bajo <code>/dist</code>.</nds-text>
+                <nds-button variant="outline">Open release notes</nds-button>
+              </nds-stack>
+            </nds-card>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

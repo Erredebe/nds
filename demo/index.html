@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="nds-dist-path" content="./dist/index.js" />
+    <title>no-dep-ds demo</title>
+    <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./assets/site.css" />
+    <link rel="stylesheet" href="./dist/styles.css" />
+    <script type="module" src="./assets/site.js"></script>
+  </head>
+  <body data-theme="light">
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="./index.html">
+          <span class="site-brand__mark">NDS</span>
+          <span>no-dep-ds</span>
+        </a>
+
+        <nav class="site-nav" aria-label="Catalogo principal">
+          <a data-nav-link href="./index.html">Inicio</a>
+          <a data-nav-link href="./components/button/index.html">Button</a>
+          <a data-nav-link href="./components/input/index.html">Input</a>
+          <a data-nav-link href="./components/text/index.html">Text</a>
+          <a data-nav-link href="./components/heading/index.html">Heading</a>
+          <a data-nav-link href="./components/box/index.html">Box</a>
+          <a data-nav-link href="./components/stack/index.html">Stack</a>
+          <a data-nav-link href="./components/card/index.html">Card</a>
+          <a data-nav-link href="./dom-modes/index.html">DOM modes</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="theme-toggle" type="button" data-theme-toggle>
+            Tema
+            <span data-theme-label>light</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="hero">
+        <div class="meta-row">
+          <span class="pill">ESM only</span>
+          <span class="pill">Web Components</span>
+          <span class="pill">Zero runtime deps</span>
+        </div>
+
+        <div class="showcase-grid">
+          <div class="section-heading">
+            <h1>Design system sin dependencias runtime listo para publicar en Netlify.</h1>
+            <p>
+              Esta demo consume directamente el build publicado del paquete y sirve como catalogo navegable para
+              revisar componentes, atributos, eventos y cobertura de <code>shadow</code> / <code>light</code> DOM.
+            </p>
+            <div class="hero-actions">
+              <a class="action-link action-link--primary" href="./components/button/index.html">Abrir catalogo</a>
+              <a class="action-link" href="./dom-modes/index.html">Ver DOM modes</a>
+            </div>
+          </div>
+
+          <div class="panel">
+            <nds-stack gap="4">
+              <nds-heading level="3">Preview rapido</nds-heading>
+              <nds-text variant="muted">
+                El sitio monta los mismos custom elements que se publican en <code>dist/</code>.
+              </nds-text>
+              <nds-card elevated>
+                <nds-stack gap="4">
+                  <nds-heading level="4">Signup compacta</nds-heading>
+                  <nds-input label="Email" placeholder="hello@example.com" type="email"></nds-input>
+                  <nds-stack direction="row" gap="3" align="center">
+                    <nds-button>Crear cuenta</nds-button>
+                    <nds-button variant="outline">Ver docs</nds-button>
+                  </nds-stack>
+                </nds-stack>
+              </nds-card>
+            </nds-stack>
+          </div>
+        </div>
+      </section>
+
+      <p class="demo-error" data-demo-error hidden></p>
+
+      <section class="section">
+        <div class="section-heading">
+          <h2>Catalogo de componentes</h2>
+          <p>Entradas dedicadas para revisar API visible, combinaciones frecuentes y snippets listos para copiar.</p>
+        </div>
+
+        <div class="catalog-grid">
+          <a class="demo-panel" href="./components/button/index.html">
+            <h3>Button</h3>
+            <p>Variantes, tamanos, disabled y evento <code>nds-click</code>.</p>
+          </a>
+          <a class="demo-panel" href="./components/input/index.html">
+            <h3>Input</h3>
+            <p>Tipos, placeholder, valor controlado y eventos <code>nds-input</code> / <code>nds-change</code>.</p>
+          </a>
+          <a class="demo-panel" href="./components/text/index.html">
+            <h3>Text</h3>
+            <p>Jerarquia de copy, alineacion y pesos tipograficos.</p>
+          </a>
+          <a class="demo-panel" href="./components/heading/index.html">
+            <h3>Heading</h3>
+            <p>Niveles semanticos y alineacion para titulares.</p>
+          </a>
+          <a class="demo-panel" href="./components/box/index.html">
+            <h3>Box</h3>
+            <p>Superficies, padding y radios tokenizados.</p>
+          </a>
+          <a class="demo-panel" href="./components/stack/index.html">
+            <h3>Stack</h3>
+            <p>Layout unidimensional con gap, align y justify.</p>
+          </a>
+          <a class="demo-panel" href="./components/card/index.html">
+            <h3>Card</h3>
+            <p>Superficie para agrupacion de contenido con elevacion opcional.</p>
+          </a>
+          <a class="demo-panel" href="./dom-modes/index.html">
+            <h3>DOM modes</h3>
+            <p>Comparativa visual entre shadow por defecto y registro mixed/light.</p>
+          </a>
+        </div>
+      </section>
+
+      <section class="section two-column">
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Instalacion y uso minimo</h2>
+            <p>La demo usa el build publicado. El mismo contrato sirve para Netlify, examples y consumidores del paquete.</p>
+          </div>
+          <div class="snippet-toolbar">
+            <span class="pill">Quick start</span>
+            <button class="copy-button" type="button" data-copy-target="home-quickstart">Copiar</button>
+          </div>
+          <pre class="snippet" id="home-quickstart"><code>import { defineAllComponents, setTheme } from 'no-dep-ds';
+import 'no-dep-ds/styles.css';
+
+defineAllComponents();
+setTheme('light');
+
+document.body.innerHTML = `
+  &lt;nds-card elevated&gt;
+    &lt;nds-stack gap="4"&gt;
+      &lt;nds-heading level="3"&gt;Hello&lt;/nds-heading&gt;
+      &lt;nds-text&gt;Build once, publish anywhere.&lt;/nds-text&gt;
+      &lt;nds-button&gt;Primary action&lt;/nds-button&gt;
+    &lt;/nds-stack&gt;
+  &lt;/nds-card&gt;
+`;</code></pre>
+        </article>
+
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Que valida esta demo</h2>
+            <p>El objetivo es que el despliegue sea util para quien consume el DS, no solo para una smoke test interna.</p>
+          </div>
+          <ul class="component-list">
+            <li>Todas las paginas cargan componentes reales desde <code>/dist</code>.</li>
+            <li>El selector de tema persiste entre paginas con <code>localStorage</code>.</li>
+            <li>Los snippets muestran markup tal como se escribiria en HTML.</li>
+            <li>Las demos interactivas registran eventos publicos del host.</li>
+            <li>La seccion DOM modes separa el registro por pagina para evitar redefiniciones.</li>
+          </ul>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

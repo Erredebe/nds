@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="nds-dist-path" content="../dist/index.js" />
+    <title>no-dep-ds | DOM modes</title>
+    <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/site.css" />
+    <link rel="stylesheet" href="../dist/styles.css" />
+    <script type="module" src="../assets/site.js"></script>
+  </head>
+  <body data-theme="light">
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="../index.html">
+          <span class="site-brand__mark">NDS</span>
+          <span>no-dep-ds</span>
+        </a>
+        <nav class="site-nav" aria-label="Catalogo principal">
+          <a data-nav-link href="../index.html">Inicio</a>
+          <a data-nav-link href="../components/button/index.html">Button</a>
+          <a data-nav-link href="../components/input/index.html">Input</a>
+          <a data-nav-link href="../components/text/index.html">Text</a>
+          <a data-nav-link href="../components/heading/index.html">Heading</a>
+          <a data-nav-link href="../components/box/index.html">Box</a>
+          <a data-nav-link href="../components/stack/index.html">Stack</a>
+          <a data-nav-link href="../components/card/index.html">Card</a>
+          <a data-nav-link href="../dom-modes/index.html">DOM modes</a>
+        </nav>
+        <div class="header-actions">
+          <button class="theme-toggle" type="button" data-theme-toggle>
+            Tema
+            <span data-theme-label>light</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="hero">
+        <div class="meta-row">
+          <span class="pill">shadow default</span>
+          <span class="pill">mixed registration</span>
+        </div>
+        <div class="section-heading">
+          <h1>DOM modes</h1>
+          <p>
+            La comparativa se resuelve por pagina para evitar redefinir custom elements dentro del mismo documento.
+            Cada iframe tiene su propio registro.
+          </p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading">
+          <h2>Comparativa visual</h2>
+          <p>Izquierda: configuracion default en shadow DOM. Derecha: pagina dedicada con <code>button: { dom: 'light' }</code>.</p>
+        </div>
+
+        <div class="demo-frame-grid">
+          <article class="frame-card">
+            <h3>Shadow por defecto</h3>
+            <p>Todos los componentes mantienen el modo configurado en su definicion.</p>
+            <iframe class="demo-frame" src="./shadow.html" title="Shadow DOM preview"></iframe>
+          </article>
+          <article class="frame-card">
+            <h3>Mixed / light</h3>
+            <p>Solo <code>nds-button</code> se registra en light DOM; el resto se mantiene en shadow.</p>
+            <iframe class="demo-frame" src="./mixed.html" title="Mixed DOM preview"></iframe>
+          </article>
+        </div>
+      </section>
+
+      <section class="section two-column">
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Configuracion usada</h2>
+            <p>La demo principal no redefine tags. La pagina <code>mixed.html</code> aplica el override al cargar.</p>
+          </div>
+          <div class="snippet-toolbar">
+            <span class="pill">Config</span>
+            <button class="copy-button" type="button" data-copy-target="dom-snippet">Copiar</button>
+          </div>
+          <pre class="snippet" id="dom-snippet"><code>defineAllComponents({
+  button: { dom: 'light' }
+});
+
+setTheme('dark');</code></pre>
+        </article>
+
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Criterio de uso</h2>
+            <p>Usa overrides de DOM mode solo cuando haya una necesidad real de integracion o style hooks del host.</p>
+          </div>
+          <ul class="component-list">
+            <li><code>shadow</code> sigue siendo el default recomendado para aislamiento.</li>
+            <li><code>light</code> resulta util cuando el host necesita exponer el DOM final a estilos externos.</li>
+            <li>El registro es idempotente: la primera definicion sigue ganando.</li>
+          </ul>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

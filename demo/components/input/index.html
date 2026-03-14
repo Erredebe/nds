@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="nds-dist-path" content="../../dist/index.js" />
+    <title>no-dep-ds | Input</title>
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../../assets/site.css" />
+    <link rel="stylesheet" href="../../dist/styles.css" />
+    <script type="module" src="../../assets/site.js"></script>
+  </head>
+  <body data-theme="light">
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="../../index.html">
+          <span class="site-brand__mark">NDS</span>
+          <span>no-dep-ds</span>
+        </a>
+        <nav class="site-nav" aria-label="Catalogo principal">
+          <a data-nav-link href="../../index.html">Inicio</a>
+          <a data-nav-link href="../button/index.html">Button</a>
+          <a data-nav-link href="../input/index.html">Input</a>
+          <a data-nav-link href="../text/index.html">Text</a>
+          <a data-nav-link href="../heading/index.html">Heading</a>
+          <a data-nav-link href="../box/index.html">Box</a>
+          <a data-nav-link href="../stack/index.html">Stack</a>
+          <a data-nav-link href="../card/index.html">Card</a>
+          <a data-nav-link href="../../dom-modes/index.html">DOM modes</a>
+        </nav>
+        <div class="header-actions">
+          <button class="theme-toggle" type="button" data-theme-toggle>
+            Tema
+            <span data-theme-label>light</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="hero">
+        <div class="meta-row">
+          <span class="pill">nds-input</span>
+          <span class="pill">Events: nds-input / nds-change</span>
+        </div>
+        <div class="section-heading">
+          <h1>Input</h1>
+          <p>Campo controlado por atributo <code>value</code> con label integrado y varios tipos HTML.</p>
+        </div>
+      </section>
+
+      <p class="demo-error" data-demo-error hidden></p>
+
+      <section class="section two-column">
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Estados frecuentes</h2>
+            <p>El host refleja <code>label</code>, <code>placeholder</code>, <code>type</code>, <code>value</code> y <code>disabled</code>.</p>
+          </div>
+          <div class="demo-preview">
+            <nds-stack gap="4">
+              <nds-input
+                label="Email"
+                placeholder="hello@example.com"
+                type="email"
+                data-demo-events="nds-input,nds-change"
+                data-demo-log="#input-event-log"
+              ></nds-input>
+              <nds-input label="Buscar" placeholder="Buscar..." type="search"></nds-input>
+              <nds-input label="Telefono" value="+34 600 000 000" type="tel"></nds-input>
+              <nds-input label="Disabled" disabled value="Solo lectura visual"></nds-input>
+            </nds-stack>
+          </div>
+          <div class="snippet-toolbar">
+            <span class="pill">Markup</span>
+            <button class="copy-button" type="button" data-copy-target="input-snippet">Copiar</button>
+          </div>
+          <pre class="snippet" id="input-snippet"><code>&lt;nds-input
+  label="Email"
+  placeholder="hello@example.com"
+  type="email"
+&gt;&lt;/nds-input&gt;
+
+&lt;nds-input label="Telefono" value="+34 600 000 000" type="tel"&gt;&lt;/nds-input&gt;</code></pre>
+        </article>
+
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Eventos</h2>
+            <p><code>nds-input</code> reacciona a cada cambio; <code>nds-change</code> se emite en commit del control nativo.</p>
+          </div>
+          <div class="demo-log" id="input-event-log">
+            <div data-log-placeholder>Escribe en el primer campo para ver el valor emitido.</div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

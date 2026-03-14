@@ -51,12 +51,13 @@
     "build:generated-styles": "node ./scripts/generate-component-styles.mjs",
     "build:ts": "npx tsc -p tsconfig.json",
     "build:css": "node ./scripts/build-css.mjs",
+    "build:site": "npm run build && node ./scripts/build-site.mjs",
     "check:no-runtime-deps": "node ./scripts/check-no-runtime-deps.mjs",
     "build": "npm run clean && npm run build:generated-styles && npm run build:ts && npm run build:css && npm run check:no-runtime-deps",
     "scaffold:component": "node ./scripts/scaffold-component.mjs",
     "serve": "node ./scripts/dev-server.mjs",
     "dev": "npm run build && npm run serve",
-    "test": "npm run build && vitest run"
+    "test": "npm run build:site && vitest run"
   },
   "dependencies": {},
   "peerDependencies": {},

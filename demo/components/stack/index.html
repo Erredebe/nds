@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="nds-dist-path" content="../../dist/index.js" />
+    <title>no-dep-ds | Stack</title>
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../../assets/site.css" />
+    <link rel="stylesheet" href="../../dist/styles.css" />
+    <script type="module" src="../../assets/site.js"></script>
+  </head>
+  <body data-theme="light">
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="../../index.html">
+          <span class="site-brand__mark">NDS</span>
+          <span>no-dep-ds</span>
+        </a>
+        <nav class="site-nav" aria-label="Catalogo principal">
+          <a data-nav-link href="../../index.html">Inicio</a>
+          <a data-nav-link href="../button/index.html">Button</a>
+          <a data-nav-link href="../input/index.html">Input</a>
+          <a data-nav-link href="../text/index.html">Text</a>
+          <a data-nav-link href="../heading/index.html">Heading</a>
+          <a data-nav-link href="../box/index.html">Box</a>
+          <a data-nav-link href="../stack/index.html">Stack</a>
+          <a data-nav-link href="../card/index.html">Card</a>
+          <a data-nav-link href="../../dom-modes/index.html">DOM modes</a>
+        </nav>
+        <div class="header-actions">
+          <button class="theme-toggle" type="button" data-theme-toggle>
+            Tema
+            <span data-theme-label>light</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="hero">
+        <div class="meta-row">
+          <span class="pill">nds-stack</span>
+          <span class="pill">direction / gap / align / justify</span>
+        </div>
+        <div class="section-heading">
+          <h1>Stack</h1>
+          <p>Primitiva de layout para componer columnas y filas usando solo atributos.</p>
+        </div>
+      </section>
+
+      <section class="section two-column">
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Column flow</h2>
+            <p>El comportamiento por defecto es columna con gap configurable.</p>
+          </div>
+          <div class="demo-preview">
+            <nds-stack gap="4">
+              <nds-card><nds-text>Primer bloque</nds-text></nds-card>
+              <nds-card><nds-text>Segundo bloque</nds-text></nds-card>
+              <nds-card><nds-text>Tercer bloque</nds-text></nds-card>
+            </nds-stack>
+          </div>
+          <div class="snippet-toolbar">
+            <span class="pill">Markup</span>
+            <button class="copy-button" type="button" data-copy-target="stack-snippet">Copiar</button>
+          </div>
+          <pre class="snippet" id="stack-snippet"><code>&lt;nds-stack gap="4"&gt;
+  &lt;nds-card&gt;&lt;nds-text&gt;Primer bloque&lt;/nds-text&gt;&lt;/nds-card&gt;
+  &lt;nds-card&gt;&lt;nds-text&gt;Segundo bloque&lt;/nds-text&gt;&lt;/nds-card&gt;
+  &lt;nds-card&gt;&lt;nds-text&gt;Tercer bloque&lt;/nds-text&gt;&lt;/nds-card&gt;
+&lt;/nds-stack&gt;</code></pre>
+        </article>
+
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Row flow</h2>
+            <p>En horizontal, <code>align</code> y <code>justify</code> gobiernan la distribucion del espacio.</p>
+          </div>
+          <div class="demo-preview">
+            <nds-stack direction="row" gap="3" align="center" justify="space-between">
+              <nds-box surface="subtle" padding="3" radius="pill"><nds-text variant="label">Alpha</nds-text></nds-box>
+              <nds-box surface="subtle" padding="3" radius="pill"><nds-text variant="label">Beta</nds-text></nds-box>
+              <nds-box surface="subtle" padding="3" radius="pill"><nds-text variant="label">Gamma</nds-text></nds-box>
+            </nds-stack>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

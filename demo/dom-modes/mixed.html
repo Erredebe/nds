@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="nds-dist-path" content="../dist/index.js" />
+    <title>Mixed preview</title>
+    <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/site.css" />
+    <link rel="stylesheet" href="../dist/styles.css" />
+    <script type="module" src="../assets/site.js"></script>
+    <style>
+      body {
+        background: transparent;
+      }
+    </style>
+  </head>
+  <body data-theme="dark" data-nds-dom-mode="mixed-button-light">
+    <main class="page-shell" style="padding-top: 12px; padding-bottom: 12px;">
+      <nds-card elevated>
+        <nds-stack gap="4">
+          <nds-heading level="3">Mixed registration</nds-heading>
+          <nds-text variant="muted">Button se define en light DOM; input mantiene shadow DOM.</nds-text>
+          <nds-button variant="outline">Boton en light DOM</nds-button>
+          <nds-input label="Input shadow" placeholder="Sigue en shadow"></nds-input>
+        </nds-stack>
+      </nds-card>
+    </main>
+  </body>
+</html>

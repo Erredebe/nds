@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="nds-dist-path" content="../../dist/index.js" />
+    <title>no-dep-ds | Box</title>
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../../assets/site.css" />
+    <link rel="stylesheet" href="../../dist/styles.css" />
+    <script type="module" src="../../assets/site.js"></script>
+  </head>
+  <body data-theme="light">
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="../../index.html">
+          <span class="site-brand__mark">NDS</span>
+          <span>no-dep-ds</span>
+        </a>
+        <nav class="site-nav" aria-label="Catalogo principal">
+          <a data-nav-link href="../../index.html">Inicio</a>
+          <a data-nav-link href="../button/index.html">Button</a>
+          <a data-nav-link href="../input/index.html">Input</a>
+          <a data-nav-link href="../text/index.html">Text</a>
+          <a data-nav-link href="../heading/index.html">Heading</a>
+          <a data-nav-link href="../box/index.html">Box</a>
+          <a data-nav-link href="../stack/index.html">Stack</a>
+          <a data-nav-link href="../card/index.html">Card</a>
+          <a data-nav-link href="../../dom-modes/index.html">DOM modes</a>
+        </nav>
+        <div class="header-actions">
+          <button class="theme-toggle" type="button" data-theme-toggle>
+            Tema
+            <span data-theme-label>light</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="hero">
+        <div class="meta-row">
+          <span class="pill">nds-box</span>
+          <span class="pill">surface / padding / radius</span>
+        </div>
+        <div class="section-heading">
+          <h1>Box</h1>
+          <p>Contenedor ligero para aplicar fondo, borde, padding y radio desde tokens semanticos.</p>
+        </div>
+      </section>
+
+      <section class="section two-column">
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Superficies</h2>
+            <p><code>surface</code> resuelve fondos transparent, subtle y accent sin logica adicional en runtime.</p>
+          </div>
+          <div class="demo-preview">
+            <nds-stack gap="4">
+              <nds-box surface="transparent" padding="4" radius="lg">
+                <nds-text>Transparent box</nds-text>
+              </nds-box>
+              <nds-box surface="subtle" padding="4" radius="lg">
+                <nds-text>Subtle box</nds-text>
+              </nds-box>
+              <nds-box surface="accent" padding="4" radius="lg">
+                <nds-text weight="medium">Accent box</nds-text>
+              </nds-box>
+            </nds-stack>
+          </div>
+          <div class="snippet-toolbar">
+            <span class="pill">Markup</span>
+            <button class="copy-button" type="button" data-copy-target="box-snippet">Copiar</button>
+          </div>
+          <pre class="snippet" id="box-snippet"><code>&lt;nds-box surface="subtle" padding="4" radius="lg"&gt;
+  &lt;nds-text&gt;Subtle box&lt;/nds-text&gt;
+&lt;/nds-box&gt;
+
+&lt;nds-box surface="accent" padding="4" radius="lg"&gt;
+  &lt;nds-text weight="medium"&gt;Accent box&lt;/nds-text&gt;
+&lt;/nds-box&gt;</code></pre>
+        </article>
+
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Radios tokenizados</h2>
+            <p>Puede usarse para chips, contenedores o bloques informativos sin CSS local adicional.</p>
+          </div>
+          <div class="demo-preview">
+            <nds-stack direction="row" gap="3" align="center">
+              <nds-box surface="subtle" padding="3" radius="pill">
+                <nds-text variant="label">pill</nds-text>
+              </nds-box>
+              <nds-box surface="subtle" padding="3" radius="md">
+                <nds-text variant="label">md</nds-text>
+              </nds-box>
+              <nds-box surface="subtle" padding="3" radius="lg">
+                <nds-text variant="label">lg</nds-text>
+              </nds-box>
+            </nds-stack>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

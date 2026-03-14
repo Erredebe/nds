@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="nds-dist-path" content="../../dist/index.js" />
+    <title>no-dep-ds | Button</title>
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../../assets/site.css" />
+    <link rel="stylesheet" href="../../dist/styles.css" />
+    <script type="module" src="../../assets/site.js"></script>
+  </head>
+  <body data-theme="light">
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="../../index.html">
+          <span class="site-brand__mark">NDS</span>
+          <span>no-dep-ds</span>
+        </a>
+        <nav class="site-nav" aria-label="Catalogo principal">
+          <a data-nav-link href="../../index.html">Inicio</a>
+          <a data-nav-link href="../button/index.html">Button</a>
+          <a data-nav-link href="../input/index.html">Input</a>
+          <a data-nav-link href="../text/index.html">Text</a>
+          <a data-nav-link href="../heading/index.html">Heading</a>
+          <a data-nav-link href="../box/index.html">Box</a>
+          <a data-nav-link href="../stack/index.html">Stack</a>
+          <a data-nav-link href="../card/index.html">Card</a>
+          <a data-nav-link href="../../dom-modes/index.html">DOM modes</a>
+        </nav>
+        <div class="header-actions">
+          <button class="theme-toggle" type="button" data-theme-toggle>
+            Tema
+            <span data-theme-label>light</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="hero">
+        <div class="meta-row">
+          <span class="pill">nds-button</span>
+          <span class="pill">Event: nds-click</span>
+        </div>
+        <div class="section-heading">
+          <h1>Button</h1>
+          <p>Acciones primarias y secundarias con variantes visuales, tamanos y estado disabled.</p>
+        </div>
+      </section>
+
+      <p class="demo-error" data-demo-error hidden></p>
+
+      <section class="section two-column">
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Variantes y tamanos</h2>
+            <p>La API publica combina <code>variant</code>, <code>size</code>, slot de texto y <code>disabled</code>.</p>
+          </div>
+          <div class="demo-preview">
+            <nds-stack gap="4">
+              <nds-stack direction="row" gap="3" align="center">
+                <nds-button data-demo-events="nds-click" data-demo-log="#button-event-log">Solid</nds-button>
+                <nds-button variant="outline">Outline</nds-button>
+                <nds-button variant="ghost">Ghost</nds-button>
+              </nds-stack>
+              <nds-stack direction="row" gap="3" align="center">
+                <nds-button size="sm">Small</nds-button>
+                <nds-button size="md">Medium</nds-button>
+                <nds-button size="lg">Large</nds-button>
+              </nds-stack>
+              <nds-button disabled variant="outline">Disabled</nds-button>
+            </nds-stack>
+          </div>
+          <div class="snippet-toolbar">
+            <span class="pill">Markup</span>
+            <button class="copy-button" type="button" data-copy-target="button-snippet">Copiar</button>
+          </div>
+          <pre class="snippet" id="button-snippet"><code>&lt;nds-button&gt;Solid&lt;/nds-button&gt;
+&lt;nds-button variant="outline"&gt;Outline&lt;/nds-button&gt;
+&lt;nds-button variant="ghost"&gt;Ghost&lt;/nds-button&gt;
+&lt;nds-button size="lg"&gt;Large&lt;/nds-button&gt;
+&lt;nds-button disabled variant="outline"&gt;Disabled&lt;/nds-button&gt;</code></pre>
+        </article>
+
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Eventos</h2>
+            <p>El componente emite <code>nds-click</code> desde el host cuando el control interno no esta disabled.</p>
+          </div>
+          <div class="callout">
+            Usa listeners sobre <code>&lt;nds-button&gt;</code>, no sobre el <code>&lt;button&gt;</code> interno.
+          </div>
+          <div class="demo-log" id="button-event-log">
+            <div data-log-placeholder>Pulsa el primer boton para ver el log del evento.</div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

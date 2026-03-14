@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="nds-dist-path" content="../../dist/index.js" />
+    <title>no-dep-ds | Heading</title>
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../../assets/site.css" />
+    <link rel="stylesheet" href="../../dist/styles.css" />
+    <script type="module" src="../../assets/site.js"></script>
+  </head>
+  <body data-theme="light">
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="../../index.html">
+          <span class="site-brand__mark">NDS</span>
+          <span>no-dep-ds</span>
+        </a>
+        <nav class="site-nav" aria-label="Catalogo principal">
+          <a data-nav-link href="../../index.html">Inicio</a>
+          <a data-nav-link href="../button/index.html">Button</a>
+          <a data-nav-link href="../input/index.html">Input</a>
+          <a data-nav-link href="../text/index.html">Text</a>
+          <a data-nav-link href="../heading/index.html">Heading</a>
+          <a data-nav-link href="../box/index.html">Box</a>
+          <a data-nav-link href="../stack/index.html">Stack</a>
+          <a data-nav-link href="../card/index.html">Card</a>
+          <a data-nav-link href="../../dom-modes/index.html">DOM modes</a>
+        </nav>
+        <div class="header-actions">
+          <button class="theme-toggle" type="button" data-theme-toggle>
+            Tema
+            <span data-theme-label>light</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="hero">
+        <div class="meta-row">
+          <span class="pill">nds-heading</span>
+          <span class="pill">Levels 1-6</span>
+        </div>
+        <div class="section-heading">
+          <h1>Heading</h1>
+          <p>Titulares semanticos que permiten variar <code>level</code> sin perder el estilo del design system.</p>
+        </div>
+      </section>
+
+      <section class="section two-column">
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Niveles</h2>
+            <p><code>level</code> determina el tag renderizado de <code>h1</code> a <code>h6</code>.</p>
+          </div>
+          <div class="demo-preview">
+            <nds-stack gap="3">
+              <nds-heading level="1">Heading level 1</nds-heading>
+              <nds-heading level="2">Heading level 2</nds-heading>
+              <nds-heading level="3">Heading level 3</nds-heading>
+              <nds-heading level="4">Heading level 4</nds-heading>
+            </nds-stack>
+          </div>
+          <div class="snippet-toolbar">
+            <span class="pill">Markup</span>
+            <button class="copy-button" type="button" data-copy-target="heading-snippet">Copiar</button>
+          </div>
+          <pre class="snippet" id="heading-snippet"><code>&lt;nds-heading level="1"&gt;Heading level 1&lt;/nds-heading&gt;
+&lt;nds-heading level="3"&gt;Heading level 3&lt;/nds-heading&gt;
+&lt;nds-heading level="4"&gt;Heading level 4&lt;/nds-heading&gt;</code></pre>
+        </article>
+
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Alineacion</h2>
+            <p>Combina <code>align</code> con texto auxiliar para componer bloques hero o cabeceras internas.</p>
+          </div>
+          <div class="demo-preview">
+            <nds-stack gap="3">
+              <nds-heading level="2" align="left">Left aligned</nds-heading>
+              <nds-heading level="3" align="center">Centered headline</nds-heading>
+              <nds-heading level="4" align="right">Right aligned note</nds-heading>
+            </nds-stack>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>
