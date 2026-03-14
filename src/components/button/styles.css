@@ -8,10 +8,6 @@
   display: none;
 }
 
-.nds-button__root {
-  display: inline-flex;
-}
-
 .nds-button__control {
   display: inline-flex;
   align-items: center;

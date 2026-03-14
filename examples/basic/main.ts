@@ -7,7 +7,7 @@ document.body.innerHTML = `
   <div class="example-shell">
     <nds-stack gap="6">
       <nds-heading level="1">no-dep-ds</nds-heading>
-      <nds-text variant="muted">
+      <nds-text tag="p" variant="muted">
         Design system ESM-only con Web Components, tokens TypeScript y soporte shadow/light.
       </nds-text>
       <nds-button id="theme-toggle" variant="outline">Toggle theme</nds-button>
@@ -34,9 +34,9 @@ document.body.innerHTML = `
         <nds-stack gap="4">
           <nds-heading level="3">Typography</nds-heading>
           <nds-heading level="4">Heading level 4</nds-heading>
-          <nds-text>Default body text.</nds-text>
-          <nds-text variant="muted">Muted text for secondary information.</nds-text>
-          <nds-text variant="caption">Caption text</nds-text>
+          <nds-text tag="p">Default body text.</nds-text>
+          <nds-text tag="p" variant="muted">Muted text for secondary information.</nds-text>
+          <nds-text tag="small" variant="caption">Caption text</nds-text>
         </nds-stack>
       </nds-card>
 
@@ -44,7 +44,7 @@ document.body.innerHTML = `
         <nds-stack gap="4">
           <nds-heading level="3">Layout</nds-heading>
           <nds-box surface="subtle" padding="4" radius="lg">
-            <nds-text>Box with semantic surface and token-based spacing.</nds-text>
+            <nds-text tag="p">Box with semantic surface and token-based spacing.</nds-text>
           </nds-box>
           <nds-stack direction="row" gap="3" align="center">
             <nds-box surface="accent" padding="3" radius="pill">

@@ -58,16 +58,17 @@ Soportado actualmente:
 Ejemplo:
 
 ```html
-<label class="nds-input__field">
-  <span class="nds-input__label">{{ label || 'Field' }}</span>
+<div class="nds-input__root">
+  <label class="nds-input__label" *if="label" [attr.for]="controlId">{{ label }}</label>
   <input
     ref="control"
     class="nds-input__control"
+    [attr.id]="controlId"
     [value]="value"
     [disabled]="disabled"
     (input)="handleSyncValue($event)"
   />
-</label>
+</div>
 ```
 
 Notas importantes:
@@ -75,6 +76,18 @@ Notas importantes:
 - `{{ }}` siempre escapa texto.
 - `[innerHTML]` no escapa; usalo solo con HTML confiable o pre-sanitizado.
 - `trackBy` hoy expone claves estables en `data-nds-key` para cada item repetido.
+
+## Semantica y accesibilidad
+
+- Este repo sigue HTML nativo primero y WAI-ARIA como complemento, no como reemplazo de semantica.
+- No uses `div` o `span` para interaccion si existe un elemento nativo correcto como `button`, `input`, `label`, `a`, `details`, `summary` o `dialog`.
+- No añadas `role` a un elemento si el elemento nativo ya expresa esa semantica.
+- Usa atributos ARIA solo para nombre, descripcion o estado cuando HTML nativo no cubre el caso completo.
+- Todo control interactivo debe tener nombre accesible explicito: texto visible, `label`, `aria-label` o `aria-labelledby` segun corresponda.
+- No metas fallbacks genericos como `Button` o `Field`; si falta nombre accesible, el authoring esta incompleto.
+- `nds-button` y `nds-input` usan `light` DOM por defecto para preservar semantica de formularios. Si se fuerzan a `shadow`, cualquier comportamiento extra debe seguir alineado con HTML nativo y con la documentacion WAI-ARIA/APG.
+- `nds-text` no fuerza ya un `<p>`; el tag semantico debe ser explicito segun el contenido.
+- `nds-card` no fuerza ya un `<article>`; usa un tag de seccion solo cuando el contenido realmente sea una unidad autonoma.
 
 ## Render y artefactos generados
 

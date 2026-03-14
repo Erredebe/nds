@@ -70,7 +70,19 @@ describe('foundation css output', () => {
 describe('foundation component configuration', () => {
   it('normalizes decorator metadata into a component definition', () => {
     expect(NDSButtonElement.definition.tagName).toBe('nds-button');
-    expect(NDSButtonElement.definition.observedAttributes).toEqual(['disabled', 'label', 'size', 'type', 'variant']);
+    expect(NDSButtonElement.definition.defaultDomMode).toBe('light');
+    expect(NDSButtonElement.definition.observedAttributes).toEqual([
+      'aria-describedby',
+      'aria-label',
+      'aria-labelledby',
+      'disabled',
+      'label',
+      'name',
+      'size',
+      'type',
+      'value',
+      'variant'
+    ]);
     expect(NDSButtonElement.definition.shadowStyles).toContain(':host');
     expect(NDSButtonElement.definition.stylePath).toBe('./styles.css');
     expect(NDSButtonElement.definition.templatePath).toBe('./template.html');

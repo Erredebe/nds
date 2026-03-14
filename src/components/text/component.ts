@@ -1,6 +1,7 @@
 import { NDSComponentElement, component, prop } from '../../foundation/index.js';
 
 const textAlignments = ['left', 'center', 'right'] as const;
+const textTags = ['span', 'p', 'small', 'strong'] as const;
 const textVariants = ['body', 'caption', 'label', 'muted'] as const;
 const textWeights = ['regular', 'medium', 'semibold', 'bold'] as const;
 
@@ -12,6 +13,7 @@ const textWeights = ['regular', 'medium', 'semibold', 'bold'] as const;
 })
 export class NDSTextElement extends NDSComponentElement {
   @prop({ reflect: true, values: textAlignments }) accessor align: (typeof textAlignments)[number] = 'left';
+  @prop({ reflect: true, values: textTags }) accessor tag: (typeof textTags)[number] = 'span';
   @prop({ reflect: true }) accessor text = '';
   @prop({ reflect: true, values: textVariants }) accessor variant: (typeof textVariants)[number] = 'body';
   @prop({ reflect: true, values: textWeights }) accessor weight: (typeof textWeights)[number] = 'regular';

@@ -2,15 +2,19 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 import { NDSAlertElement } from '../dist/components/alert/component.js';
 import { NDSButtonElement } from '../dist/components/button/component.js';
+import { NDSCardElement } from '../dist/components/card/component.js';
 import { NDSInputElement } from '../dist/components/input/component.js';
+import { NDSTextElement } from '../dist/components/text/component.js';
 import { configureComponentClass } from '../dist/foundation/component.js';
 
 const lightAlertTag = 'nds-test-alert-light';
 const shadowAlertTag = 'nds-test-alert-shadow';
 const lightButtonTag = 'nds-test-button-light';
 const shadowButtonTag = 'nds-test-button-shadow';
+const lightCardTag = 'nds-test-card-light';
 const lightInputTag = 'nds-test-input-light';
 const shadowInputTag = 'nds-test-input-shadow';
+const shadowTextTag = 'nds-test-text-shadow';
 
 if (!customElements.get(lightAlertTag)) {
   class LightAlertTestElement extends configureComponentClass(NDSAlertElement, 'light') {}
@@ -32,6 +36,11 @@ if (!customElements.get(shadowButtonTag)) {
   customElements.define(shadowButtonTag, ShadowButtonTestElement);
 }
 
+if (!customElements.get(lightCardTag)) {
+  class LightCardTestElement extends configureComponentClass(NDSCardElement, 'light') {}
+  customElements.define(lightCardTag, LightCardTestElement);
+}
+
 if (!customElements.get(lightInputTag)) {
   class LightInputTestElement extends configureComponentClass(NDSInputElement, 'light') {}
   customElements.define(lightInputTag, LightInputTestElement);
@@ -40,6 +49,11 @@ if (!customElements.get(lightInputTag)) {
 if (!customElements.get(shadowInputTag)) {
   class ShadowInputTestElement extends configureComponentClass(NDSInputElement, 'shadow') {}
   customElements.define(shadowInputTag, ShadowInputTestElement);
+}
+
+if (!customElements.get(shadowTextTag)) {
+  class ShadowTextTestElement extends configureComponentClass(NDSTextElement, 'shadow') {}
+  customElements.define(shadowTextTag, ShadowTextTestElement);
 }
 
 afterEach(() => {
@@ -67,6 +81,20 @@ describe('nds-button', () => {
     expect(element.textContent).toContain('Ghost action');
   });
 
+  it('forwards aria and form attributes to the native button', () => {
+    const element = document.createElement(lightButtonTag);
+    element.setAttribute('aria-label', 'Close dialog');
+    element.setAttribute('name', 'intent');
+    element.setAttribute('value', 'close');
+    document.body.append(element);
+
+    const button = element.querySelector<HTMLButtonElement>('.nds-button__control');
+
+    expect(button?.getAttribute('aria-label')).toBe('Close dialog');
+    expect(button?.name).toBe('intent');
+    expect(button?.value).toBe('close');
+  });
+
   it('emits nds-click from the host and survives rerenders', () => {
     const element = document.createElement(shadowButtonTag);
     const receivedTargets: EventTarget[] = [];
@@ -84,6 +112,23 @@ describe('nds-button', () => {
     expect(receivedTargets[0]).toBe(element);
     expect(receivedTargets[1]).toBe(element);
   });
+
+  it('proxies submit actions when rendered in shadow dom', () => {
+    const form = document.createElement('form');
+    const element = document.createElement(shadowButtonTag);
+    let submitCalls = 0;
+
+    element.setAttribute('type', 'submit');
+    form.requestSubmit = () => {
+      submitCalls += 1;
+    };
+
+    form.append(element);
+    document.body.append(form);
+    element.shadowRoot?.querySelector<HTMLButtonElement>('.nds-button__control')?.click();
+
+    expect(submitCalls).toBe(1);
+  });
 });
 
 describe('nds-input', () => {
@@ -97,6 +142,39 @@ describe('nds-input', () => {
 
     expect(input).not.toBeNull();
     expect(input?.value).toBe('hello@example.com');
+  });
+
+  it('associates an explicit label with the native input', () => {
+    const element = document.createElement(lightInputTag);
+    element.setAttribute('label', 'Email');
+    document.body.append(element);
+
+    const label = element.querySelector<HTMLLabelElement>('.nds-input__label');
+    const input = element.querySelector<HTMLInputElement>('.nds-input__control');
+
+    expect(label).not.toBeNull();
+    expect(input).not.toBeNull();
+    expect(label?.getAttribute('for')).toBe(input?.id ?? null);
+  });
+
+  it('forwards native and aria state to the input control', () => {
+    const element = document.createElement(lightInputTag);
+    element.setAttribute('aria-describedby', 'email-help');
+    element.setAttribute('aria-errormessage', 'email-error');
+    element.setAttribute('aria-label', 'Email address');
+    element.setAttribute('invalid', '');
+    element.setAttribute('readonly', '');
+    element.setAttribute('required', '');
+    document.body.append(element);
+
+    const input = element.querySelector<HTMLInputElement>('.nds-input__control');
+
+    expect(input?.getAttribute('aria-describedby')).toBe('email-help');
+    expect(input?.getAttribute('aria-errormessage')).toBe('email-error');
+    expect(input?.getAttribute('aria-label')).toBe('Email address');
+    expect(input?.getAttribute('aria-invalid')).toBe('true');
+    expect(input?.readOnly).toBe(true);
+    expect(input?.required).toBe(true);
   });
 
   it('renders in light dom and syncs user input back to the host attribute', () => {
@@ -152,6 +230,45 @@ describe('nds-input', () => {
 
     expect(received.input).toEqual(['one@example.com']);
     expect(received.change).toEqual(['two@example.com']);
+  });
+});
+
+describe('nds-text', () => {
+  it('renders a neutral span by default', () => {
+    const element = document.createElement(shadowTextTag);
+    element.setAttribute('text', 'Helper copy');
+    document.body.append(element);
+
+    const content = element.shadowRoot?.querySelector('.nds-text__content');
+
+    expect(content?.tagName).toBe('SPAN');
+    expect(content?.textContent).toContain('Helper copy');
+  });
+
+  it('renders the requested semantic tag', () => {
+    const element = document.createElement(shadowTextTag);
+    element.setAttribute('tag', 'p');
+    element.setAttribute('text', 'Paragraph copy');
+    document.body.append(element);
+
+    expect(element.shadowRoot?.querySelector('.nds-text__content')?.tagName).toBe('P');
+  });
+});
+
+describe('nds-card', () => {
+  it('renders a neutral div by default', () => {
+    const element = document.createElement(lightCardTag);
+    document.body.append(element);
+
+    expect(element.querySelector('.nds-card__surface')?.tagName).toBe('DIV');
+  });
+
+  it('renders an article only when requested', () => {
+    const element = document.createElement(lightCardTag);
+    element.setAttribute('tag', 'article');
+    document.body.append(element);
+
+    expect(element.querySelector('.nds-card__surface')?.tagName).toBe('ARTICLE');
   });
 });
 

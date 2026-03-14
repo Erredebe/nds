@@ -1,3 +1,12 @@
-<p part="text" class="nds-text__content">
+<span part="text" class="nds-text__content" *if="tag === 'span'">
+  <slot>{{ text }}</slot>
+</span>
+<p part="text" class="nds-text__content" *if="tag === 'p'">
   <slot>{{ text }}</slot>
 </p>
+<small part="text" class="nds-text__content" *if="tag === 'small'">
+  <slot>{{ text }}</slot>
+</small>
+<strong part="text" class="nds-text__content" *if="tag === 'strong'">
+  <slot>{{ text }}</slot>
+</strong>

@@ -1,17 +1,24 @@
 <div class="nds-input__root">
-  <label part="field" class="nds-input__field">
-    <span part="label" class="nds-input__label">{{ label || 'Field' }}</span>
-    <input
-      ref="control"
-      part="input"
-      class="nds-input__control"
-      [type]="type"
-      [value]="value"
-      [placeholder]="placeholder"
-      [name]="name"
-      [disabled]="disabled"
-      (input)="handleSyncValue($event)"
-      (change)="handleCommitValue($event)"
-    />
-  </label>
+  <label part="label" class="nds-input__label" *if="label" [attr.for]="controlId">{{ label }}</label>
+  <input
+    ref="control"
+    part="input"
+    class="nds-input__control"
+    [attr.id]="controlId"
+    [type]="type"
+    [value]="value"
+    [placeholder]="placeholder"
+    [name]="name"
+    [autocomplete]="autocomplete"
+    [disabled]="disabled"
+    [required]="required"
+    [attr.readonly]="readOnly ? '' : null"
+    [attr.aria-describedby]="describedBy || null"
+    [attr.aria-errormessage]="errorMessage || null"
+    [attr.aria-invalid]="invalid ? 'true' : null"
+    [attr.aria-label]="ariaLabel || null"
+    [attr.aria-labelledby]="ariaLabelledBy || null"
+    (input)="handleSyncValue($event)"
+    (change)="handleCommitValue($event)"
+  />
 </div>

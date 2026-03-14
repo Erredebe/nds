@@ -8,10 +8,6 @@ export const shadowStyles = `:host {
   display: none;
 }
 
-.nds-button__root {
-  display: inline-flex;
-}
-
 .nds-button__control {
   display: inline-flex;
   align-items: center;
@@ -86,10 +82,6 @@ display: inline-flex;
 
 nds-button[hidden] {
 display: none;
-}
-
-nds-button .nds-button__root {
-display: inline-flex;
 }
 
 nds-button .nds-button__control {

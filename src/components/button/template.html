@@ -1,13 +1,16 @@
-<span class="nds-button__root">
-  <button
-    part="control"
-    class="nds-button__control"
-    [type]="type"
-    [disabled]="disabled"
-    (click)="handleControlClick($event)"
-  >
-    <span part="label" class="nds-button__label">
-      <slot>{{ label || 'Button' }}</slot>
-    </span>
-  </button>
-</span>
+<button
+  part="control"
+  class="nds-button__control"
+  [type]="type"
+  [disabled]="disabled"
+  [name]="name"
+  [value]="value"
+  [attr.aria-describedby]="ariaDescribedBy || null"
+  [attr.aria-label]="ariaLabel || null"
+  [attr.aria-labelledby]="ariaLabelledBy || null"
+  (click)="handleControlClick($event)"
+>
+  <span part="label" class="nds-button__label">
+    <slot>{{ label }}</slot>
+  </span>
+</button>

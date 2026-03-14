@@ -8,7 +8,7 @@ export const shadowStyles = `:host {
   display: none;
 }
 
-.nds-input__field {
+.nds-input__root {
   display: grid;
   gap: var(--nds-spacing-2);
 }
@@ -61,7 +61,7 @@ nds-input[hidden] {
 display: none;
 }
 
-nds-input .nds-input__field {
+nds-input .nds-input__root {
 display: grid;
   gap: var(--nds-spacing-2);
 }

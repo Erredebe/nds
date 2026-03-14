@@ -1,3 +1,12 @@
-<article part="surface" class="nds-card__surface">
+<div part="surface" class="nds-card__surface" *if="tag === 'div'">
+  <slot></slot>
+</div>
+<article part="surface" class="nds-card__surface" *if="tag === 'article'">
   <slot></slot>
 </article>
+<section part="surface" class="nds-card__surface" *if="tag === 'section'">
+  <slot></slot>
+</section>
+<aside part="surface" class="nds-card__surface" *if="tag === 'aside'">
+  <slot></slot>
+</aside>

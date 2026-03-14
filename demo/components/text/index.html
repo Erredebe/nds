@@ -57,9 +57,9 @@
           </div>
           <div class="demo-preview">
             <nds-stack gap="4">
-              <nds-text>Body por defecto para parrafos generales.</nds-text>
-              <nds-text variant="muted">Muted para informacion secundaria.</nds-text>
-              <nds-text variant="caption">Caption para metadata o labels auxiliares.</nds-text>
+              <nds-text tag="p">Body con tag explicito para parrafos generales.</nds-text>
+              <nds-text tag="p" variant="muted">Muted para informacion secundaria.</nds-text>
+              <nds-text tag="small" variant="caption">Caption para metadata o labels auxiliares.</nds-text>
               <nds-text variant="label" weight="semibold">Label para UI compacta.</nds-text>
             </nds-stack>
           </div>
@@ -67,9 +67,9 @@
             <span class="pill">Markup</span>
             <button class="copy-button" type="button" data-copy-target="text-snippet">Copiar</button>
           </div>
-          <pre class="snippet" id="text-snippet"><code>&lt;nds-text&gt;Body por defecto&lt;/nds-text&gt;
-&lt;nds-text variant="muted"&gt;Muted&lt;/nds-text&gt;
-&lt;nds-text variant="caption"&gt;Caption&lt;/nds-text&gt;
+          <pre class="snippet" id="text-snippet"><code>&lt;nds-text tag="p"&gt;Body por defecto&lt;/nds-text&gt;
+&lt;nds-text tag="p" variant="muted"&gt;Muted&lt;/nds-text&gt;
+&lt;nds-text tag="small" variant="caption"&gt;Caption&lt;/nds-text&gt;
 &lt;nds-text variant="label" weight="semibold"&gt;Label&lt;/nds-text&gt;</code></pre>
         </article>
 
@@ -80,9 +80,9 @@
           </div>
           <div class="demo-preview">
             <nds-stack gap="4">
-              <nds-text align="left">Left aligned text.</nds-text>
-              <nds-text align="center">Centered helper copy.</nds-text>
-              <nds-text align="right">Right aligned note.</nds-text>
+              <nds-text tag="p" align="left">Left aligned text.</nds-text>
+              <nds-text tag="p" align="center">Centered helper copy.</nds-text>
+              <nds-text tag="p" align="right">Right aligned note.</nds-text>
             </nds-stack>
           </div>
         </article>
