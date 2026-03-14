@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>no-dep-ds basic example</title>
+    <link rel="stylesheet" href="../../dist/styles.css" />
+    <style>
+      body {
+        padding: 32px;
+      }
+
+      .example-shell {
+        display: grid;
+        gap: 24px;
+        max-width: 960px;
+        margin: 0 auto;
+      }
+
+      .example-grid {
+        display: grid;
+        gap: 24px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+    </style>
+  </head>
+  <body>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

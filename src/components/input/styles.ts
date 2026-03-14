@@ -1,0 +1,111 @@
+export const inputShadowStyles = `
+:host {
+  display: inline-block;
+  min-width: 14rem;
+  font-family: var(--nds-typography-font-family-sans);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.nds-input__field {
+  display: grid;
+  gap: var(--nds-spacing-2);
+}
+
+.nds-input__label {
+  color: var(--nds-color-text);
+  font-size: var(--nds-typography-font-size-sm);
+  font-weight: var(--nds-typography-font-weight-medium);
+}
+
+.nds-input__control {
+  width: 100%;
+  min-height: 2.75rem;
+  padding-inline: var(--nds-spacing-4);
+  border: 1px solid var(--nds-component-input-border);
+  border-radius: var(--nds-radius-md);
+  background: var(--nds-component-input-background);
+  color: var(--nds-color-text);
+  font: inherit;
+  font-size: var(--nds-typography-font-size-md);
+  box-shadow: var(--nds-shadows-sm);
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    background-color 140ms ease;
+}
+
+.nds-input__control:focus {
+  outline: none;
+  border-color: var(--nds-color-accent);
+  box-shadow: 0 0 0 4px var(--nds-color-focus);
+}
+
+.nds-input__control::placeholder {
+  color: var(--nds-color-text-muted);
+}
+
+:host([disabled]) .nds-input__control,
+.nds-input__control:disabled {
+  opacity: 0.64;
+  cursor: not-allowed;
+}
+`.trim();
+
+export const inputLightStyles = `
+nds-input {
+  display: inline-block;
+  min-width: 14rem;
+  font-family: var(--nds-typography-font-family-sans);
+}
+
+nds-input[hidden] {
+  display: none;
+}
+
+nds-input .nds-input__field {
+  display: grid;
+  gap: var(--nds-spacing-2);
+}
+
+nds-input .nds-input__label {
+  color: var(--nds-color-text);
+  font-size: var(--nds-typography-font-size-sm);
+  font-weight: var(--nds-typography-font-weight-medium);
+}
+
+nds-input .nds-input__control {
+  width: 100%;
+  min-height: 2.75rem;
+  padding-inline: var(--nds-spacing-4);
+  border: 1px solid var(--nds-component-input-border);
+  border-radius: var(--nds-radius-md);
+  background: var(--nds-component-input-background);
+  color: var(--nds-color-text);
+  font: inherit;
+  font-size: var(--nds-typography-font-size-md);
+  box-shadow: var(--nds-shadows-sm);
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    background-color 140ms ease;
+}
+
+nds-input .nds-input__control:focus {
+  outline: none;
+  border-color: var(--nds-color-accent);
+  box-shadow: 0 0 0 4px var(--nds-color-focus);
+}
+
+nds-input .nds-input__control::placeholder {
+  color: var(--nds-color-text-muted);
+}
+
+nds-input[disabled] .nds-input__control,
+nds-input .nds-input__control:disabled {
+  opacity: 0.64;
+  cursor: not-allowed;
+}
+`.trim();

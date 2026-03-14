@@ -1,0 +1,67 @@
+{
+  "name": "no-dep-ds",
+  "version": "0.1.0",
+  "description": "Design system ESM-only con Web Components y cero dependencias runtime.",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "./dist/styles.css"
+  ],
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./button": {
+      "types": "./dist/components/button/index.d.ts",
+      "import": "./dist/components/button/index.js"
+    },
+    "./input": {
+      "types": "./dist/components/input/index.d.ts",
+      "import": "./dist/components/input/index.js"
+    },
+    "./text": {
+      "types": "./dist/components/text/index.d.ts",
+      "import": "./dist/components/text/index.js"
+    },
+    "./heading": {
+      "types": "./dist/components/heading/index.d.ts",
+      "import": "./dist/components/heading/index.js"
+    },
+    "./box": {
+      "types": "./dist/components/box/index.d.ts",
+      "import": "./dist/components/box/index.js"
+    },
+    "./stack": {
+      "types": "./dist/components/stack/index.d.ts",
+      "import": "./dist/components/stack/index.js"
+    },
+    "./card": {
+      "types": "./dist/components/card/index.d.ts",
+      "import": "./dist/components/card/index.js"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "clean": "node ./scripts/clean.mjs",
+    "build:ts": "npx tsc -p tsconfig.json",
+    "build:css": "node ./scripts/build-css.mjs",
+    "check:no-runtime-deps": "node ./scripts/check-no-runtime-deps.mjs",
+    "build": "npm run clean && npm run build:ts && npm run build:css && npm run check:no-runtime-deps",
+    "scaffold:component": "node ./scripts/scaffold-component.mjs",
+    "serve": "node ./scripts/dev-server.mjs",
+    "dev": "npm run build && npm run serve",
+    "test": "npm run build && vitest run"
+  },
+  "dependencies": {},
+  "peerDependencies": {},
+  "devDependencies": {
+    "jsdom": "^26.0.0",
+    "typescript": "^5.8.2",
+    "vitest": "^3.2.4"
+  }
+}
