@@ -15,8 +15,13 @@ export class NDSInputElement extends NDSComponentElement {
 
   readonly #controlId = `nds-input-control-${inputIdCounter++}`;
   readonly #internals = typeof this.attachInternals === 'function' ? this.attachInternals() : null;
+  #fallbackControl: HTMLInputElement | null = null;
   #defaultValue = '';
   #didInitializeDefaultValue = false;
+  #fallbackForm: HTMLFormElement | null = null;
+  readonly #handleFormReset = (): void => {
+    this.formResetCallback();
+  };
 
   @prop({ reflect: true }) accessor autocomplete = '';
   @prop({ reflect: true, attribute: 'aria-describedby' }) accessor describedBy = '';
@@ -52,6 +57,12 @@ export class NDSInputElement extends NDSComponentElement {
       this.#defaultValue = this.value;
       this.#didInitializeDefaultValue = true;
     }
+
+    this.syncFallbackFormBinding();
+  }
+
+  disconnectedCallback(): void {
+    this.teardownFallbackFormBinding();
   }
 
   protected get controlId(): string {
@@ -101,9 +112,11 @@ export class NDSInputElement extends NDSComponentElement {
     const internals = this.formInternals;
 
     if (!internals) {
+      this.syncFallbackControl();
       return;
     }
 
+    this.teardownFallbackControl();
     internals.setFormValue(this.disabled ? null : this.value);
 
     if (this.invalid) {
@@ -117,5 +130,68 @@ export class NDSInputElement extends NDSComponentElement {
     }
 
     internals.setValidity({});
+  }
+
+  private syncFallbackControl(): void {
+    if (this.domMode !== 'shadow' || !this.isConnected) {
+      this.teardownFallbackControl();
+      this.teardownFallbackFormBinding();
+      return;
+    }
+
+    this.syncFallbackFormBinding();
+
+    const control = this.#fallbackControl ?? document.createElement('input');
+
+    if (!this.#fallbackControl) {
+      control.setAttribute('aria-hidden', 'true');
+      control.dataset.ndsInputFallback = 'true';
+      control.tabIndex = -1;
+      this.append(control);
+      this.#fallbackControl = control;
+    }
+
+    control.type = this.type;
+    control.name = this.name;
+    control.value = this.value;
+    control.defaultValue = this.#defaultValue;
+    control.disabled = this.disabled;
+    control.required = this.required;
+    control.readOnly = this.readOnly;
+
+    if (this.placeholder) {
+      control.placeholder = this.placeholder;
+    } else {
+      control.removeAttribute('placeholder');
+    }
+
+    if (this.invalid) {
+      control.setCustomValidity('Invalid field value.');
+      return;
+    }
+
+    control.setCustomValidity('');
+  }
+
+  private syncFallbackFormBinding(): void {
+    const nextForm = this.domMode === 'shadow' ? this.closest('form') : null;
+
+    if (nextForm === this.#fallbackForm) {
+      return;
+    }
+
+    this.teardownFallbackFormBinding();
+    nextForm?.addEventListener('reset', this.#handleFormReset);
+    this.#fallbackForm = nextForm;
+  }
+
+  private teardownFallbackControl(): void {
+    this.#fallbackControl?.remove();
+    this.#fallbackControl = null;
+  }
+
+  private teardownFallbackFormBinding(): void {
+    this.#fallbackForm?.removeEventListener('reset', this.#handleFormReset);
+    this.#fallbackForm = null;
   }
 }

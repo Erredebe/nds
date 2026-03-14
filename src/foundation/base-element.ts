@@ -3,6 +3,7 @@ import { applyShadowStyles, escapeHtml } from '../utils/dom.js';
 export type DomMode = 'shadow' | 'light';
 
 const managedRootAttribute = 'data-nds-managed-root';
+const HTMLElementBase = globalThis.HTMLElement ?? class {};
 
 type FocusSnapshot = {
   end: number | null;
@@ -14,7 +15,7 @@ const isTextControl = (
   value: Element | null
 ): value is HTMLInputElement | HTMLTextAreaElement => value instanceof HTMLInputElement || value instanceof HTMLTextAreaElement;
 
-export abstract class NDSBaseElement extends HTMLElement {
+export abstract class NDSBaseElement extends HTMLElementBase {
   static domMode: DomMode = 'shadow';
   static shadowStyles = '';
   static observedAttributes: string[] = [];

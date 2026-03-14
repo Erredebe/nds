@@ -11,6 +11,12 @@ export const defineComponent = <T extends NDSComponentClass<any>>(
   componentClass: T,
   options: DefineComponentOptions = {}
 ): CustomElementConstructor => {
+  if (typeof customElements === 'undefined') {
+    throw new Error(
+      `Cannot define '${componentClass.definition.tagName}' outside a browser custom elements runtime.`
+    );
+  }
+
   const definition = componentClass.definition;
   const domMode = normalizeDomMode(options.dom ?? definition.defaultDomMode);
   const existingDefinition = customElements.get(definition.tagName);

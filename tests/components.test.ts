@@ -97,12 +97,16 @@ describe('nds-input', () => {
     const element = document.createElement(tags.shadowInput);
     element.setAttribute('label', 'Email');
     element.setAttribute('value', 'hello@example.com');
+    element.setAttribute('name', 'email');
     document.body.append(element);
 
     const input = element.shadowRoot?.querySelector<HTMLInputElement>('.nds-input__control');
+    const fallback = element.querySelector<HTMLInputElement>('input[data-nds-input-fallback="true"]');
 
     expect(input).not.toBeNull();
     expect(input?.value).toBe('hello@example.com');
+    expect(fallback?.value).toBe('hello@example.com');
+    expect(fallback?.name).toBe('email');
   });
 
   it('renders in light dom and syncs user input back to the host attribute', () => {
@@ -173,6 +177,42 @@ describe('nds-input', () => {
 
     expect(received.input).toEqual(['one@example.com']);
     expect(received.change).toEqual(['two@example.com']);
+  });
+
+  it('syncs a shadow-dom fallback control for form submit and reset', () => {
+    const form = document.createElement('form');
+    const element = document.createElement(tags.shadowInput);
+    element.setAttribute('label', 'Email');
+    element.setAttribute('name', 'email');
+    element.setAttribute('value', 'initial@example.com');
+    form.append(element);
+    document.body.append(form);
+
+    const input = element.shadowRoot?.querySelector<HTMLInputElement>('.nds-input__control');
+    const fallback = element.querySelector<HTMLInputElement>('input[data-nds-input-fallback="true"]');
+
+    expect(input).not.toBeNull();
+    expect(fallback).not.toBeNull();
+    expect(new FormData(form).get('email')).toBe('initial@example.com');
+
+    if (!input || !fallback) {
+      return;
+    }
+
+    input.value = 'updated@example.com';
+    input.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+
+    expect(fallback.value).toBe('updated@example.com');
+    expect(new FormData(form).get('email')).toBe('updated@example.com');
+
+    form.reset();
+
+    const resetInput = element.shadowRoot?.querySelector<HTMLInputElement>('.nds-input__control');
+    const resetFallback = element.querySelector<HTMLInputElement>('input[data-nds-input-fallback="true"]');
+
+    expect(element.getAttribute('value')).toBe('initial@example.com');
+    expect(resetInput?.value).toBe('initial@example.com');
+    expect(resetFallback?.value).toBe('initial@example.com');
   });
 });
 

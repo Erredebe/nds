@@ -26,6 +26,15 @@ defineAllComponents();
 setTheme('light');
 ```
 
+En apps con SSR, deja el registro de componentes del lado cliente. Los tokens y temas si pueden importarse de forma segura en servidor.
+
+```ts
+import { themes, tokens } from 'no-dep-ds';
+
+console.log(tokens.spacing[4]);
+console.log(themes.light.color.background.canvas);
+```
+
 Tambien puedes registrar componentes individuales:
 
 ```ts
@@ -106,7 +115,10 @@ console.log(themes.dark.color.background.canvas);
 
 - Paquete ESM-only.
 - Runtime de desarrollo y build: Node `>=20`.
-- Navegadores objetivo: entornos modernos con Custom Elements, Shadow DOM y ES modules.
+- Navegadores objetivo: `Chrome`, `Edge`, `Firefox`, `Safari` macOS e iOS en sus ultimas 2 versiones estables.
+- Registro de componentes (`defineAllComponents`, `defineButton`, etc.): solo cliente/navegador.
+- Imports SSR-safe: `tokens`, `semanticTokens`, `themes` y helpers de CSS pueden importarse sin registrar componentes.
+- Si una app usa CSP estricta sin `unsafe-eval`, el runtime actual de templates necesita revision adicional antes de adoptarse.
 
 ## Desarrollo
 

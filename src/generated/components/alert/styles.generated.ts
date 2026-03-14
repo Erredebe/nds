@@ -1,7 +1,9 @@
 export const shadowStyles = `:host {
   display: block;
   --nds-alert-accent: #11736b;
+  --nds-alert-background: #eef6f5;
   --nds-alert-background: color-mix(in srgb, var(--nds-alert-accent) 12%, var(--nds-color-surface, #ffffff));
+  --nds-alert-border: rgba(17, 115, 107, 0.36);
   --nds-alert-border: color-mix(in srgb, var(--nds-alert-accent) 36%, transparent);
   --nds-alert-text: var(--nds-color-text, #0f172a);
 }
@@ -44,6 +46,7 @@ export const shadowStyles = `:host {
   width: 2rem;
   height: 2rem;
   border-radius: 999px;
+  background: rgba(17, 115, 107, 0.18);
   background: color-mix(in srgb, var(--nds-alert-accent) 18%, transparent);
   color: var(--nds-alert-accent);
   font-size: 0.875rem;
@@ -70,6 +73,7 @@ export const shadowStyles = `:host {
 
 .nds-alert__dismiss {
   padding: 0.35rem 0.7rem;
+  border: 1px solid rgba(17, 115, 107, 0.28);
   border: 1px solid color-mix(in srgb, var(--nds-alert-accent) 28%, transparent);
   border-radius: 999px;
   background: transparent;
@@ -80,6 +84,7 @@ export const shadowStyles = `:host {
 
 .nds-alert__message,
 .nds-alert__slot {
+  color: var(--nds-alert-text);
   color: color-mix(in srgb, var(--nds-alert-text) 82%, var(--nds-alert-accent) 18%);
   line-height: 1.55;
 }
@@ -96,6 +101,7 @@ export const shadowStyles = `:host {
 }
 
 .nds-alert__feature {
+  color: var(--nds-alert-text);
   color: color-mix(in srgb, var(--nds-alert-text) 78%, var(--nds-alert-accent) 22%);
 }
 
@@ -105,7 +111,9 @@ export const shadowStyles = `:host {
 export const lightStyles = `nds-alert {
 display: block;
   --nds-alert-accent: #11736b;
+  --nds-alert-background: #eef6f5;
   --nds-alert-background: color-mix(in srgb, var(--nds-alert-accent) 12%, var(--nds-color-surface, #ffffff));
+  --nds-alert-border: rgba(17, 115, 107, 0.36);
   --nds-alert-border: color-mix(in srgb, var(--nds-alert-accent) 36%, transparent);
   --nds-alert-text: var(--nds-color-text, #0f172a);
 }
@@ -148,6 +156,7 @@ display: inline-flex;
   width: 2rem;
   height: 2rem;
   border-radius: 999px;
+  background: rgba(17, 115, 107, 0.18);
   background: color-mix(in srgb, var(--nds-alert-accent) 18%, transparent);
   color: var(--nds-alert-accent);
   font-size: 0.875rem;
@@ -174,6 +183,7 @@ font-size: 0.95rem;
 
 nds-alert .nds-alert__dismiss {
 padding: 0.35rem 0.7rem;
+  border: 1px solid rgba(17, 115, 107, 0.28);
   border: 1px solid color-mix(in srgb, var(--nds-alert-accent) 28%, transparent);
   border-radius: 999px;
   background: transparent;
@@ -184,7 +194,8 @@ padding: 0.35rem 0.7rem;
 
 nds-alert .nds-alert__message,
 nds-alert .nds-alert__slot {
-color: color-mix(in srgb, var(--nds-alert-text) 82%, var(--nds-alert-accent) 18%);
+color: var(--nds-alert-text);
+  color: color-mix(in srgb, var(--nds-alert-text) 82%, var(--nds-alert-accent) 18%);
   line-height: 1.55;
 }
 
@@ -200,7 +211,8 @@ display: grid;
 }
 
 nds-alert .nds-alert__feature {
-color: color-mix(in srgb, var(--nds-alert-text) 78%, var(--nds-alert-accent) 22%);
+color: var(--nds-alert-text);
+  color: color-mix(in srgb, var(--nds-alert-text) 78%, var(--nds-alert-accent) 22%);
 }
 
 nds-alert .nds-alert__slot:empty {
