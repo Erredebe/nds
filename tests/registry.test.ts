@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { defineAlert } from '../dist/components/alert/index.js';
 import { defineButton } from '../dist/components/button/index.js';
 import { defineInput } from '../dist/components/input/index.js';
 
@@ -18,5 +19,13 @@ describe('component registration', () => {
 
     expect(firstDefinition).toBe(secondDefinition);
     expect(customElements.get('nds-input')).toBe(firstDefinition);
+  });
+
+  it('defines nds-alert once', () => {
+    const firstDefinition = defineAlert({ dom: 'shadow' });
+    const secondDefinition = defineAlert({ dom: 'light' });
+
+    expect(firstDefinition).toBe(secondDefinition);
+    expect(customElements.get('nds-alert')).toBe(firstDefinition);
   });
 });

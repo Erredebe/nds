@@ -43,17 +43,22 @@
       "types": "./dist/components/card/index.d.ts",
       "import": "./dist/components/card/index.js"
     },
+    "./alert": {
+      "types": "./dist/components/alert/index.d.ts",
+      "import": "./dist/components/alert/index.js"
+    },
     "./styles.css": "./dist/styles.css",
     "./package.json": "./package.json"
   },
   "scripts": {
     "clean": "node ./scripts/clean.mjs",
     "build:generated-styles": "node ./scripts/generate-component-styles.mjs",
+    "build:templates": "node ./scripts/generate-component-templates.mjs",
     "build:ts": "npx tsc -p tsconfig.json",
     "build:css": "node ./scripts/build-css.mjs",
     "build:site": "npm run build && node ./scripts/build-site.mjs",
     "check:no-runtime-deps": "node ./scripts/check-no-runtime-deps.mjs",
-    "build": "npm run clean && npm run build:generated-styles && npm run build:ts && npm run build:css && npm run check:no-runtime-deps",
+    "build": "npm run clean && npm run build:generated-styles && npm run build:templates && npm run build:ts && npm run build:css && npm run check:no-runtime-deps",
     "scaffold:component": "node ./scripts/scaffold-component.mjs",
     "serve": "node ./scripts/dev-server.mjs",
     "dev": "npm run build && npm run serve",

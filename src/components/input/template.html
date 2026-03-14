@@ -1,0 +1,17 @@
+<div class="nds-input__root">
+  <label part="field" class="nds-input__field">
+    <span part="label" class="nds-input__label">{{ label || 'Field' }}</span>
+    <input
+      ref="control"
+      part="input"
+      class="nds-input__control"
+      [type]="type"
+      [value]="value"
+      [placeholder]="placeholder"
+      [name]="name"
+      [disabled]="disabled"
+      (input)="handleSyncValue($event)"
+      (change)="handleCommitValue($event)"
+    />
+  </label>
+</div>

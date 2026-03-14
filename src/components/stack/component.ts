@@ -1,4 +1,4 @@
-import { type DomMode, NDSComponentElement, attr, component } from '../../foundation/index.js';
+import { NDSComponentElement, component, prop } from '../../foundation/index.js';
 import { resolveSpaceValue } from '../../utils/style-values.js';
 
 const stackAlignments = ['baseline', 'center', 'end', 'start', 'stretch'] as const;
@@ -27,26 +27,14 @@ const applyStackStyles = (element: NDSStackElement): void => {
 @component({
   defaultDomMode: 'shadow',
   stylePath: './styles.css',
-  tagName: 'nds-stack'
+  tagName: 'nds-stack',
+  templatePath: './template.html'
 })
 export class NDSStackElement extends NDSComponentElement {
-  @attr.enum(stackAlignments) accessor align: (typeof stackAlignments)[number] = 'stretch';
-  @attr.enum(stackDirections) accessor direction: (typeof stackDirections)[number] = 'column';
-  @attr.string() accessor gap = '';
-  @attr.enum(stackJustifyValues) accessor justify: (typeof stackJustifyValues)[number] = 'start';
-
-  protected override renderTemplate(mode: DomMode): string {
-    const content =
-      mode === 'shadow'
-        ? '<slot></slot>'
-        : '<div part="content" class="nds-stack__content" data-nds-slot-target="default"></div>';
-
-    return `
-      <div part="container" class="nds-stack__container">
-        ${content}
-      </div>
-    `.trim();
-  }
+  @prop({ reflect: true, values: stackAlignments }) accessor align: (typeof stackAlignments)[number] = 'stretch';
+  @prop({ reflect: true, values: stackDirections }) accessor direction: (typeof stackDirections)[number] = 'column';
+  @prop({ reflect: true }) accessor gap = '';
+  @prop({ reflect: true, values: stackJustifyValues }) accessor justify: (typeof stackJustifyValues)[number] = 'start';
 
   protected override rendered(): void {
     applyStackStyles(this);

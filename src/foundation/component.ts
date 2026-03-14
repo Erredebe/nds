@@ -1,4 +1,13 @@
 import { NDSBaseElement, type DomMode } from './base-element.js';
+import type { CompiledTemplateDefinition } from './template.js';
+import { collectReusableNodes, renderTemplate } from './template.js';
+
+export interface NDSPropDefinition {
+  attribute?: string;
+  propertyKey: string;
+  reflect: boolean;
+  type: 'boolean' | 'string';
+}
 
 export interface NDSComponentDefinition<T extends HTMLElement = NDSComponentElement> {
   tagName: string;
@@ -6,27 +15,27 @@ export interface NDSComponentDefinition<T extends HTMLElement = NDSComponentElem
   shadowStyles: string;
   defaultDomMode: DomMode;
   stylePath?: string;
-  renderTemplate: (element: T, mode: DomMode) => string;
-  getDefaultSlotFallbackText?: (element: T) => string;
+  templatePath?: string;
+  template: CompiledTemplateDefinition;
   afterRender?: (element: T) => void;
-}
-
-export interface NDSListenerDefinition {
-  eventName: string;
-  methodName: string;
-  selector?: string;
-  target: 'host' | 'renderRoot';
 }
 
 export interface NDSComponentClass<T extends NDSComponentElement = NDSComponentElement>
   extends CustomElementConstructor {
   new (...args: any[]): T;
   definition: NDSComponentDefinition<T>;
-  listeners?: readonly NDSListenerDefinition[];
   domMode: DomMode;
   shadowStyles: string;
   observedAttributes: string[];
+  propDefinitions?: readonly NDSPropDefinition[];
+  watchers?: Readonly<Record<string, readonly string[]>>;
 }
+
+const emptyTemplate: CompiledTemplateDefinition = {
+  sourcePath: 'inline',
+  tagName: 'nds-component',
+  nodes: []
+};
 
 export class NDSComponentElement extends NDSBaseElement {
   static definition: NDSComponentDefinition<any> = {
@@ -34,30 +43,27 @@ export class NDSComponentElement extends NDSBaseElement {
     observedAttributes: [],
     shadowStyles: '',
     defaultDomMode: 'shadow',
-    renderTemplate: () => ''
+    template: emptyTemplate
   };
 
-  #listenerCleanup = new Map<EventTarget, Array<{ eventName: string; handler: EventListener }>>();
+  static propDefinitions: readonly NDSPropDefinition[] = [];
+  static watchers: Readonly<Record<string, readonly string[]>> = {};
+
+  #isApplyingAttribute = new Set<string>();
+  #isRendering = false;
+  #needsRender = false;
+  #refs: Record<string, Element> = {};
+  #syncedInitialAttributes = false;
+
+  public get refs(): Record<string, Element> {
+    return this.#refs;
+  }
 
   protected get definition(): NDSComponentDefinition<this> {
-    const componentClass = this.constructor as NDSComponentClass<this>;
-
-    return componentClass.definition;
-  }
-
-  protected renderTemplate(_mode: DomMode): string {
-    return '';
-  }
-
-  protected defaultSlotFallbackText(): string {
-    return '';
+    return (this.constructor as NDSComponentClass<this>).definition;
   }
 
   protected rendered(): void {}
-
-  protected get renderRoot(): ShadowRoot | this {
-    return (this.shadowRoot ?? this) as ShadowRoot | this;
-  }
 
   protected emit<T>(
     type: string,
@@ -75,79 +81,138 @@ export class NDSComponentElement extends NDSBaseElement {
     );
   }
 
-  protected override renderShadowTemplate(): string {
-    return this.definition.renderTemplate(this, 'shadow');
+  connectedCallback(): void {
+    this.syncInitialAttributes();
+    this.requestUpdate();
   }
 
-  protected override renderLightTemplate(): string {
-    return this.definition.renderTemplate(this, 'light');
+  attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
+    if (oldValue === newValue || this.#isApplyingAttribute.has(name)) {
+      return;
+    }
+
+    const definition = (this.constructor as NDSComponentClass<this>).propDefinitions?.find(
+      (entry) => entry.attribute === name
+    );
+
+    if (!definition) {
+      return;
+    }
+
+    this.#isApplyingAttribute.add(name);
+
+    try {
+      (this as Record<string, unknown>)[definition.propertyKey] =
+        definition.type === 'boolean' ? newValue !== null && newValue !== 'false' : newValue;
+    } finally {
+      this.#isApplyingAttribute.delete(name);
+    }
   }
 
-  protected override getDefaultSlotFallbackText(): string {
-    return this.definition.getDefaultSlotFallbackText?.(this) ?? '';
+  protected requestUpdate(): void {
+    if (!this.isConnected) {
+      return;
+    }
+
+    if (this.#isRendering) {
+      this.#needsRender = true;
+      return;
+    }
+
+    this.performRender();
   }
 
-  protected override afterRender(): void {
-    this.rebindDeclaredListeners();
-    this.definition.afterRender?.(this);
+  public notifyReactivePropertyChange(propertyKey: string, previousValue: unknown, nextValue: unknown): void {
+    if (Object.is(previousValue, nextValue)) {
+      return;
+    }
+
+    const watcherNames = (this.constructor as NDSComponentClass<this>).watchers?.[propertyKey] ?? [];
+
+    for (const watcherName of watcherNames) {
+      const watcher = this[watcherName as keyof this];
+
+      if (typeof watcher === 'function') {
+        watcher.call(this, nextValue, previousValue);
+      }
+    }
+
+    this.requestUpdate();
   }
 
-  disconnectedCallback(): void {
-    this.removeDeclaredListeners();
-  }
+  public syncReactiveAttribute(attribute: string, reflect: boolean, value: unknown): void {
+    if (!reflect || this.#isApplyingAttribute.has(attribute)) {
+      return;
+    }
 
-  private rebindDeclaredListeners(): void {
-    this.removeDeclaredListeners();
+    this.#isApplyingAttribute.add(attribute);
 
-    const componentClass = this.constructor as NDSComponentClass<this>;
-    const listeners = componentClass.listeners ?? [];
-
-    for (const definition of listeners) {
-      const handler = ((event: Event) => {
-        const method = this[definition.methodName as keyof this];
-
-        if (typeof method === 'function') {
-          method.call(this, event);
+    try {
+      if (typeof value === 'boolean') {
+        if (value) {
+          this.setAttribute(attribute, '');
+        } else {
+          this.removeAttribute(attribute);
         }
-      }) as EventListener;
 
-      const targets = this.resolveListenerTargets(definition);
-
-      for (const target of targets) {
-        target.addEventListener(definition.eventName, handler);
-        const registeredHandlers = this.#listenerCleanup.get(target) ?? [];
-        registeredHandlers.push({ eventName: definition.eventName, handler });
-        this.#listenerCleanup.set(target, registeredHandlers);
+        return;
       }
+
+      if (value === null || value === undefined) {
+        this.removeAttribute(attribute);
+        return;
+      }
+
+      this.setAttribute(attribute, String(value));
+    } finally {
+      this.#isApplyingAttribute.delete(attribute);
     }
   }
 
-  private removeDeclaredListeners(): void {
-    for (const [target, handlers] of this.#listenerCleanup.entries()) {
-      for (const { eventName, handler } of handlers) {
-        target.removeEventListener(eventName, handler);
-      }
+  private performRender(): void {
+    this.#isRendering = true;
+
+    try {
+      const focusSnapshot = this.captureFocusSnapshot();
+      const projectedNodes = this.domMode === 'light' ? this.collectLightDomSlotNodes() : [];
+      const reusePool = collectReusableNodes(this.renderRoot);
+      const { fragment, refs } = renderTemplate(
+        this as unknown as HTMLElement & Record<string, unknown> & { refs: Record<string, Element> },
+        this.definition.template,
+        this.domMode,
+        projectedNodes,
+        reusePool
+      );
+
+      this.mountManagedFragment(fragment);
+      this.#refs = refs;
+      this.restoreFocusSnapshot(focusSnapshot, refs);
+      this.rendered();
+      this.definition.afterRender?.(this);
+    } finally {
+      this.#isRendering = false;
     }
 
-    this.#listenerCleanup.clear();
+    if (this.#needsRender) {
+      this.#needsRender = false;
+      this.performRender();
+    }
   }
 
-  private resolveListenerTargets(definition: NDSListenerDefinition): EventTarget[] {
-    if (definition.target === 'host') {
-      return [this];
+  private syncInitialAttributes(): void {
+    if (this.#syncedInitialAttributes) {
+      return;
     }
 
-    const root = this.renderRoot;
+    this.#syncedInitialAttributes = true;
 
-    if (!definition.selector) {
-      return [root];
+    for (const definition of (this.constructor as NDSComponentClass<this>).propDefinitions ?? []) {
+      if (!definition.attribute || !this.hasAttribute(definition.attribute)) {
+        continue;
+      }
+
+      this.attributeChangedCallback(definition.attribute, null, this.getAttribute(definition.attribute));
     }
-
-    if ('querySelectorAll' in root) {
-      return Array.from(root.querySelectorAll(definition.selector));
-    }
-
-    return [];
   }
 }
 
@@ -174,6 +239,8 @@ export const configureComponentClass = <T extends NDSComponentClass<any>>(
   ConfiguredComponentClass.domMode = domMode;
   ConfiguredComponentClass.shadowStyles = definition.shadowStyles;
   ConfiguredComponentClass.observedAttributes = definition.observedAttributes;
+  ConfiguredComponentClass.propDefinitions = componentClass.propDefinitions ?? [];
+  ConfiguredComponentClass.watchers = componentClass.watchers ?? {};
 
   const nextByMode = existingByMode ?? new Map<DomMode, NDSComponentClass<any>>();
   nextByMode.set(domMode, ConfiguredComponentClass as unknown as NDSComponentClass<any>);

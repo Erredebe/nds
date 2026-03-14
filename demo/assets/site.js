@@ -140,6 +140,64 @@ const bindDemoEventLogs = () => {
   });
 };
 
+const bindAlertPlayground = () => {
+  const target = document.querySelector('#alert-playground');
+  const status = document.querySelector('[data-alert-demo-status]');
+
+  if (!(target instanceof HTMLElement) || !(status instanceof HTMLElement)) {
+    return;
+  }
+
+  const initialFeatures = target.getAttribute('features') ?? '';
+  const initialMessage = target.getAttribute('message') ?? '';
+  const updateStatus = () => {
+    const features = (target.getAttribute('features') ?? '').split('|').filter(Boolean);
+    const keys = Array.from(target.shadowRoot?.querySelectorAll('[data-nds-key]') ?? target.querySelectorAll('[data-nds-key]')).map(
+      (element) => element.getAttribute('data-nds-key') ?? ''
+    );
+
+    status.replaceChildren();
+    appendLogEntry(status, `features -> ${features.join(' | ') || 'none'}`);
+    appendLogEntry(status, `keys -> ${keys.join(' | ') || 'none'}`);
+  };
+
+  const replaceSets = [
+    ['Check dashboards', 'Post changelog', 'Confirm rollback owner'],
+    ['Warm caches', 'Ping support', 'Archive snapshot']
+  ];
+  let replaceIndex = 0;
+
+  document.querySelectorAll('[data-alert-demo-action]').forEach((element) => {
+    if (!(element instanceof HTMLButtonElement)) {
+      return;
+    }
+
+    element.addEventListener('click', () => {
+      const action = element.dataset.alertDemoAction;
+      const current = (target.getAttribute('features') ?? '').split('|').filter(Boolean);
+
+      if (action === 'shuffle') {
+        target.setAttribute('features', [...current].reverse().join('|'));
+      }
+
+      if (action === 'replace') {
+        target.setAttribute('features', replaceSets[replaceIndex % replaceSets.length].join('|'));
+        target.setAttribute('message', `Lista reemplazada ${replaceIndex + 1}.`);
+        replaceIndex += 1;
+      }
+
+      if (action === 'reset') {
+        target.setAttribute('features', initialFeatures);
+        target.setAttribute('message', initialMessage);
+      }
+
+      window.requestAnimationFrame(updateStatus);
+    });
+  });
+
+  updateStatus();
+};
+
 const resolveDefineConfig = () => {
   const domMode = document.body.dataset.ndsDomMode;
 
@@ -195,6 +253,7 @@ const bootstrap = async () => {
   defineAllComponents(resolveDefineConfig());
   bindThemeToggle(setTheme);
   bindDemoEventLogs();
+  bindAlertPlayground();
 
   document.documentElement.classList.add('nds-demo-ready');
 };

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="nds-dist-path" content="../../dist/index.js" />
+    <title>no-dep-ds | Alert</title>
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../../assets/site.css" />
+    <link rel="stylesheet" href="../../dist/styles.css" />
+    <script type="module" src="../../assets/site.js"></script>
+  </head>
+  <body data-theme="light">
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="../../index.html">
+          <span class="site-brand__mark">NDS</span>
+          <span>no-dep-ds</span>
+        </a>
+        <nav class="site-nav" aria-label="Catalogo principal">
+          <a data-nav-link href="../../index.html">Inicio</a>
+          <a data-nav-link href="../button/index.html">Button</a>
+          <a data-nav-link href="../input/index.html">Input</a>
+          <a data-nav-link href="../text/index.html">Text</a>
+          <a data-nav-link href="../heading/index.html">Heading</a>
+          <a data-nav-link href="../box/index.html">Box</a>
+          <a data-nav-link href="../stack/index.html">Stack</a>
+          <a data-nav-link href="../card/index.html">Card</a>
+          <a data-nav-link href="../alert/index.html">Alert</a>
+          <a data-nav-link href="../../dom-modes/index.html">DOM modes</a>
+        </nav>
+        <div class="header-actions">
+          <button class="theme-toggle" type="button" data-theme-toggle>
+            Tema
+            <span data-theme-label>light</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="hero">
+        <div class="meta-row">
+          <span class="pill">nds-alert</span>
+          <span class="pill">Event: nds-dismiss</span>
+          <span class="pill">Uses *if / *for / [innerHTML]</span>
+        </div>
+        <div class="section-heading">
+          <h1>Alert</h1>
+          <p>Nuevo componente generado desde el scaffold y refinado con el authoring HTML Angular-like del DS.</p>
+        </div>
+      </section>
+
+      <p class="demo-error" data-demo-error hidden></p>
+
+      <section class="section two-column">
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Estados y contenido enriquecido</h2>
+            <p>El template usa <code>*if</code> para el dismiss, <code>*for</code> para la lista y <code>[innerHTML]</code> para el mensaje enriquecido.</p>
+          </div>
+          <div class="demo-preview">
+            <nds-stack gap="4">
+              <nds-alert
+                title="Checklist antes del deploy"
+                tone="warning"
+                dismissible
+                features="Preview build|Smoke tests|Rollback plan"
+                message-html="<p>Verifica <strong>monitoring</strong>, ventanas de despliegue y responsables de guardia.</p>"
+                data-demo-events="nds-dismiss"
+                data-demo-log="#alert-event-log"
+              >
+                <a href="../button/index.html">Abrir acciones sugeridas</a>
+              </nds-alert>
+
+              <nds-alert
+                title="Release publicada"
+                tone="success"
+                message="La build quedo estable en produccion y sin errores de smoke."
+              ></nds-alert>
+            </nds-stack>
+          </div>
+          <div class="snippet-toolbar">
+            <span class="pill">Markup</span>
+            <button class="copy-button" type="button" data-copy-target="alert-snippet">Copiar</button>
+          </div>
+          <pre class="snippet" id="alert-snippet"><code>&lt;nds-alert
+  title="Checklist antes del deploy"
+  tone="warning"
+  dismissible
+  features="Preview build|Smoke tests|Rollback plan"
+  message-html="&lt;p&gt;Verifica &lt;strong&gt;monitoring&lt;/strong&gt;, ventanas de despliegue y responsables de guardia.&lt;/p&gt;"
+&gt;
+  &lt;a href="/playbooks/release"&gt;Abrir playbook&lt;/a&gt;
+&lt;/nds-alert&gt;</code></pre>
+        </article>
+
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Review DX</h2>
+            <p>Este componente sirve de smoke test real del nuevo flujo de authoring.</p>
+          </div>
+          <ul class="component-list">
+            <li>Clase corta centrada en props, estado y handlers.</li>
+            <li>Template legible en <code>template.html</code> con sintaxis parecida a Angular.</li>
+            <li>La lista de checklist usa <code>*for</code> con <code>trackBy</code>.</li>
+            <li>El dismiss re-renderiza sin listeners duplicados y emite <code>nds-dismiss</code>.</li>
+          </ul>
+
+          <div class="demo-log" id="alert-event-log">
+            <div data-log-placeholder>Pulsa el boton de cerrar del primer alert para ver el evento.</div>
+          </div>
+        </article>
+      </section>
+
+      <section class="section two-column">
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Playground de lista</h2>
+            <p>Este bloque cambia atributos del host para forzar rerenders y revisar visualmente el comportamiento de <code>*for</code> con <code>trackBy</code>.</p>
+          </div>
+
+          <div class="demo-preview">
+            <nds-alert
+              id="alert-playground"
+              title="Checklist viva"
+              tone="info"
+              features="Create preview|Run smoke tests|Share QA link"
+              message="Pulsa los controles para reordenar o reemplazar la lista."
+            ></nds-alert>
+          </div>
+
+          <div class="live-row">
+            <button class="copy-button" type="button" data-alert-demo-action="shuffle" data-alert-demo-target="#alert-playground">Reordenar</button>
+            <button class="copy-button" type="button" data-alert-demo-action="replace" data-alert-demo-target="#alert-playground">Reemplazar items</button>
+            <button class="copy-button" type="button" data-alert-demo-action="reset" data-alert-demo-target="#alert-playground">Reset</button>
+          </div>
+        </article>
+
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Estado actual</h2>
+            <p>Resumen rapido de la lista actual y de las claves visibles en el DOM.</p>
+          </div>
+
+          <div class="demo-log" data-alert-demo-status>
+            <div data-log-placeholder>Interactua con el playground para ver los cambios.</div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

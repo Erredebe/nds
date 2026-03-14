@@ -1,4 +1,4 @@
-import { type DomMode, NDSComponentElement, attr, component } from '../../foundation/index.js';
+import { NDSComponentElement, component, prop } from '../../foundation/index.js';
 import { resolveShadowValue, resolveSpaceValue } from '../../utils/style-values.js';
 
 const applyCardStyles = (element: NDSCardElement): void => {
@@ -12,24 +12,12 @@ const applyCardStyles = (element: NDSCardElement): void => {
 @component({
   defaultDomMode: 'shadow',
   stylePath: './styles.css',
-  tagName: 'nds-card'
+  tagName: 'nds-card',
+  templatePath: './template.html'
 })
 export class NDSCardElement extends NDSComponentElement {
-  @attr.boolean() accessor elevated = false;
-  @attr.string() accessor padding = '';
-
-  protected override renderTemplate(mode: DomMode): string {
-    const content =
-      mode === 'shadow'
-        ? '<slot></slot>'
-        : '<div part="content" class="nds-card__content" data-nds-slot-target="default"></div>';
-
-    return `
-      <article part="surface" class="nds-card__surface">
-        ${content}
-      </article>
-    `.trim();
-  }
+  @prop({ reflect: true, type: Boolean }) accessor elevated = false;
+  @prop({ reflect: true }) accessor padding = '';
 
   protected override rendered(): void {
     applyCardStyles(this);

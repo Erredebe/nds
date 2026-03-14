@@ -6,6 +6,7 @@ import { defineInput } from './components/input/index.js';
 import { defineStack } from './components/stack/index.js';
 import { defineText } from './components/text/index.js';
 import { semanticTokens, setTheme, themes, tokens } from './foundation/index.js';
+import { defineAlert } from './components/alert/index.js';
 import type { DefineComponentOptions } from './foundation/registry.js';
 
 export interface DefineAllComponentsConfig {
@@ -16,6 +17,7 @@ export interface DefineAllComponentsConfig {
   input?: DefineComponentOptions;
   stack?: DefineComponentOptions;
   text?: DefineComponentOptions;
+  alert?: DefineComponentOptions;
 }
 
 export const defineAllComponents = (config: DefineAllComponentsConfig = {}): void => {
@@ -26,6 +28,7 @@ export const defineAllComponents = (config: DefineAllComponentsConfig = {}): voi
   defineInput(config.input);
   defineStack(config.stack);
   defineText(config.text);
+  defineAlert(config.alert);
 };
 
 export { semanticTokens, setTheme, themes, tokens };

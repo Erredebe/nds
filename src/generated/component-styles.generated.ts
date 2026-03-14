@@ -1,3 +1,4 @@
+import * as alertStyles from './components/alert/styles.generated.js';
 import * as boxStyles from './components/box/styles.generated.js';
 import * as buttonStyles from './components/button/styles.generated.js';
 import * as cardStyles from './components/card/styles.generated.js';
@@ -14,6 +15,7 @@ export interface GeneratedComponentStyleEntry {
 }
 
 export const generatedComponentStyles: Record<string, GeneratedComponentStyleEntry> = {
+  'nds-alert': { lightStyles: alertStyles.lightStyles, shadowStyles: alertStyles.shadowStyles, stylePath: 'src/components/alert/styles.css', tagName: 'nds-alert' },
   'nds-box': { lightStyles: boxStyles.lightStyles, shadowStyles: boxStyles.shadowStyles, stylePath: 'src/components/box/styles.css', tagName: 'nds-box' },
   'nds-button': { lightStyles: buttonStyles.lightStyles, shadowStyles: buttonStyles.shadowStyles, stylePath: 'src/components/button/styles.css', tagName: 'nds-button' },
   'nds-card': { lightStyles: cardStyles.lightStyles, shadowStyles: cardStyles.shadowStyles, stylePath: 'src/components/card/styles.css', tagName: 'nds-card' },
@@ -24,6 +26,7 @@ export const generatedComponentStyles: Record<string, GeneratedComponentStyleEnt
 };
 
 export const generatedLightStyles = [
+  alertStyles.lightStyles,
   boxStyles.lightStyles,
   buttonStyles.lightStyles,
   cardStyles.lightStyles,

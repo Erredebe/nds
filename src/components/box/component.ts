@@ -1,4 +1,4 @@
-import { type DomMode, NDSComponentElement, attr, component } from '../../foundation/index.js';
+import { NDSComponentElement, component, prop } from '../../foundation/index.js';
 import { resolveRadiusValue, resolveSpaceValue } from '../../utils/style-values.js';
 
 const boxSurfaces = ['accent', 'subtle', 'transparent'] as const;
@@ -28,25 +28,13 @@ const applyBoxStyles = (element: NDSBoxElement): void => {
 @component({
   defaultDomMode: 'shadow',
   stylePath: './styles.css',
-  tagName: 'nds-box'
+  tagName: 'nds-box',
+  templatePath: './template.html'
 })
 export class NDSBoxElement extends NDSComponentElement {
-  @attr.string() accessor padding = '';
-  @attr.string() accessor radius = '';
-  @attr.enum(boxSurfaces) accessor surface: (typeof boxSurfaces)[number] = 'transparent';
-
-  protected override renderTemplate(mode: DomMode): string {
-    const content =
-      mode === 'shadow'
-        ? '<slot></slot>'
-        : '<div part="content" class="nds-box__content" data-nds-slot-target="default"></div>';
-
-    return `
-      <div part="container" class="nds-box__container">
-        ${content}
-      </div>
-    `.trim();
-  }
+  @prop({ reflect: true }) accessor padding = '';
+  @prop({ reflect: true }) accessor radius = '';
+  @prop({ reflect: true, values: boxSurfaces }) accessor surface: (typeof boxSurfaces)[number] = 'transparent';
 
   protected override rendered(): void {
     applyBoxStyles(this);

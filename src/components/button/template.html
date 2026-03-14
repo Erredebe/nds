@@ -1,0 +1,13 @@
+<span class="nds-button__root">
+  <button
+    part="control"
+    class="nds-button__control"
+    [type]="type"
+    [disabled]="disabled"
+    (click)="handleControlClick($event)"
+  >
+    <span part="label" class="nds-button__label">
+      <slot>{{ label || 'Button' }}</slot>
+    </span>
+  </button>
+</span>

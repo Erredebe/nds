@@ -1,0 +1,30 @@
+<article part="root" class="nds-alert__root" [attr.role]="roleValue()" [attr.hidden]="dismissed ? '' : null">
+  <div class="nds-alert__frame">
+    <div class="nds-alert__icon" aria-hidden="true">{{ iconGlyph() }}</div>
+
+    <div class="nds-alert__body" *if="showCopy()">
+      <div class="nds-alert__header">
+        <strong part="title" class="nds-alert__title" *if="title">{{ title }}</strong>
+        <button
+          part="dismiss"
+          class="nds-alert__dismiss"
+          type="button"
+          *if="dismissible"
+          (click)="handleDismiss()"
+        >
+          Cerrar
+        </button>
+      </div>
+
+      <div class="nds-alert__message" *if="message || messageHtml" [innerHTML]="messageMarkup()"></div>
+
+      <ul class="nds-alert__features" *if="featureItems().length > 0">
+        <li class="nds-alert__feature" *for="item, index in featureItems(); trackBy: `${index}-${item}`">{{ item }}</li>
+      </ul>
+
+      <div class="nds-alert__slot">
+        <slot></slot>
+      </div>
+    </div>
+  </div>
+</article>

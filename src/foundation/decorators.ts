@@ -1,11 +1,7 @@
 import type { DomMode } from './base-element.js';
-import type { NDSComponentElement } from './component.js';
-import {
-  type NDSComponentClass,
-  type NDSComponentDefinition,
-  type NDSListenerDefinition
-} from './component.js';
+import type { NDSComponentElement, NDSComponentClass, NDSComponentDefinition, NDSPropDefinition } from './component.js';
 import { generatedComponentStyles } from '../generated/component-styles.generated.js';
+import { generatedComponentTemplates } from '../generated/component-templates.generated.js';
 
 const symbolConstructor = Symbol as SymbolConstructor & { metadata?: symbol };
 const metadataSymbol = symbolConstructor.metadata ?? Symbol.for('Symbol.metadata');
@@ -19,26 +15,28 @@ if (!symbolConstructor.metadata) {
   });
 }
 
-const componentAttributesMetadataKey = Symbol('nds.componentAttributes');
-const componentListenersMetadataKey = Symbol('nds.componentListeners');
+const componentPropsMetadataKey = Symbol('nds.componentProps');
+const componentWatchersMetadataKey = Symbol('nds.componentWatchers');
 
 interface NDSDecoratorMetadata {
-  [componentAttributesMetadataKey]?: NDSAttributeDefinition[];
-  [componentListenersMetadataKey]?: NDSListenerDefinition[];
-}
-
-interface NDSAttributeDefinition {
-  attribute: string;
+  [componentPropsMetadataKey]?: NDSPropDefinition[];
+  [componentWatchersMetadataKey]?: Record<string, string[]>;
 }
 
 interface NDSComponentDecoratorOptions {
   defaultDomMode?: DomMode;
   stylePath: string;
   tagName: string;
+  templatePath: string;
 }
 
-interface NDSAttributeDecoratorOptions {
-  attribute?: string;
+type PropType = BooleanConstructor | StringConstructor;
+
+interface NDSPropDecoratorOptions {
+  attribute?: false | string;
+  reflect?: boolean;
+  type?: PropType;
+  values?: readonly string[];
 }
 
 const toKebabCase = (value: string): string =>
@@ -65,110 +63,113 @@ const pushUnique = <T>(values: T[], nextValue: T, matcher: (value: T) => boolean
   }
 };
 
-const registerAttribute = (
-  context: ClassAccessorDecoratorContext,
-  definition: NDSAttributeDefinition
-): void => {
+const registerProp = (context: ClassAccessorDecoratorContext, definition: NDSPropDefinition): void => {
   const metadata = getMetadata(context);
-  const attributes = metadata[componentAttributesMetadataKey] ?? [];
+  const props = metadata[componentPropsMetadataKey] ?? [];
 
-  pushUnique(attributes, definition, (value) => value.attribute === definition.attribute);
-  metadata[componentAttributesMetadataKey] = attributes;
+  pushUnique(props, definition, (value) => value.propertyKey === definition.propertyKey);
+  metadata[componentPropsMetadataKey] = props;
 };
 
-const registerListener = (
-  context: ClassMethodDecoratorContext,
-  definition: NDSListenerDefinition
-): void => {
+const registerWatcher = (context: ClassMethodDecoratorContext, propertyKey: string): void => {
   const metadata = getMetadata(context);
-  const listeners = metadata[componentListenersMetadataKey] ?? [];
+  const watchers = metadata[componentWatchersMetadataKey] ?? {};
+  const methodNames = watchers[propertyKey] ?? [];
 
-  listeners.push(definition);
-  metadata[componentListenersMetadataKey] = listeners;
+  methodNames.push(String(context.name));
+  watchers[propertyKey] = methodNames;
+  metadata[componentWatchersMetadataKey] = watchers;
+};
+
+const normalizeStringValue = (value: unknown, fallback: string, allowedValues?: readonly string[]): string => {
+  const normalized = `${value ?? ''}`;
+
+  if (!allowedValues || allowedValues.length === 0) {
+    return normalized;
+  }
+
+  return allowedValues.includes(normalized) ? normalized : fallback;
+};
+
+const normalizeBooleanValue = (value: unknown): boolean => Boolean(value);
+
+const createReactiveDecorator = (kind: 'prop' | 'state', options: NDSPropDecoratorOptions = {}) => {
+  return <T>(
+    value: ClassAccessorDecoratorTarget<object, T>,
+    context: ClassAccessorDecoratorContext<object, T>
+  ): ClassAccessorDecoratorResult<object, T> => {
+    if (context.kind !== 'accessor' || context.static || context.private) {
+      throw new TypeError(`@${kind} can only be used on public instance accessors.`);
+    }
+
+    const propertyKey = String(context.name);
+    const type = options.type === Boolean ? 'boolean' : 'string';
+    const reflect = kind === 'prop' ? (options.reflect ?? false) : false;
+    const attribute = kind === 'prop' ? (options.attribute === false ? undefined : options.attribute ?? toKebabCase(propertyKey)) : undefined;
+
+    registerProp(context, {
+      ...(attribute ? { attribute } : {}),
+      propertyKey,
+      reflect,
+      type
+    });
+
+    return {
+      get(this: object): T {
+        return value.get.call(this);
+      },
+      set(this: object, nextValue: T): void {
+        const previousValue = value.get.call(this);
+        const fallbackValue = previousValue as string | boolean;
+        const normalizedValue = (
+          type === 'boolean'
+            ? normalizeBooleanValue(nextValue)
+            : normalizeStringValue(nextValue, `${fallbackValue ?? ''}`, options.values)
+        ) as T;
+
+        value.set.call(this, normalizedValue);
+
+        const host = this as NDSComponentElement;
+
+        if (attribute) {
+          host.syncReactiveAttribute(attribute, reflect, normalizedValue);
+        }
+
+        host.notifyReactivePropertyChange(propertyKey, previousValue, normalizedValue);
+      },
+      init(initialValue: T): T {
+        return (
+          type === 'boolean'
+            ? normalizeBooleanValue(initialValue)
+            : normalizeStringValue(initialValue, `${initialValue ?? ''}`, options.values)
+        ) as T;
+      }
+    };
+  };
 };
 
 const getGeneratedShadowStyles = (tagName: string): string => generatedComponentStyles[tagName]?.shadowStyles ?? '';
+const getGeneratedTemplate = (tagName: string) => generatedComponentTemplates[tagName];
 
 type DecoratedComponentHooks = {
-  renderTemplate(mode: DomMode): string;
-  defaultSlotFallbackText(): string;
   rendered(): void;
 };
 
 const getDecoratedHooks = (element: NDSComponentElement): DecoratedComponentHooks =>
   element as unknown as DecoratedComponentHooks;
 
-const reflectStringAttribute = (element: HTMLElement, name: string, value: string): void => {
-  if (element.getAttribute(name) !== value) {
-    element.setAttribute(name, value);
-  }
-};
-
-const reflectBooleanAttribute = (element: HTMLElement, name: string, value: boolean): void => {
-  const hasAttribute = element.hasAttribute(name);
-
-  if (value && !hasAttribute) {
-    element.setAttribute(name, '');
-    return;
-  }
-
-  if (!value && hasAttribute) {
-    element.removeAttribute(name);
-  }
-};
-
-const createAccessorDecorator = <T>(
-  definitionFactory: (attribute: string) => {
-    fromAttribute: (value: string | null, fallback: T) => T;
-    normalizeAssignedValue: (value: T, fallback: T) => T;
-    reflectAttribute: (element: HTMLElement, attribute: string, value: T) => void;
-  },
-  options: NDSAttributeDecoratorOptions = {}
-) => {
-  return (
-    value: ClassAccessorDecoratorTarget<HTMLElement, T>,
-    context: ClassAccessorDecoratorContext<HTMLElement, T>
-  ): ClassAccessorDecoratorResult<HTMLElement, T> => {
-    if (context.kind !== 'accessor' || context.static || context.private) {
-      throw new TypeError('@attr decorators can only be used on public instance accessors.');
-    }
-
-    const attribute = options.attribute ?? toKebabCase(String(context.name));
-    const definition = definitionFactory(attribute);
-
-    registerAttribute(context, { attribute });
-
-    return {
-      get(this: HTMLElement): T {
-        return definition.fromAttribute(this.getAttribute(attribute), value.get.call(this));
-      },
-      set(this: HTMLElement, nextValue: T): void {
-        const normalizedValue = definition.normalizeAssignedValue(nextValue, value.get.call(this));
-
-        value.set.call(this, normalizedValue);
-        definition.reflectAttribute(this, attribute, normalizedValue);
-      },
-      init(initialValue: T): T {
-        return initialValue;
-      }
-    };
-  };
-};
-
 export const component =
-  ({ defaultDomMode = 'shadow', stylePath, tagName }: NDSComponentDecoratorOptions) =>
-  <T extends abstract new (...args: any[]) => object>(
-    value: T,
-    context: ClassDecoratorContext<T>
-  ): void => {
+  ({ defaultDomMode = 'shadow', stylePath, tagName, templatePath }: NDSComponentDecoratorOptions) =>
+  <T extends abstract new (...args: any[]) => object>(value: T, context: ClassDecoratorContext<T>): void => {
     if (context.kind !== 'class') {
       throw new TypeError('@component can only decorate classes.');
     }
 
     const componentClass = value as unknown as NDSComponentClass<NDSComponentElement>;
     const metadata = (context.metadata as NDSDecoratorMetadata | undefined) ?? {};
-    const observedAttributes = (metadata[componentAttributesMetadataKey] ?? []).map(({ attribute }) => attribute);
-    const listeners = metadata[componentListenersMetadataKey] ?? [];
+    const propDefinitions = metadata[componentPropsMetadataKey] ?? [];
+    const watchers = metadata[componentWatchersMetadataKey] ?? {};
+    const observedAttributes = propDefinitions.flatMap(({ attribute }) => (attribute ? [attribute] : []));
     const previousDefinition = componentClass.definition as NDSComponentDefinition<any> | undefined;
 
     componentClass.definition = {
@@ -177,71 +178,27 @@ export const component =
       shadowStyles: getGeneratedShadowStyles(tagName) || previousDefinition?.shadowStyles || '',
       defaultDomMode,
       stylePath,
-      renderTemplate: (element, mode) => getDecoratedHooks(element).renderTemplate(mode),
-      getDefaultSlotFallbackText: (element) => getDecoratedHooks(element).defaultSlotFallbackText(),
+      templatePath,
+      template: getGeneratedTemplate(tagName) ?? previousDefinition?.template ?? { nodes: [], sourcePath: templatePath, tagName },
       afterRender: (element) => getDecoratedHooks(element).rendered()
     };
 
-    componentClass.listeners = listeners;
+    componentClass.propDefinitions = propDefinitions;
+    componentClass.watchers = watchers;
     componentClass.observedAttributes = observedAttributes;
     componentClass.shadowStyles = componentClass.definition.shadowStyles;
   };
 
-export const attr = {
-  boolean: (options?: NDSAttributeDecoratorOptions) =>
-    createAccessorDecorator<boolean>(
-      () => ({
-        fromAttribute: (value, fallback) => (value === null ? fallback : value !== 'false'),
-        normalizeAssignedValue: (value) => Boolean(value),
-        reflectAttribute: reflectBooleanAttribute
-      }),
-      options
-    ),
-  enum: <const T extends readonly string[]>(values: T, options?: NDSAttributeDecoratorOptions) =>
-    createAccessorDecorator<T[number]>(
-      () => ({
-        fromAttribute: (value, fallback) => (values.includes(value as T[number]) ? (value as T[number]) : fallback),
-        normalizeAssignedValue: (value, fallback) => (values.includes(value) ? value : fallback),
-        reflectAttribute: reflectStringAttribute
-      }),
-      options
-    ),
-  string: (options?: NDSAttributeDecoratorOptions) =>
-    createAccessorDecorator<string>(
-      () => ({
-        fromAttribute: (value, fallback) => value ?? fallback,
-        normalizeAssignedValue: (value) => `${value ?? ''}`,
-        reflectAttribute: reflectStringAttribute
-      }),
-      options
-    )
-};
+export const prop = (options?: NDSPropDecoratorOptions) => createReactiveDecorator('prop', options);
 
-export const listen =
-  (
-    eventName: string,
-    options: {
-      selector?: string;
-      target?: 'host' | 'renderRoot';
-    } = {}
-  ) =>
-  (
-    _value: (this: unknown, event: Event) => void,
-    context: ClassMethodDecoratorContext<unknown, (this: unknown, event: Event) => void>
-  ): void => {
+export const state = (options?: NDSPropDecoratorOptions) => createReactiveDecorator('state', options);
+
+export const watch =
+  (propertyKey: string) =>
+  (_value: (this: unknown, nextValue: unknown, previousValue: unknown) => void, context: ClassMethodDecoratorContext) => {
     if (context.kind !== 'method' || context.static || context.private) {
-      throw new TypeError('@listen can only be used on public instance methods.');
+      throw new TypeError('@watch can only be used on public instance methods.');
     }
 
-    const definition: NDSListenerDefinition = {
-      eventName,
-      methodName: String(context.name),
-      target: options.target ?? 'renderRoot'
-    };
-
-    if (options.selector) {
-      definition.selector = options.selector;
-    }
-
-    registerListener(context, definition);
+    registerWatcher(context, propertyKey);
   };

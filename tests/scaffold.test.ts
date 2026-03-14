@@ -60,6 +60,7 @@ describe('scaffold component script', () => {
       expect(firstRun.stdout).toContain('Actualizaciones aplicadas:');
 
       const componentFile = await readFile(resolve(componentDirectory, 'alert-box/component.ts'), 'utf8');
+      const templateFile = await readFile(resolve(componentDirectory, 'alert-box/template.html'), 'utf8');
       const stylesFile = await readFile(resolve(componentDirectory, 'alert-box/styles.css'), 'utf8');
       const indexFile = await readFile(resolve(componentDirectory, 'alert-box/index.ts'), 'utf8');
       const rootIndexFile = await readFile(resolve(temporaryDirectory, 'src/index.ts'), 'utf8');
@@ -68,6 +69,9 @@ describe('scaffold component script', () => {
       expect(componentFile).toContain('export class NDSAlertBoxElement');
       expect(componentFile).toContain("@component({");
       expect(componentFile).toContain("tagName: 'nds-alert-box'");
+      expect(componentFile).toContain("templatePath: './template.html'");
+      expect(componentFile).toContain('@prop({ reflect: true }) accessor text =');
+      expect(templateFile).toContain('<slot>{{ text }}</slot>');
       expect(stylesFile).toContain(':host {');
       expect(indexFile).toContain('export const defineAlertBox');
       expect(rootIndexFile).toContain("import { defineAlertBox } from './components/alert-box/index.js';");

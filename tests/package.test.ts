@@ -21,6 +21,7 @@ describe('package contract', () => {
       'dist/components/box/index.d.ts',
       'dist/components/stack/index.d.ts',
       'dist/components/card/index.d.ts',
+      'dist/components/alert/index.d.ts',
       'dist/styles.css'
     ];
 
@@ -30,6 +31,7 @@ describe('package contract', () => {
 
     const packageJson = JSON.parse(await readFile(resolve(process.cwd(), 'package.json'), 'utf8'));
     const generatedStyles = await readFile(resolve(process.cwd(), 'src/generated/component-styles.generated.ts'), 'utf8');
+    const generatedTemplates = await readFile(resolve(process.cwd(), 'src/generated/component-templates.generated.ts'), 'utf8');
     const css = await readFile(resolve(process.cwd(), 'dist/styles.css'), 'utf8');
 
     expect(Object.keys(packageJson.exports)).toEqual([
@@ -41,11 +43,14 @@ describe('package contract', () => {
       './box',
       './stack',
       './card',
+      './alert',
       './styles.css',
       './package.json'
     ]);
     expect(generatedStyles).toContain("export const generatedLightStyles = [");
     expect(generatedStyles).toContain("'nds-button'");
+    expect(generatedTemplates).toContain('src/components/button/template.html');
+    expect(generatedTemplates).toContain('"nds-input"');
     expect(css).toContain('nds-button');
     expect(css).toContain('[data-nds-theme="dark"]');
   });
@@ -60,6 +65,7 @@ describe('package contract', () => {
       'site-dist/components/box/index.html',
       'site-dist/components/stack/index.html',
       'site-dist/components/card/index.html',
+      'site-dist/components/alert/index.html',
       'site-dist/dom-modes/index.html',
       'site-dist/dist/index.js',
       'site-dist/dist/styles.css'

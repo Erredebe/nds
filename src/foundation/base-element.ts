@@ -1,9 +1,18 @@
-import { applyShadowStyles, escapeHtml, htmlToFragment } from '../utils/dom.js';
+import { applyShadowStyles, escapeHtml } from '../utils/dom.js';
 
 export type DomMode = 'shadow' | 'light';
 
 const managedRootAttribute = 'data-nds-managed-root';
-const slotTargetAttribute = 'data-nds-slot-target';
+
+type FocusSnapshot = {
+  end: number | null;
+  ref: string;
+  start: number | null;
+};
+
+const isTextControl = (
+  value: Element | null
+): value is HTMLInputElement | HTMLTextAreaElement => value instanceof HTMLInputElement || value instanceof HTMLTextAreaElement;
 
 export abstract class NDSBaseElement extends HTMLElement {
   static domMode: DomMode = 'shadow';
@@ -20,88 +29,61 @@ export abstract class NDSBaseElement extends HTMLElement {
     return (this.constructor as typeof NDSBaseElement).shadowStyles;
   }
 
-  protected abstract renderShadowTemplate(): string;
-
-  protected abstract renderLightTemplate(): string;
-
-  protected afterRender(): void {}
-
-  protected getDefaultSlotFallbackText(): string {
-    return '';
+  protected get renderRoot(): ShadowRoot | this {
+    return (this.shadowRoot ?? this) as ShadowRoot | this;
   }
 
   protected escapeText(value: string): string {
     return escapeHtml(value);
   }
 
-  connectedCallback(): void {
-    this.render();
+  protected captureFocusSnapshot(): FocusSnapshot | null {
+    const activeElement =
+      this.domMode === 'shadow'
+        ? (this.shadowRoot?.activeElement as HTMLElement | null | undefined) ?? null
+        : document.activeElement instanceof HTMLElement && this.contains(document.activeElement)
+          ? document.activeElement
+          : null;
+
+    if (!activeElement) {
+      return null;
+    }
+
+    const ref = activeElement.getAttribute('data-nds-ref');
+
+    if (!ref) {
+      return null;
+    }
+
+    return {
+      end: isTextControl(activeElement) ? activeElement.selectionEnd : null,
+      ref,
+      start: isTextControl(activeElement) ? activeElement.selectionStart : null
+    };
   }
 
-  attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
-    if (oldValue === newValue) {
+  protected restoreFocusSnapshot(snapshot: FocusSnapshot | null, refs: Record<string, Element>): void {
+    if (!snapshot) {
       return;
     }
 
-    this.render();
-  }
+    const nextElement = refs[snapshot.ref];
 
-  protected render(): void {
-    if (this.domMode === 'shadow') {
-      this.renderShadowDom();
-    } else {
-      this.renderLightDom();
-    }
-
-    this.afterRender();
-  }
-
-  private renderShadowDom(): void {
-    const shadowRoot = this.shadowRoot ?? this.attachShadow({ mode: 'open' });
-
-    if (!this.#shadowMountPoint) {
-      this.#shadowMountPoint = document.createElement('div');
-      this.#shadowMountPoint.setAttribute(managedRootAttribute, '');
-      shadowRoot.replaceChildren(this.#shadowMountPoint);
-    }
-
-    if (this.shadowStyles) {
-      applyShadowStyles(shadowRoot, this.shadowStyles, `${this.tagName.toLowerCase()}::${this.shadowStyles}`);
-    }
-
-    this.#shadowMountPoint.innerHTML = this.renderShadowTemplate();
-  }
-
-  private renderLightDom(): void {
-    const slottedNodes = this.collectLightDomSlotNodes();
-    const fragment = htmlToFragment(this.renderLightTemplate());
-    const managedRoot = fragment.firstElementChild;
-
-    if (!managedRoot) {
-      this.replaceChildren();
+    if (!(nextElement instanceof HTMLElement)) {
       return;
     }
 
-    managedRoot.setAttribute(managedRootAttribute, '');
+    nextElement.focus();
 
-    const slotTarget = managedRoot.querySelector<HTMLElement>(`[${slotTargetAttribute}="default"]`);
-
-    if (slotTarget && slottedNodes.length > 0) {
-      slotTarget.replaceChildren(...slottedNodes);
-    } else if (slotTarget && slottedNodes.length === 0) {
-      const fallbackText = this.getDefaultSlotFallbackText();
-
-      if (fallbackText) {
-        slotTarget.textContent = fallbackText;
-      }
+    if (isTextControl(nextElement) && snapshot.start !== null && snapshot.end !== null) {
+      nextElement.setSelectionRange(snapshot.start, snapshot.end);
     }
-
-    this.replaceChildren(managedRoot);
   }
 
-  private collectLightDomSlotNodes(): Node[] {
-    const managedRoot = this.querySelector<HTMLElement>(`[${managedRootAttribute}]`);
-    const existingSlotTarget = managedRoot?.querySelector<HTMLElement>(`[${slotTargetAttribute}="default"]`);
+  protected collectLightDomSlotNodes(): Node[] {
+    const existingSlotTarget = this.querySelector<HTMLElement>(
+      `[${managedRootAttribute}] [data-nds-slot-target="default"], [${managedRootAttribute}][data-nds-slot-target="default"]`
+    );
 
     if (existingSlotTarget) {
       return Array.from(existingSlotTarget.childNodes);
@@ -110,5 +92,39 @@ export abstract class NDSBaseElement extends HTMLElement {
     return Array.from(this.childNodes).filter(
       (node) => !(node instanceof HTMLElement && node.hasAttribute(managedRootAttribute))
     );
+  }
+
+  protected mountManagedFragment(fragment: DocumentFragment): void {
+    if (this.domMode === 'shadow') {
+      const shadowRoot = this.shadowRoot ?? this.attachShadow({ mode: 'open' });
+
+      if (!this.#shadowMountPoint) {
+        this.#shadowMountPoint = document.createElement('div');
+        this.#shadowMountPoint.setAttribute(managedRootAttribute, '');
+        shadowRoot.replaceChildren(this.#shadowMountPoint);
+      }
+
+      if (this.shadowStyles) {
+        applyShadowStyles(shadowRoot, this.shadowStyles, `${this.tagName.toLowerCase()}::${this.shadowStyles}`);
+      }
+
+      this.#shadowMountPoint.replaceChildren(...Array.from(fragment.childNodes));
+      return;
+    }
+
+    const childNodes = Array.from(fragment.childNodes);
+
+    if (childNodes.length === 0) {
+      this.replaceChildren();
+      return;
+    }
+
+    for (const node of childNodes) {
+      if (node instanceof HTMLElement) {
+        node.setAttribute(managedRootAttribute, '');
+      }
+    }
+
+    this.replaceChildren(...childNodes);
   }
 }

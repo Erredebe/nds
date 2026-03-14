@@ -120,31 +120,22 @@ try {
 
 await mkdir(componentDirectory, { recursive: false });
 
-const componentSource = `import { type DomMode, NDSComponentElement, attr, component } from '../../foundation/index.js';
-import { escapeHtml } from '../../utils/dom.js';
+const componentSource = `import { NDSComponentElement, component, prop } from '../../foundation/index.js';
 
 @component({
   defaultDomMode: 'shadow',
   stylePath: './styles.css',
-  tagName: '${tagName}'
+  tagName: '${tagName}',
+  templatePath: './template.html'
 })
 export class ${className} extends NDSComponentElement {
-  @attr.string() accessor text = '';
-
-  protected override renderTemplate(mode: DomMode): string {
-    const fallbackText = escapeHtml(this.defaultSlotFallbackText());
-    const content =
-      mode === 'shadow'
-        ? \`<slot>\${fallbackText}</slot>\`
-        : \`<span data-nds-slot-target="default">\${fallbackText}</span>\`;
-
-    return \`<div part="root" class="${blockClassName}__root">\${content}</div>\`;
-  }
-
-  protected override defaultSlotFallbackText(): string {
-    return this.text;
-  }
+  @prop({ reflect: true }) accessor text = '';
 }
+`;
+
+const templateSource = `<div part="root" class="${blockClassName}__root">
+  <slot>{{ text }}</slot>
+</div>
 `;
 
 const stylesSource = `:host {
@@ -171,6 +162,7 @@ export const ${defineFunctionName} = (options: DefineComponentOptions = {}): Cus
 
 await Promise.all([
   writeFile(resolve(componentDirectory, 'component.ts'), componentSource, 'utf8'),
+  writeFile(resolve(componentDirectory, 'template.html'), templateSource, 'utf8'),
   writeFile(resolve(componentDirectory, 'styles.css'), stylesSource, 'utf8'),
   writeFile(resolve(componentDirectory, 'index.ts'), indexSource, 'utf8')
 ]);
