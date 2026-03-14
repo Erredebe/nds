@@ -53,7 +53,7 @@ Soportado actualmente:
 - `ref="name"` para exponer referencias en `this.refs.name`.
 - `*if="expr"` para render condicional.
 - `*for="item in items"`, `*for="item, index in items"` y `*for="item in items; trackBy: expr"` para listas.
-- `[innerHTML]="expr"` para inyectar HTML confiable de forma explicita.
+- `[innerHTML]="expr"` para inyectar un subconjunto sanitizado de HTML de forma explicita.
 
 Ejemplo:
 
@@ -74,8 +74,9 @@ Ejemplo:
 Notas importantes:
 
 - `{{ }}` siempre escapa texto.
-- `[innerHTML]` no escapa; usalo solo con HTML confiable o pre-sanitizado.
+- `[innerHTML]` sanea strings antes de insertarlos y elimina tags/atributos inseguros; no lo uses como canal para HTML arbitrario de terceros.
 - `trackBy` hoy expone claves estables en `data-nds-key` para cada item repetido.
+- Las expresiones del template se interpretan en un scope limitado al componente, locals y `$event`; no dependen de `unsafe-eval` ni acceden a globals arbitrarios.
 
 ## Semantica y accesibilidad
 

@@ -1,6 +1,7 @@
 import { NDSComponentElement, component, prop } from '../../foundation/index.js';
 
 const inputTypes = ['email', 'number', 'password', 'search', 'tel', 'text', 'url'] as const;
+const sensitiveInputTypes = new Set(['password']);
 
 let inputIdCounter = 0;
 
@@ -36,7 +37,7 @@ export class NDSInputElement extends NDSComponentElement {
   @prop({ reflect: true, attribute: 'readonly', type: Boolean }) accessor readOnly = false;
   @prop({ reflect: true, type: Boolean }) accessor required = false;
   @prop({ reflect: true, values: inputTypes }) accessor type: (typeof inputTypes)[number] = 'text';
-  @prop({ reflect: true }) accessor value = '';
+  @prop({ reflect: false }) accessor value = '';
 
   private get formInternals(): Pick<ElementInternals, 'setFormValue' | 'setValidity'> | null {
     if (
@@ -76,7 +77,7 @@ export class NDSInputElement extends NDSComponentElement {
       this.value = target.value;
     }
 
-    this.emit('nds-input', { value: target.value });
+    this.emitSensitiveAwareValueEvent('nds-input', target.value);
   }
 
   protected handleCommitValue(event: Event): void {
@@ -86,7 +87,7 @@ export class NDSInputElement extends NDSComponentElement {
       this.value = target.value;
     }
 
-    this.emit('nds-change', { value: target.value });
+    this.emitSensitiveAwareValueEvent('nds-change', target.value);
   }
 
   protected override rendered(): void {
@@ -106,6 +107,15 @@ export class NDSInputElement extends NDSComponentElement {
   formResetCallback(): void {
     this.value = this.#defaultValue;
     this.invalid = false;
+  }
+
+  private emitSensitiveAwareValueEvent(type: 'nds-change' | 'nds-input', value: string): void {
+    if (sensitiveInputTypes.has(this.type)) {
+      this.emit(type);
+      return;
+    }
+
+    this.emit(type, { value });
   }
 
   private syncFormValue(): void {

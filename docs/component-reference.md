@@ -51,7 +51,7 @@
 
 ## `nds-alert`
 
-- Atributos: `dismissible`, `features`, `message`, `message-html`, `title`, `tone`
+- Atributos: `dismissible`, `features`, `message`, `message-html` (deprecated), `title`, `tone`
 - Eventos: `nds-dismiss`
 - Slots: default
 - Parts: `root`, `title`, `dismiss`
@@ -59,4 +59,5 @@
 ## Notas
 
 - Todos los componentes soportan `shadow` y `light` DOM via `defineX({ dom })` o `defineAllComponents({ ... })`.
-- `message-html` y cualquier `[innerHTML]` deben recibir HTML confiable o sanitizado previamente.
+- `message-html` y cualquier `[innerHTML]` se sanitizan antes de renderizar; el runtime conserva solo un subconjunto seguro de tags y atributos.
+- `message-html` queda deprecado en `nds-alert`; para contenido enriquecido prefiere slot content authored por la app y deja `message` para texto plano.

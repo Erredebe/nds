@@ -1,4 +1,5 @@
-import { escapeHtml } from '../utils/dom.js';
+import { evaluateExpressionSource, executeStatementSource } from './expression.js';
+import { escapeHtml, setSanitizedInnerHtml } from '../utils/dom.js';
 import type { DomMode } from './base-element.js';
 
 export interface CompiledTemplateTextPart {
@@ -51,9 +52,6 @@ type ReusePool = Map<string, HTMLElement[]>;
 
 type ScopeLocals = Record<string, unknown>;
 type TemplateHost = HTMLElement & Record<string, unknown> & { refs: Record<string, Element> };
-
-const expressionCache = new Map<string, (scope: object, event?: Event) => unknown>();
-const statementCache = new Map<string, (scope: object, event?: Event) => void>();
 const listenerControllerSymbol = Symbol('nds.template.listenerController');
 const reuseKeyAttribute = 'data-nds-key';
 
@@ -61,87 +59,19 @@ type BoundElement = HTMLElement & {
   [listenerControllerSymbol]?: AbortController;
 };
 
-const compileExpression = (expression: string): ((scope: object, event?: Event) => unknown) => {
-  const cached = expressionCache.get(expression);
-
-  if (cached) {
-    return cached;
-  }
-
-  const compiled = new Function('$scope', '$event', `with ($scope) { return (${expression}); }`) as (
-    scope: object,
-    event?: Event
-  ) => unknown;
-
-  expressionCache.set(expression, compiled);
-  return compiled;
-};
-
-const compileStatement = (statement: string): ((scope: object, event?: Event) => void) => {
-  const cached = statementCache.get(statement);
-
-  if (cached) {
-    return cached;
-  }
-
-  const compiled = new Function('$scope', '$event', `with ($scope) { ${statement}; }`) as (
-    scope: object,
-    event?: Event
-  ) => void;
-
-  statementCache.set(statement, compiled);
-  return compiled;
-};
-
-const createScope = (component: TemplateHost, locals: ScopeLocals, event?: Event): object =>
-  new Proxy(Object.create(null) as Record<string, unknown>, {
-    get(_target, property) {
-      if (property === Symbol.unscopables) {
-        return undefined;
-      }
-
-      if (typeof property !== 'string') {
-        return undefined;
-      }
-
-      if (property === '$event') {
-        return event;
-      }
-
-      if (Object.prototype.hasOwnProperty.call(locals, property)) {
-        return locals[property];
-      }
-
-      const value = (component as unknown as Record<string, unknown>)[property];
-      return typeof value === 'function' ? value.bind(component) : value;
-    },
-    has(_target, property) {
-      if (typeof property !== 'string') {
-        return false;
-      }
-
-      return property === '$event' || Object.prototype.hasOwnProperty.call(locals, property) || property in component;
-    },
-    set(_target, property, value) {
-      if (typeof property !== 'string') {
-        return false;
-      }
-
-      if (Object.prototype.hasOwnProperty.call(locals, property)) {
-        locals[property] = value;
-        return true;
-      }
-
-      component[property] = value;
-      return true;
-    }
+const evaluateExpression = (component: TemplateHost, expression: string, locals: ScopeLocals, event?: Event): unknown =>
+  evaluateExpressionSource(expression, {
+    component: component as Record<string, unknown>,
+    ...(event ? { event } : {}),
+    locals
   });
 
-const evaluateExpression = (component: TemplateHost, expression: string, locals: ScopeLocals, event?: Event): unknown =>
-  compileExpression(expression)(createScope(component, locals, event), event);
-
 const executeStatement = (component: TemplateHost, statement: string, locals: ScopeLocals, event: Event): void => {
-  compileStatement(statement)(createScope(component, locals, event), event);
+  executeStatementSource(statement, {
+    component: component as Record<string, unknown>,
+    event,
+    locals
+  });
 };
 
 const toTextValue = (value: unknown): string => {
@@ -293,7 +223,7 @@ const applyInnerHtmlBinding = (
   }
 
   const value = evaluateExpression(component, node.innerHtmlExpression, locals);
-  element.innerHTML = value === null || value === undefined ? '' : String(value);
+  setSanitizedInnerHtml(element, value === null || value === undefined ? '' : String(value));
   return true;
 };
 

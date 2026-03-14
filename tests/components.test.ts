@@ -1,6 +1,6 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { NDSAlertElement } from '../dist/components/alert/component.js';
+import { NDSAlertElement, resetAlertDeprecationWarningsForTesting } from '../dist/components/alert/component.js';
 import { NDSBoxElement } from '../dist/components/box/component.js';
 import { NDSButtonElement } from '../dist/components/button/component.js';
 import { NDSCardElement } from '../dist/components/card/component.js';
@@ -109,7 +109,7 @@ describe('nds-input', () => {
     expect(fallback?.name).toBe('email');
   });
 
-  it('renders in light dom and syncs user input back to the host attribute', () => {
+  it('renders in light dom and syncs user input back to the host property only', () => {
     const element = document.createElement(tags.lightInput);
     element.setAttribute('label', 'Email');
     document.body.append(element);
@@ -125,7 +125,8 @@ describe('nds-input', () => {
     input.value = 'typed@example.com';
     input.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
 
-    expect(element.getAttribute('value')).toBe('typed@example.com');
+    expect((element as NDSInputElement).value).toBe('typed@example.com');
+    expect(element.getAttribute('value')).toBeNull();
   });
 
   it('keeps label and aria state wired to the internal control', () => {
@@ -179,6 +180,32 @@ describe('nds-input', () => {
     expect(received.change).toEqual(['two@example.com']);
   });
 
+  it('does not reflect or emit password values through host-facing APIs', () => {
+    const element = document.createElement(tags.lightInput);
+    const received: Array<string | undefined> = [];
+
+    element.setAttribute('type', 'password');
+    element.addEventListener('nds-input', (event) => {
+      received.push((event as CustomEvent<{ value?: string }>).detail?.value);
+    });
+    document.body.append(element);
+
+    const input = element.querySelector<HTMLInputElement>('.nds-input__control');
+
+    expect(input).not.toBeNull();
+
+    if (!input) {
+      return;
+    }
+
+    input.value = 'super-secret';
+    input.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+
+    expect((element as NDSInputElement).value).toBe('super-secret');
+    expect(element.getAttribute('value')).toBeNull();
+    expect(received).toEqual([undefined]);
+  });
+
   it('syncs a shadow-dom fallback control for form submit and reset', () => {
     const form = document.createElement('form');
     const element = document.createElement(tags.shadowInput);
@@ -217,10 +244,10 @@ describe('nds-input', () => {
 });
 
 describe('nds-alert', () => {
-  it('renders trusted [innerHTML] content and trackBy keys in shadow dom', () => {
+  it('renders sanitized rich content and trackBy keys in shadow dom', () => {
     const element = document.createElement(tags.shadowAlert);
     element.setAttribute('title', 'Deploy notice');
-    element.setAttribute('message-html', '<p><strong>Heads up</strong> before release.</p>');
+    element.setAttribute('message-html', '<p><strong>Heads up</strong> before release.</p><img src="x" onerror="alert(1)">');
     element.setAttribute('features', 'Preview build|Smoke tests|Rollback plan');
     document.body.append(element);
 
@@ -228,11 +255,28 @@ describe('nds-alert', () => {
     const features = Array.from(root?.querySelectorAll<HTMLLIElement>('.nds-alert__feature') ?? []);
 
     expect(root?.querySelector('.nds-alert__message strong')?.textContent).toBe('Heads up');
+    expect(root?.querySelector('.nds-alert__message img')).toBeNull();
     expect(features.map((item) => item.getAttribute('data-nds-key'))).toEqual([
       '0-Preview build',
       '1-Smoke tests',
       '2-Rollback plan'
     ]);
+  });
+
+  it('warns once that message-html is deprecated', () => {
+    resetAlertDeprecationWarningsForTesting();
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const first = document.createElement(tags.shadowAlert);
+    const second = document.createElement(tags.lightAlert);
+
+    first.setAttribute('message-html', '<p>First</p>');
+    second.setAttribute('message-html', '<p>Second</p>');
+    document.body.append(first, second);
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0]?.[0]).toContain('message-html');
+
+    warnSpy.mockRestore();
   });
 
   it('reuses keyed list nodes when trackBy order changes', () => {

@@ -2,6 +2,7 @@ import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 import { JSDOM } from 'jsdom';
+import { validateExpressionSource } from './template-expression.mjs';
 
 const rootDirectory = process.cwd();
 const componentsDirectory = resolve(rootDirectory, 'src/components');
@@ -11,7 +12,7 @@ const interpolationPattern = /{{([\s\S]+?)}}/g;
 
 const validateExpression = (expression, context) => {
   try {
-    new Function('$scope', '$event', `with ($scope) { return (${expression}); }`);
+    validateExpressionSource(expression);
   } catch (error) {
     throw new Error(`Expresion invalida en ${context}: ${expression}\n${error instanceof Error ? error.message : String(error)}`);
   }
@@ -19,7 +20,7 @@ const validateExpression = (expression, context) => {
 
 const validateStatement = (statement, context) => {
   try {
-    new Function('$scope', '$event', `with ($scope) { ${statement}; }`);
+    validateExpressionSource(statement);
   } catch (error) {
     throw new Error(`Statement invalido en ${context}: ${statement}\n${error instanceof Error ? error.message : String(error)}`);
   }

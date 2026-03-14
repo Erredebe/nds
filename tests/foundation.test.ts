@@ -176,9 +176,9 @@ describe('foundation component configuration', () => {
     document.body.replaceChildren();
   });
 
-  it('applies explicit [innerHTML] bindings as trusted markup', () => {
+  it('sanitizes explicit [innerHTML] bindings before rendering', () => {
     const host = Object.assign(document.createElement('div'), {
-      htmlSnippet: '<strong>Trusted</strong>',
+      htmlSnippet: '<strong>Trusted</strong><img src="x" onerror="alert(1)"><a href="javascript:alert(1)">Bad</a>',
       refs: {} as Record<string, Element>
     });
 
@@ -208,6 +208,8 @@ describe('foundation component configuration', () => {
     document.body.append(fragment);
 
     expect(document.body.querySelector('strong')?.textContent).toBe('Trusted');
+    expect(document.body.querySelector('img')).toBeNull();
+    expect(document.body.querySelector('a')?.hasAttribute('href')).toBe(false);
     expect(document.body.textContent).not.toContain('Ignored');
 
     document.body.replaceChildren();
