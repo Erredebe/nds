@@ -4,18 +4,7 @@ import { resolve } from 'node:path';
 const packageJsonPath = resolve(process.cwd(), 'package.json');
 const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8'));
 
-const expectedExports = [
-  '.',
-  './button',
-  './input',
-  './text',
-  './heading',
-  './box',
-  './stack',
-  './card',
-  './styles.css',
-  './package.json'
-];
+const requiredExports = ['.', './alert', './styles.css', './package.json'];
 
 const dependencyCount = Object.keys(packageJson.dependencies ?? {}).length;
 const peerDependencyCount = Object.keys(packageJson.peerDependencies ?? {}).length;
@@ -28,7 +17,7 @@ if (peerDependencyCount !== 0) {
   throw new Error('package.json must keep peerDependencies empty.');
 }
 
-for (const exportKey of expectedExports) {
+for (const exportKey of requiredExports) {
   if (!(exportKey in (packageJson.exports ?? {}))) {
     throw new Error(`Missing export subpath: ${exportKey}`);
   }

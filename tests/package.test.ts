@@ -55,24 +55,33 @@ describe('package contract', () => {
     expect(css).toContain('[data-nds-theme="dark"]');
   });
 
-  it('build:site assembles the demo and published package files', async () => {
-    const expectedFiles = [
-      'site-dist/index.html',
-      'site-dist/components/button/index.html',
-      'site-dist/components/input/index.html',
-      'site-dist/components/text/index.html',
-      'site-dist/components/heading/index.html',
-      'site-dist/components/box/index.html',
-      'site-dist/components/stack/index.html',
-      'site-dist/components/card/index.html',
-      'site-dist/components/alert/index.html',
-      'site-dist/dom-modes/index.html',
-      'site-dist/dist/index.js',
-      'site-dist/dist/styles.css'
-    ];
+  it('ships required package metadata for publication', async () => {
+    const packageJson = JSON.parse(await readFile(resolve(process.cwd(), 'package.json'), 'utf8'));
 
-    await Promise.all(
-      expectedFiles.map((relativePath) => access(resolve(process.cwd(), relativePath)))
-    );
+    await Promise.all([
+      access(resolve(process.cwd(), 'README.md')),
+      access(resolve(process.cwd(), 'LICENSE')),
+      access(resolve(process.cwd(), 'CHANGELOG.md')),
+      access(resolve(process.cwd(), 'CONTRIBUTING.md'))
+    ]);
+
+    expect(packageJson.license).toBe('MIT');
+    expect(packageJson.type).toBe('module');
+    expect(packageJson.engines.node).toBe('>=20');
+    expect(packageJson.repository.url).toContain('github.com/Erredebe/nds');
+    expect(packageJson.publishConfig.access).toBe('public');
+  });
+
+  it('supports consumer imports from the built package entrypoints', async () => {
+    const rootModule = await import(resolve(process.cwd(), 'dist/index.js'));
+    const buttonModule = await import(resolve(process.cwd(), 'dist/components/button/index.js'));
+    const inputModule = await import(resolve(process.cwd(), 'dist/components/input/index.js'));
+    const alertModule = await import(resolve(process.cwd(), 'dist/components/alert/index.js'));
+
+    expect(typeof rootModule.defineAllComponents).toBe('function');
+    expect(typeof rootModule.setTheme).toBe('function');
+    expect(typeof buttonModule.defineButton).toBe('function');
+    expect(typeof inputModule.defineInput).toBe('function');
+    expect(typeof alertModule.defineAlert).toBe('function');
   });
 });

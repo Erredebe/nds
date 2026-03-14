@@ -2,9 +2,31 @@
   "name": "no-dep-ds",
   "version": "0.1.0",
   "description": "Design system ESM-only con Web Components y cero dependencias runtime.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Erredebe/nds.git"
+  },
+  "homepage": "https://nds1.netlify.app/",
+  "bugs": {
+    "url": "https://github.com/Erredebe/nds/issues"
+  },
+  "keywords": [
+    "design-system",
+    "web-components",
+    "custom-elements",
+    "esm",
+    "typescript",
+    "zero-dependencies"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
   "sideEffects": [
     "./dist/styles.css"
@@ -58,11 +80,15 @@
     "build:css": "node ./scripts/build-css.mjs",
     "build:site": "npm run build && node ./scripts/build-site.mjs",
     "check:no-runtime-deps": "node ./scripts/check-no-runtime-deps.mjs",
+    "check:package": "node ./scripts/check-package-contract.mjs",
+    "check:site": "node ./scripts/check-site-build.mjs",
     "build": "npm run clean && npm run build:generated-styles && npm run build:templates && npm run build:ts && npm run build:css && npm run check:no-runtime-deps",
     "scaffold:component": "node ./scripts/scaffold-component.mjs",
     "serve": "node ./scripts/dev-server.mjs",
     "dev": "npm run build && npm run serve",
-    "test": "npm run build:site && vitest run"
+    "test": "vitest run",
+    "test:ci": "npm run build && npm run check:package && npm test",
+    "release:check": "npm run build:site && npm run check:site && npm run check:package && npm test"
   },
   "dependencies": {},
   "peerDependencies": {},
@@ -70,5 +96,8 @@
     "jsdom": "^26.0.0",
     "typescript": "^5.8.2",
     "vitest": "^3.2.4"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

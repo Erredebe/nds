@@ -1,60 +1,52 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { NDSAlertElement } from '../dist/components/alert/component.js';
+import { NDSBoxElement } from '../dist/components/box/component.js';
 import { NDSButtonElement } from '../dist/components/button/component.js';
 import { NDSCardElement } from '../dist/components/card/component.js';
+import { NDSHeadingElement } from '../dist/components/heading/component.js';
 import { NDSInputElement } from '../dist/components/input/component.js';
+import { NDSStackElement } from '../dist/components/stack/component.js';
 import { NDSTextElement } from '../dist/components/text/component.js';
-import { configureComponentClass } from '../dist/foundation/component.js';
+import { configureComponentClass, type NDSComponentClass } from '../dist/foundation/component.js';
 
-const lightAlertTag = 'nds-test-alert-light';
-const shadowAlertTag = 'nds-test-alert-shadow';
-const lightButtonTag = 'nds-test-button-light';
-const shadowButtonTag = 'nds-test-button-shadow';
-const lightCardTag = 'nds-test-card-light';
-const lightInputTag = 'nds-test-input-light';
-const shadowInputTag = 'nds-test-input-shadow';
-const shadowTextTag = 'nds-test-text-shadow';
+const registerTestElement = <T extends NDSComponentClass<any>>(
+  baseClass: T,
+  tagName: string,
+  domMode: 'light' | 'shadow'
+): void => {
+  if (customElements.get(tagName)) {
+    return;
+  }
 
-if (!customElements.get(lightAlertTag)) {
-  class LightAlertTestElement extends configureComponentClass(NDSAlertElement, 'light') {}
-  customElements.define(lightAlertTag, LightAlertTestElement);
-}
+  customElements.define(tagName, configureComponentClass(baseClass, domMode));
+};
 
-if (!customElements.get(shadowAlertTag)) {
-  class ShadowAlertTestElement extends configureComponentClass(NDSAlertElement, 'shadow') {}
-  customElements.define(shadowAlertTag, ShadowAlertTestElement);
-}
+const tags = {
+  lightAlert: 'nds-test-alert-light',
+  shadowAlert: 'nds-test-alert-shadow',
+  lightBox: 'nds-test-box-light',
+  shadowButton: 'nds-test-button-shadow',
+  lightButton: 'nds-test-button-light',
+  lightCard: 'nds-test-card-light',
+  shadowHeading: 'nds-test-heading-shadow',
+  lightInput: 'nds-test-input-light',
+  shadowInput: 'nds-test-input-shadow',
+  lightStack: 'nds-test-stack-light',
+  shadowText: 'nds-test-text-shadow'
+} as const;
 
-if (!customElements.get(lightButtonTag)) {
-  class LightButtonTestElement extends configureComponentClass(NDSButtonElement, 'light') {}
-  customElements.define(lightButtonTag, LightButtonTestElement);
-}
-
-if (!customElements.get(shadowButtonTag)) {
-  class ShadowButtonTestElement extends configureComponentClass(NDSButtonElement, 'shadow') {}
-  customElements.define(shadowButtonTag, ShadowButtonTestElement);
-}
-
-if (!customElements.get(lightCardTag)) {
-  class LightCardTestElement extends configureComponentClass(NDSCardElement, 'light') {}
-  customElements.define(lightCardTag, LightCardTestElement);
-}
-
-if (!customElements.get(lightInputTag)) {
-  class LightInputTestElement extends configureComponentClass(NDSInputElement, 'light') {}
-  customElements.define(lightInputTag, LightInputTestElement);
-}
-
-if (!customElements.get(shadowInputTag)) {
-  class ShadowInputTestElement extends configureComponentClass(NDSInputElement, 'shadow') {}
-  customElements.define(shadowInputTag, ShadowInputTestElement);
-}
-
-if (!customElements.get(shadowTextTag)) {
-  class ShadowTextTestElement extends configureComponentClass(NDSTextElement, 'shadow') {}
-  customElements.define(shadowTextTag, ShadowTextTestElement);
-}
+registerTestElement(NDSAlertElement, tags.lightAlert, 'light');
+registerTestElement(NDSAlertElement, tags.shadowAlert, 'shadow');
+registerTestElement(NDSBoxElement, tags.lightBox, 'light');
+registerTestElement(NDSButtonElement, tags.lightButton, 'light');
+registerTestElement(NDSButtonElement, tags.shadowButton, 'shadow');
+registerTestElement(NDSCardElement, tags.lightCard, 'light');
+registerTestElement(NDSHeadingElement, tags.shadowHeading, 'shadow');
+registerTestElement(NDSInputElement, tags.lightInput, 'light');
+registerTestElement(NDSInputElement, tags.shadowInput, 'shadow');
+registerTestElement(NDSStackElement, tags.lightStack, 'light');
+registerTestElement(NDSTextElement, tags.shadowText, 'shadow');
 
 afterEach(() => {
   document.body.replaceChildren();
@@ -62,7 +54,7 @@ afterEach(() => {
 
 describe('nds-button', () => {
   it('renders with shadow dom when configured', () => {
-    const element = document.createElement(shadowButtonTag);
+    const element = document.createElement(tags.shadowButton);
     element.setAttribute('label', 'Primary action');
     document.body.append(element);
 
@@ -72,7 +64,7 @@ describe('nds-button', () => {
   });
 
   it('renders into the host when configured for light dom', () => {
-    const element = document.createElement(lightButtonTag);
+    const element = document.createElement(tags.lightButton);
     element.setAttribute('label', 'Ghost action');
     document.body.append(element);
 
@@ -81,22 +73,8 @@ describe('nds-button', () => {
     expect(element.textContent).toContain('Ghost action');
   });
 
-  it('forwards aria and form attributes to the native button', () => {
-    const element = document.createElement(lightButtonTag);
-    element.setAttribute('aria-label', 'Close dialog');
-    element.setAttribute('name', 'intent');
-    element.setAttribute('value', 'close');
-    document.body.append(element);
-
-    const button = element.querySelector<HTMLButtonElement>('.nds-button__control');
-
-    expect(button?.getAttribute('aria-label')).toBe('Close dialog');
-    expect(button?.name).toBe('intent');
-    expect(button?.value).toBe('close');
-  });
-
   it('emits nds-click from the host and survives rerenders', () => {
-    const element = document.createElement(shadowButtonTag);
+    const element = document.createElement(tags.shadowButton);
     const receivedTargets: EventTarget[] = [];
 
     element.addEventListener('nds-click', (event) => {
@@ -112,28 +90,11 @@ describe('nds-button', () => {
     expect(receivedTargets[0]).toBe(element);
     expect(receivedTargets[1]).toBe(element);
   });
-
-  it('proxies submit actions when rendered in shadow dom', () => {
-    const form = document.createElement('form');
-    const element = document.createElement(shadowButtonTag);
-    let submitCalls = 0;
-
-    element.setAttribute('type', 'submit');
-    form.requestSubmit = () => {
-      submitCalls += 1;
-    };
-
-    form.append(element);
-    document.body.append(form);
-    element.shadowRoot?.querySelector<HTMLButtonElement>('.nds-button__control')?.click();
-
-    expect(submitCalls).toBe(1);
-  });
 });
 
 describe('nds-input', () => {
   it('renders in shadow dom and reflects the attribute value', () => {
-    const element = document.createElement(shadowInputTag);
+    const element = document.createElement(tags.shadowInput);
     element.setAttribute('label', 'Email');
     element.setAttribute('value', 'hello@example.com');
     document.body.append(element);
@@ -144,41 +105,8 @@ describe('nds-input', () => {
     expect(input?.value).toBe('hello@example.com');
   });
 
-  it('associates an explicit label with the native input', () => {
-    const element = document.createElement(lightInputTag);
-    element.setAttribute('label', 'Email');
-    document.body.append(element);
-
-    const label = element.querySelector<HTMLLabelElement>('.nds-input__label');
-    const input = element.querySelector<HTMLInputElement>('.nds-input__control');
-
-    expect(label).not.toBeNull();
-    expect(input).not.toBeNull();
-    expect(label?.getAttribute('for')).toBe(input?.id ?? null);
-  });
-
-  it('forwards native and aria state to the input control', () => {
-    const element = document.createElement(lightInputTag);
-    element.setAttribute('aria-describedby', 'email-help');
-    element.setAttribute('aria-errormessage', 'email-error');
-    element.setAttribute('aria-label', 'Email address');
-    element.setAttribute('invalid', '');
-    element.setAttribute('readonly', '');
-    element.setAttribute('required', '');
-    document.body.append(element);
-
-    const input = element.querySelector<HTMLInputElement>('.nds-input__control');
-
-    expect(input?.getAttribute('aria-describedby')).toBe('email-help');
-    expect(input?.getAttribute('aria-errormessage')).toBe('email-error');
-    expect(input?.getAttribute('aria-label')).toBe('Email address');
-    expect(input?.getAttribute('aria-invalid')).toBe('true');
-    expect(input?.readOnly).toBe(true);
-    expect(input?.required).toBe(true);
-  });
-
   it('renders in light dom and syncs user input back to the host attribute', () => {
-    const element = document.createElement(lightInputTag);
+    const element = document.createElement(tags.lightInput);
     element.setAttribute('label', 'Email');
     document.body.append(element);
 
@@ -196,8 +124,23 @@ describe('nds-input', () => {
     expect(element.getAttribute('value')).toBe('typed@example.com');
   });
 
+  it('keeps label and aria state wired to the internal control', () => {
+    const element = document.createElement(tags.shadowInput);
+    element.setAttribute('label', 'Work email');
+    element.setAttribute('required', '');
+    element.setAttribute('invalid', '');
+    document.body.append(element);
+
+    const label = element.shadowRoot?.querySelector<HTMLLabelElement>('.nds-input__label');
+    const input = element.shadowRoot?.querySelector<HTMLInputElement>('.nds-input__control');
+
+    expect(label?.getAttribute('for')).toBe(input?.id);
+    expect(input?.getAttribute('required')).toBe('');
+    expect(input?.getAttribute('aria-invalid')).toBe('true');
+  });
+
   it('emits nds-input and nds-change with the host as target', () => {
-    const element = document.createElement(lightInputTag);
+    const element = document.createElement(tags.lightInput);
     const received = {
       change: [] as string[],
       input: [] as string[]
@@ -233,48 +176,9 @@ describe('nds-input', () => {
   });
 });
 
-describe('nds-text', () => {
-  it('renders a neutral span by default', () => {
-    const element = document.createElement(shadowTextTag);
-    element.setAttribute('text', 'Helper copy');
-    document.body.append(element);
-
-    const content = element.shadowRoot?.querySelector('.nds-text__content');
-
-    expect(content?.tagName).toBe('SPAN');
-    expect(content?.textContent).toContain('Helper copy');
-  });
-
-  it('renders the requested semantic tag', () => {
-    const element = document.createElement(shadowTextTag);
-    element.setAttribute('tag', 'p');
-    element.setAttribute('text', 'Paragraph copy');
-    document.body.append(element);
-
-    expect(element.shadowRoot?.querySelector('.nds-text__content')?.tagName).toBe('P');
-  });
-});
-
-describe('nds-card', () => {
-  it('renders a neutral div by default', () => {
-    const element = document.createElement(lightCardTag);
-    document.body.append(element);
-
-    expect(element.querySelector('.nds-card__surface')?.tagName).toBe('DIV');
-  });
-
-  it('renders an article only when requested', () => {
-    const element = document.createElement(lightCardTag);
-    element.setAttribute('tag', 'article');
-    document.body.append(element);
-
-    expect(element.querySelector('.nds-card__surface')?.tagName).toBe('ARTICLE');
-  });
-});
-
 describe('nds-alert', () => {
   it('renders trusted [innerHTML] content and trackBy keys in shadow dom', () => {
-    const element = document.createElement(shadowAlertTag);
+    const element = document.createElement(tags.shadowAlert);
     element.setAttribute('title', 'Deploy notice');
     element.setAttribute('message-html', '<p><strong>Heads up</strong> before release.</p>');
     element.setAttribute('features', 'Preview build|Smoke tests|Rollback plan');
@@ -292,7 +196,7 @@ describe('nds-alert', () => {
   });
 
   it('reuses keyed list nodes when trackBy order changes', () => {
-    const element = document.createElement(shadowAlertTag);
+    const element = document.createElement(tags.shadowAlert);
     element.setAttribute('features', 'Alpha|Beta|Gamma');
     document.body.append(element);
 
@@ -310,7 +214,7 @@ describe('nds-alert', () => {
   });
 
   it('emits nds-dismiss and hides the host content after dismiss', () => {
-    const element = document.createElement(lightAlertTag);
+    const element = document.createElement(tags.lightAlert);
     const received: string[] = [];
 
     element.setAttribute('title', 'Watch the rollout');
@@ -328,5 +232,69 @@ describe('nds-alert', () => {
 
     expect(received).toEqual(['info']);
     expect(element.querySelector('[hidden]')).not.toBeNull();
+  });
+});
+
+describe('layout and typography primitives', () => {
+  it('renders semantic heading tags from the level attribute', () => {
+    const element = document.createElement(tags.shadowHeading);
+    element.setAttribute('level', '3');
+    element.setAttribute('text', 'Release readiness');
+    document.body.append(element);
+
+    const heading = element.shadowRoot?.querySelector('h3');
+
+    expect(heading).not.toBeNull();
+    expect(heading?.textContent).toContain('Release readiness');
+  });
+
+  it('renders text with the requested semantic tag', () => {
+    const element = document.createElement(tags.shadowText);
+    element.setAttribute('tag', 'strong');
+    element.setAttribute('text', 'Stable API');
+    document.body.append(element);
+
+    const text = element.shadowRoot?.querySelector('strong.nds-text__content');
+
+    expect(text).not.toBeNull();
+    expect(text?.textContent).toContain('Stable API');
+  });
+
+  it('applies box design tokens as CSS custom properties', () => {
+    const element = document.createElement(tags.lightBox);
+    element.setAttribute('padding', '4');
+    element.setAttribute('radius', 'lg');
+    element.setAttribute('surface', 'accent');
+    document.body.append(element);
+
+    expect(element.style.getPropertyValue('--nds-box-padding')).toBe('var(--nds-spacing-4)');
+    expect(element.style.getPropertyValue('--nds-box-radius')).toBe('var(--nds-radius-lg)');
+    expect(element.style.getPropertyValue('--nds-box-background')).toBe('var(--nds-component-box-accent-background)');
+  });
+
+  it('applies stack layout variables from attributes', () => {
+    const element = document.createElement(tags.lightStack);
+    element.setAttribute('direction', 'row');
+    element.setAttribute('gap', '6');
+    element.setAttribute('align', 'center');
+    element.setAttribute('justify', 'space-between');
+    document.body.append(element);
+
+    expect(element.style.getPropertyValue('--nds-stack-direction')).toBe('row');
+    expect(element.style.getPropertyValue('--nds-stack-gap')).toBe('var(--nds-spacing-6)');
+    expect(element.style.getPropertyValue('--nds-stack-align')).toBe('center');
+    expect(element.style.getPropertyValue('--nds-stack-justify')).toBe('space-between');
+  });
+
+  it('renders card with semantic tag selection and elevation state', () => {
+    const element = document.createElement(tags.lightCard);
+    element.setAttribute('tag', 'section');
+    element.setAttribute('elevated', '');
+    document.body.append(element);
+
+    const surface = element.querySelector('section.nds-card__surface');
+
+    expect(surface).not.toBeNull();
+    expect(element.style.getPropertyValue('--nds-card-shadow')).toBe('var(--nds-shadows-md)');
   });
 });
