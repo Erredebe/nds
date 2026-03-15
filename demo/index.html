@@ -4,15 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="nds-dist-path" content="./dist/index.js" />
-    <title>no-dep-ds | Design system portable entre stacks</title>
+    <title>no-dep-ds | Casos reales para validar fiabilidad</title>
     <meta
       name="description"
-      content="Design system ESM-only con Web Components y cero dependencias runtime. Reutiliza el mismo paquete en HTML, SPAs y despliegues estaticos sin lock-in de framework."
+      content="Demo de no-dep-ds orientada a fiabilidad: formularios reales, estados asincronos, incidentes y comparativas de integracion host con shadow y light DOM."
     />
-    <meta property="og:title" content="no-dep-ds | Design system portable entre stacks" />
+    <meta property="og:title" content="no-dep-ds | Casos reales para validar fiabilidad" />
     <meta
       property="og:description"
-      content="Web Components ESM-only, zero runtime deps y soporte shadow/light DOM para integrar una sola vez y reutilizar en varios entornos."
+      content="Valida flujos reales con Web Components ESM-only, sin dependencias runtime y con evidencia visible de recuperacion, eventos y portabilidad."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://nds1.netlify.app/" />
@@ -31,10 +31,13 @@
 
         <nav class="site-nav" aria-label="Catalogo principal">
           <a data-nav-link href="./index.html">Inicio</a>
-          <a href="#product-demo">Demo real</a>
-          <a href="#why-nds">Por que NDS</a>
+          <a href="#flagship-demo">Flagship</a>
+          <a href="#real-cases">Casos reales</a>
+          <a href="#evidence-matrix">Fiabilidad</a>
           <a href="#catalogo">Catalogo</a>
-          <a data-nav-link href="./components/alert/index.html">Alert</a>
+          <a data-nav-link href="./cases/workspace-rollout/index.html">Workspace rollout</a>
+          <a data-nav-link href="./cases/ops-console/index.html">Ops console</a>
+          <a data-nav-link href="./cases/host-integration/index.html">Host integration</a>
           <a data-nav-link href="./dom-modes/index.html">DOM modes</a>
           <a href="https://github.com/Erredebe/nds" target="_blank" rel="noreferrer">GitHub</a>
         </nav>
@@ -49,119 +52,106 @@
     </header>
 
     <main class="page-shell">
-      <section class="hero">
+      <section class="hero hero--editorial">
         <div class="meta-row">
-          <span class="pill">Portable entre stacks</span>
+          <span class="pill">Casos reales</span>
+          <span class="pill">Estados asincronos</span>
           <span class="pill">Zero runtime deps</span>
-          <span class="pill">Web Components ESM-only</span>
         </div>
 
-        <div class="showcase-grid">
-          <div class="section-heading">
-            <h1>Un design system portable entre stacks, sin dependencias runtime.</h1>
+        <div class="showcase-grid showcase-grid--hero">
+          <div class="section-heading section-heading--wide">
+            <h1>La demo ya no vende solo componentes. Vende comportamiento fiable.</h1>
             <p>
-              Construye con Web Components ESM-only y reutiliza el mismo paquete en HTML, apps SPA y despliegues
-              estaticos sin wrappers obligatorios ni lock-in de framework.
+              Replanteamos la demo para que pruebe lo que importa en produccion: validacion, errores recuperables,
+              eventos del host, persistencia ligera y convivencia real con stacks distintos.
             </p>
-            <div class="hero-proof">
-              <div>
-                <strong>1 paquete</strong>
-                <span>para varios entornos</span>
-              </div>
-              <div>
-                <strong>0 deps runtime</strong>
-                <span>menos coste oculto</span>
-              </div>
-              <div>
-                <strong>shadow / light</strong>
-                <span>aislamiento o integracion</span>
-              </div>
-            </div>
             <div class="hero-actions">
-              <a class="action-link action-link--primary" href="#product-demo">Ver demo real</a>
-              <a class="action-link" href="#quickstart">Copiar quickstart</a>
-              <a class="action-link" href="./dom-modes/index.html">Ver DOM modes</a>
-              <a class="action-link" href="https://github.com/Erredebe/nds" target="_blank" rel="noreferrer">Ver GitHub</a>
+              <a class="action-link action-link--primary" href="#flagship-demo">Abrir flagship demo</a>
+              <a class="action-link" href="#real-cases">Ver todos los casos</a>
+              <a class="action-link" href="./cases/workspace-rollout/index.html">Abrir caso completo</a>
             </div>
           </div>
 
-          <div class="panel hero-panel">
-            <div class="hero-panel__header">
-              <span class="pill">Mismo contrato de uso</span>
-              <span class="hero-panel__caption">HTML, React, Vue, Astro o donde lo necesites</span>
+          <aside class="panel panel--metrics">
+            <div class="section-heading section-heading--compact">
+              <h2>Que probamos aqui</h2>
+              <p>No slogans: evidencia visible de resiliencia y contrato estable.</p>
             </div>
-            <div class="hero-stack-grid">
-              <article class="stack-chip-card">
-                <strong>HTML</strong>
-                <span>Define componentes y listo.</span>
+
+            <div class="metric-grid">
+              <article class="metric-card">
+                <strong>Validacion y retry</strong>
+                <span>Errores previos al submit, timeouts simulados y recuperacion guiada.</span>
               </article>
-              <article class="stack-chip-card">
-                <strong>SPA</strong>
-                <span>Usa el mismo paquete sin wrappers obligatorios.</span>
+              <article class="metric-card">
+                <strong>Estado observable</strong>
+                <span>Payload, timeline, badging y feedback renderizados desde el host.</span>
               </article>
-              <article class="stack-chip-card">
-                <strong>Static hosting</strong>
-                <span>Publica la demo y el paquete con el mismo build.</span>
+              <article class="metric-card">
+                <strong>Portabilidad real</strong>
+                <span>Mismo paquete para docs, producto, marketing y herramientas internas.</span>
               </article>
-              <article class="stack-chip-card">
-                <strong>Design tokens</strong>
-                <span>Temas y estilos publicados desde <code>styles.css</code>.</span>
+              <article class="metric-card">
+                <strong>Shadow y light</strong>
+                <span>Comparativa para aislar UI o integrarla en hosts con estilos agresivos.</span>
               </article>
             </div>
-            <div class="hero-inline-snippet">
-              <span class="pill">npm</span>
-              <code>npm install no-dep-ds</code>
-            </div>
-          </div>
+          </aside>
         </div>
       </section>
 
       <p class="demo-error" data-demo-error hidden></p>
 
-      <section class="section trust-strip">
+      <section class="section evidence-strip">
         <article class="trust-card">
-          <h2>Portabilidad real</h2>
-          <p>Un solo paquete para varios proyectos y stacks, sin rehacer el DS por framework.</p>
+          <h2>Fiabilidad de formularios</h2>
+          <p>Campos coordinados, payload visible, estado guardado y errores antes de romper el flujo.</p>
         </article>
         <article class="trust-card">
-          <h2>Menos peso operativo</h2>
-          <p>Cero dependencias runtime para reducir superficie de fallo y dependencias transitivas.</p>
+          <h2>Fiabilidad operativa</h2>
+          <p>Alertas, dialogos y botones usados en procesos con rollback, handoff y trazabilidad.</p>
         </article>
         <article class="trust-card">
-          <h2>Control del DOM</h2>
-          <p><code>shadow</code> por defecto y <code>light</code> cuando la integracion del host lo pide.</p>
+          <h2>Fiabilidad de integracion</h2>
+          <p>Comparativa entre aislamiento y acoplamiento host para decidir DOM mode con criterio.</p>
         </article>
       </section>
 
-      <section class="section" id="product-demo">
+      <section class="section" id="flagship-demo">
         <div class="section-heading section-heading--wide">
-          <h2>Demo real: onboarding portable</h2>
+          <h2>Flagship demo: rollout de un workspace multi-stack</h2>
           <p>
-            No es una galeria de piezas sueltas. Este flujo muestra formularios, estado, feedback y dialogos con el
-            mismo paquete que luego publicas.
+            Este flujo ya no enseña solo inputs bonitos. Simula una implantacion con draft persistido, validacion,
+            estados de despliegue, timeout recuperable y evidencia de que el host conserva el control.
           </p>
         </div>
 
-        <div class="product-demo-grid">
+        <div class="product-demo-grid" data-workspace-demo>
           <article class="demo-panel product-demo-panel">
             <div class="section-heading">
-              <h3>Configura un espacio nuevo</h3>
-              <p>Simula un flujo de adopcion y revisa eventos, estado visual y combinacion de componentes.</p>
+              <h3>Configura la simulacion</h3>
+              <p>Elige el stack, la estrategia de DOM y el escenario operativo que quieres poner a prueba.</p>
             </div>
 
-            <form class="adoption-form" data-home-demo-form>
-              <nds-field label="Work email" required description="Usa un email de equipo para compartir tokens y temas.">
+            <div class="demo-note demo-note--strong">
+              El draft se guarda en local y se restaura al recargar. La simulacion se resuelve desde el host, sin
+              listeners sobre nodos internos.
+            </div>
+
+            <form class="adoption-form" novalidate>
+              <nds-field label="Work email" required description="Email de quien lidera el rollout inicial.">
                 <nds-input
                   name="email"
                   type="email"
-                  placeholder="team@example.com"
+                  placeholder="platform@example.com"
                   value="platform@example.com"
                   data-demo-events="nds-input,nds-change"
                   data-demo-log="#home-event-log"
                 ></nds-input>
               </nds-field>
 
-              <nds-field label="Equipo principal" description="Selecciona donde desplegarias primero el sistema.">
+              <nds-field label="Equipo owner" description="Equipo responsable del primer despliegue.">
                 <nds-select
                   name="team"
                   value="platform"
@@ -180,12 +170,32 @@
                 data-demo-log="#home-event-log"
               ></nds-radio-group>
 
-              <nds-field label="Contexto de adopcion" description="Que necesitas resolver en la primera integracion.">
+              <nds-field label="Modo DOM preferido" description="Decide si priorizas aislamiento o style hooks del host.">
+                <nds-select
+                  name="domMode"
+                  value="shadow"
+                  options="shadow:Shadow por defecto|light:Light para host styles|mixed:Mixed por componente"
+                  data-demo-events="nds-input,nds-change"
+                  data-demo-log="#home-event-log"
+                ></nds-select>
+              </nds-field>
+
+              <nds-field label="Escenario de fiabilidad" description="Que quieres demostrar en la demo.">
+                <nds-select
+                  name="scenario"
+                  value="success"
+                  options="success:Happy path con validacion|timeout:Timeout con retry|approval:Bloqueo por aprobacion"
+                  data-demo-events="nds-input,nds-change"
+                  data-demo-log="#home-event-log"
+                ></nds-select>
+              </nds-field>
+
+              <nds-field label="Contexto de integracion" description="Incluye restricciones reales del host o del equipo.">
                 <nds-textarea
                   name="notes"
                   rows="4"
-                  placeholder="Design system para marketing, producto y app interna."
-                  value="Queremos unificar formularios y superficies sin acoplarnos a un framework unico."
+                  placeholder="Marketing en Astro, dashboard en React y admin interna sin wrappers propios."
+                  value="Necesitamos un rollout rapido entre marketing, producto y ops con un mismo contrato de integracion."
                   data-demo-events="nds-input,nds-change"
                   data-demo-log="#home-event-log"
                 ></nds-textarea>
@@ -195,117 +205,176 @@
                 name="updates"
                 value="yes"
                 checked
-                label="Quiero la guia de integracion multi-stack"
-                description="Incluye quickstart, theming y decision tree para shadow/light DOM."
+                label="Guardar draft y playbook de recuperacion"
+                description="La demo recuerda el draft y expone pasos de recuperacion cuando el rollout falla."
                 data-demo-events="nds-input,nds-change"
                 data-demo-log="#home-event-log"
               ></nds-checkbox>
 
               <div class="hero-actions hero-actions--compact">
-                <nds-button data-home-demo-submit data-demo-events="nds-click" data-demo-log="#home-event-log">
-                  Simular adopcion
+                <nds-button data-workspace-submit data-demo-events="nds-click" data-demo-log="#home-event-log">
+                  Ejecutar simulacion
                 </nds-button>
                 <nds-button
                   variant="outline"
-                  data-home-demo-dialog-open
+                  data-workspace-force-timeout
                   data-demo-events="nds-click"
                   data-demo-log="#home-event-log"
                 >
-                  Ver comparativa
+                  Forzar timeout
                 </nds-button>
-                <button class="copy-button" type="reset">Reset</button>
+                <nds-button
+                  variant="ghost"
+                  data-workspace-dialog-open
+                  data-demo-events="nds-click"
+                  data-demo-log="#home-event-log"
+                >
+                  Ver decision tree
+                </nds-button>
+                <button class="copy-button" type="button" data-workspace-reset>Limpiar draft</button>
               </div>
             </form>
           </article>
 
           <article class="demo-panel product-status-panel">
             <div class="section-heading">
-              <h3>Lo que esta vendiendo el producto</h3>
-              <p>La UI responde con el mismo contrato que usaria una app consumidora del paquete.</p>
+              <h3>Resultado observable del host</h3>
+              <p>Todo lo que cambia aqui sale del host que consume el componente: badges, alert, timeline y payload.</p>
             </div>
 
             <div class="demo-badge-row">
-              <nds-badge id="home-stack-badge" tone="info" emphasis="solid">Stack: Astro</nds-badge>
-              <nds-badge tone="success">Zero runtime deps</nds-badge>
+              <nds-badge id="home-state-badge" tone="info" emphasis="solid">Estado: Draft</nds-badge>
+              <nds-badge id="home-stack-badge" tone="info">Stack: Astro</nds-badge>
               <nds-badge id="home-team-badge" tone="neutral">Team: Platform</nds-badge>
+              <nds-badge id="home-scenario-badge" tone="warning">Escenario: Happy path</nds-badge>
             </div>
 
             <div class="demo-preview demo-preview--dense">
               <nds-alert
                 id="home-adoption-alert"
-                title="Listo para una primera integracion"
-                tone="success"
-                message="El mismo paquete puede cubrir marketing, producto y apps internas sin cambiar de DS."
-                features="Un solo contrato|Menos lock-in|Build publicable"
+                title="Draft listo para validar"
+                tone="info"
+                message="Ajusta el escenario y ejecuta la simulacion para ver como responde el host ante estados reales."
+                features="Persistencia local|Eventos del host|Sin runtime extra"
               ></nds-alert>
             </div>
 
+            <div class="mini-grid status-grid">
+              <article class="mini-swatch">
+                <strong>Draft</strong>
+                <p class="visually-muted" id="home-draft-status">Guardado y restaurable.</p>
+              </article>
+              <article class="mini-swatch">
+                <strong>Resultado</strong>
+                <p class="visually-muted" id="home-result-status">Pendiente de simulacion.</p>
+              </article>
+              <article class="mini-swatch">
+                <strong>Contrato</strong>
+                <p class="visually-muted">Eventos `nds-*` y estado dirigido por atributos y props del host.</p>
+              </article>
+            </div>
+
             <div class="proof-card">
-              <h4>Resumen de adopcion</h4>
+              <h4>Checklist de fiabilidad</h4>
               <ul class="component-list" id="home-adoption-summary">
-                <li>Email de equipo: platform@example.com</li>
-                <li>Equipo principal: Platform</li>
+                <li>Email owner: platform@example.com</li>
+                <li>Equipo owner: Platform</li>
                 <li>Stack prioritario: Astro</li>
-                <li>Guia multi-stack: solicitada</li>
+                <li>Modo DOM: Shadow por defecto</li>
+                <li>Escenario: Happy path con validacion</li>
               </ul>
             </div>
 
             <div class="snippet-toolbar">
-              <span class="pill">Eventos del host</span>
-              <span class="visually-muted">Sin listeners sobre nodos internos</span>
+              <span class="pill">Payload host</span>
+              <span class="visually-muted">Preview del contrato que consumiria tu app</span>
+            </div>
+            <pre class="snippet snippet--compact" id="home-payload-preview"><code>{}</code></pre>
+
+            <div class="snippet-toolbar">
+              <span class="pill">Timeline</span>
+              <span class="visually-muted">Estados operativos recientes</span>
             </div>
             <div class="demo-log" id="home-event-log">
-              <div data-log-placeholder>Interactua con el flujo para ver eventos de componentes reales.</div>
+              <div data-log-placeholder>Interactua con el flujo para ver transiciones, eventos y recuperacion.</div>
             </div>
           </article>
         </div>
 
         <nds-dialog
           id="home-adoption-dialog"
-          title="Por que gana fuera de un solo framework"
-          description="Mismo paquete, mismo estilo de uso y menos coste de mantenimiento entre proyectos."
+          title="Decision tree para elegir DOM mode"
+          description="Elige el modo segun el nivel de control del host, no solo por preferencia estetica."
           data-demo-events="nds-open,nds-close"
           data-demo-log="#home-event-log"
         >
           <div class="dialog-proof-grid">
             <article class="stack-chip-card">
-              <strong>HTML</strong>
-              <span>Componentes listos para sitios estaticos y prototipos.</span>
+              <strong>Shadow</strong>
+              <span>Aislamiento estable para producto, paneles internos y superficies con CSS host impredecible.</span>
             </article>
             <article class="stack-chip-card">
-              <strong>React / Vue</strong>
-              <span>El equipo comparte tokens y componentes sin duplicar implementaciones.</span>
+              <strong>Light</strong>
+              <span>Util si el host necesita hooks de estilo directos o analitica sobre el DOM final.</span>
             </article>
             <article class="stack-chip-card">
-              <strong>Astro / Netlify</strong>
-              <span>El build publicado sirve igual para demo, docs y consumo real.</span>
+              <strong>Mixed</strong>
+              <span>Compromiso util cuando solo uno o dos componentes deben abrirse al host.</span>
             </article>
           </div>
         </nds-dialog>
       </section>
 
-      <section class="section" id="why-nds">
+      <section class="section" id="real-cases">
+        <div class="section-heading section-heading--wide">
+          <h2>Casos reales priorizados</h2>
+          <p>
+            El objetivo es que la demo cuente historias de producto. Cada caso conecta componentes con una situacion
+            real donde la fiabilidad se percibe de inmediato.
+          </p>
+        </div>
+
+        <div class="case-grid">
+          <a class="case-card" href="./cases/workspace-rollout/index.html">
+            <span class="pill">Formularios</span>
+            <strong>Workspace rollout</strong>
+            <p>Draft persistido, validacion, timeout con retry y payload host listo para integracion.</p>
+          </a>
+          <a class="case-card" href="./cases/ops-console/index.html">
+            <span class="pill">Feedback</span>
+            <strong>Ops console</strong>
+            <p>Alertas, badges, dialogos y botones coordinados en una respuesta a incidente con rollback.</p>
+          </a>
+          <a class="case-card" href="./cases/host-integration/index.html">
+            <span class="pill">Integracion</span>
+            <strong>Host integration lab</strong>
+            <p>Comparativa entre shadow, light y mixed cuando el host impone estilos y restricciones reales.</p>
+          </a>
+        </div>
+      </section>
+
+      <section class="section" id="evidence-matrix">
         <div class="section-heading">
-          <h2>Por que elegir no-dep-ds</h2>
-          <p>La ventaja no es solo tecnica. Es operacional: menos lock-in, menos duplicacion y mas control.</p>
+          <h2>Matriz de evidencia</h2>
+          <p>La demo debe dejar claro que el producto resiste cambios y no solo reproduce estados felices.</p>
         </div>
 
         <div class="compare-grid">
           <article class="demo-panel compare-card">
-            <h3>Un solo paquete para varios stacks</h3>
-            <p>Evita mantener varios kits visuales segun framework o contexto de despliegue.</p>
+            <h3>Validacion antes de fallar</h3>
+            <p>Email y contexto insuficiente bloquean la simulacion sin romper el estado actual.</p>
           </article>
           <article class="demo-panel compare-card">
-            <h3>Cero deps runtime</h3>
-            <p>Menos dependencias transitivas, menos peso operativo y menos superficie de fallo.</p>
+            <h3>Persistencia ligera</h3>
+            <p>El draft vuelve tras un reload y evita perder contexto durante sesiones de evaluacion.</p>
           </article>
           <article class="demo-panel compare-card">
-            <h3>Aislamiento o integracion</h3>
-            <p><code>shadow</code> cuando prima el encapsulamiento, <code>light</code> cuando el host necesita control.</p>
+            <h3>Errores recuperables</h3>
+            <p>Timeout y bloqueo por aprobacion muestran siguientes pasos claros en lugar de callejones sin salida.</p>
           </article>
           <article class="demo-panel compare-card">
-            <h3>Build publicable</h3>
-            <p>La demo consume el mismo build que publicas, en lugar de depender de una maqueta separada.</p>
+            <h3>Contrato publico</h3>
+            <p>La integracion escucha eventos `nds-*` desde el host y decide el estado visible con su propia logica.</p>
           </article>
         </div>
       </section>
@@ -313,14 +382,14 @@
       <section class="section two-column" id="catalogo">
         <article class="demo-panel">
           <div class="section-heading">
-            <h2>Catalogo del producto</h2>
-            <p>La home enseña el valor; el catalogo te deja inspeccionar piezas, API y comportamiento visible.</p>
+            <h2>Catalogo tecnico</h2>
+            <p>El catalogo sigue disponible para inspeccionar API y markup, pero ahora acompana a los casos reales.</p>
           </div>
 
           <div class="family-grid">
             <a class="family-card" href="./components/button/index.html">
               <strong>Actions</strong>
-              <span>Button, button variants y eventos del host.</span>
+              <span>Button, variantes y eventos del host.</span>
             </a>
             <a class="family-card" href="./components/input/index.html">
               <strong>Forms</strong>
@@ -328,25 +397,21 @@
             </a>
             <a class="family-card" href="./components/alert/index.html">
               <strong>Feedback</strong>
-              <span>Alert, badge y dialog para estados, aviso y confirmacion.</span>
+              <span>Alert, badge y dialog para estados, incidentes y confirmacion.</span>
             </a>
             <a class="family-card" href="./components/card/index.html">
               <strong>Layout</strong>
-              <span>Box, stack y card para composicion y superficies reutilizables.</span>
-            </a>
-            <a class="family-card" href="./components/text/index.html">
-              <strong>Content</strong>
-              <span>Text y heading para jerarquia editorial consistente.</span>
+              <span>Box, stack y card para superficies de producto y docs.</span>
             </a>
             <a class="family-card" href="./dom-modes/index.html">
               <strong>DOM modes</strong>
-              <span>Prueba visual de <code>shadow</code> y <code>light</code> segun integracion.</span>
+              <span>Comparativa dedicada entre shadow, light y mixed.</span>
             </a>
           </div>
 
           <div class="section-heading section-heading--compact">
-            <h3>Demos disponibles</h3>
-            <p>Cobertura directa para todos los componentes publicados hoy.</p>
+            <h3>Demos de componentes</h3>
+            <p>Cobertura para todos los componentes publicados hoy.</p>
           </div>
 
           <div class="component-link-grid">
@@ -371,83 +436,33 @@
 
         <article class="demo-panel">
           <div class="section-heading">
-            <h2>Funciona donde trabajas</h2>
-            <p>La integracion no cambia de filosofia segun el stack: defines componentes, cargas estilos y ya estas dentro.</p>
+            <h2>Como leer esta demo ahora</h2>
+            <p>Primero valida comportamiento; despues entra al catalogo para revisar la API de cada pieza.</p>
           </div>
 
-          <div class="stack-proof-grid">
-            <article class="mini-swatch">
-              <strong>HTML</strong>
-              <p class="visually-muted">Sitios estaticos, CMS y prototipos funcionales.</p>
-            </article>
-            <article class="mini-swatch">
-              <strong>React</strong>
-              <p class="visually-muted">Apps de producto sin rehacer la libreria visual.</p>
-            </article>
-            <article class="mini-swatch">
-              <strong>Vue</strong>
-              <p class="visually-muted">Mismo lenguaje visual entre equipos distintos.</p>
-            </article>
-            <article class="mini-swatch">
-              <strong>Astro</strong>
-              <p class="visually-muted">Ideal para marketing y docs con el mismo paquete.</p>
-            </article>
-          </div>
-        </article>
-      </section>
-
-      <section class="section two-column" id="quickstart">
-        <article class="demo-panel">
-          <div class="section-heading">
-            <h2>Instalacion y uso minimo</h2>
-            <p>El contrato de arranque es pequeno: importas el paquete, registras componentes y aplicas tema.</p>
-          </div>
-          <div class="snippet-toolbar">
-            <span class="pill">Quick start</span>
-            <button class="copy-button" type="button" data-copy-target="home-quickstart">Copiar</button>
-          </div>
-          <pre class="snippet" id="home-quickstart"><code>import { defineAllComponents, setTheme } from 'no-dep-ds';
-import 'no-dep-ds/styles.css';
-
-defineAllComponents();
-setTheme('light');
-
-document.body.innerHTML = `
-  &lt;nds-card elevated&gt;
-    &lt;nds-stack gap="4"&gt;
-      &lt;nds-heading level="3"&gt;Portable UI&lt;/nds-heading&gt;
-      &lt;nds-text&gt;Mismo paquete para marketing, producto y apps internas.&lt;/nds-text&gt;
-      &lt;nds-button&gt;Primary action&lt;/nds-button&gt;
-    &lt;/nds-stack&gt;
-  &lt;/nds-card&gt;
-`;</code></pre>
-        </article>
-
-        <article class="demo-panel">
-          <div class="section-heading">
-            <h2>Lo que demuestra esta landing</h2>
-            <p>La propuesta no se queda en slogans: hay una demo viva, familias de componentes y una historia clara de adopcion.</p>
-          </div>
           <ul class="component-list">
-            <li>Mismo paquete para demo, integracion y despliegue.</li>
-            <li>Portabilidad entre HTML, SPA y hosting estatico.</li>
-            <li>Eventos publicos del host, no listeners sobre implementaciones internas.</li>
-            <li>Soporte visible para formularios, feedback, layout y contenido.</li>
-            <li>Prueba dedicada de <code>shadow</code> y <code>light</code> DOM en <a href="./dom-modes/index.html">DOM modes</a>.</li>
+            <li>Empieza por `Workspace rollout` si quieres evaluar formularios, estado y retry.</li>
+            <li>Abre `Ops console` para ver feedback y dialogos en una operacion con riesgo.</li>
+            <li>Usa `Host integration lab` para decidir cuando necesitas `shadow`, `light` o un mix.</li>
+            <li>Consulta `DOM modes` si quieres la comparativa corta y tecnica.</li>
+            <li>Entra al catalogo cuando necesites atributos, eventos y snippets concretos.</li>
           </ul>
         </article>
       </section>
 
       <section class="section final-cta">
         <div class="section-heading">
-          <h2>Construye una vez. Reutiliza en varios contextos.</h2>
-          <p>Si evaluas un design system para equipos externos, aqui puedes ver el producto, entender por que gana y empezar a integrarlo.</p>
+          <h2>Construye una vez. Demuestra fiabilidad en varios contextos.</h2>
+          <p>
+            La demo ya no es solo una vitrina de componentes. Es una prueba de que el mismo paquete aguanta estados,
+            integraciones y decisiones reales de producto.
+          </p>
         </div>
 
         <div class="hero-actions">
-          <a class="action-link action-link--primary" href="#product-demo">Abrir demo real</a>
-          <a class="action-link" href="#catalogo">Explorar catalogo</a>
-          <a class="action-link" href="https://github.com/Erredebe/nds" target="_blank" rel="noreferrer">Revisar codigo</a>
+          <a class="action-link action-link--primary" href="./cases/workspace-rollout/index.html">Abrir caso flagship</a>
+          <a class="action-link" href="./cases/ops-console/index.html">Revisar incidente</a>
+          <a class="action-link" href="./cases/host-integration/index.html">Comparar integracion</a>
         </div>
       </section>
     </main>

@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="nds-dist-path" content="../../dist/index.js" />
+    <title>no-dep-ds | Workspace rollout</title>
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../../assets/site.css" />
+    <link rel="stylesheet" href="../../dist/styles.css" />
+    <script type="module" src="../../assets/site.js"></script>
+  </head>
+  <body data-theme="light">
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="../../index.html">
+          <span class="site-brand__mark">NDS</span>
+          <span>no-dep-ds</span>
+        </a>
+        <nav class="site-nav" aria-label="Casos reales">
+          <a data-nav-link href="../../index.html">Inicio</a>
+          <a data-nav-link href="./index.html">Workspace rollout</a>
+          <a data-nav-link href="../ops-console/index.html">Ops console</a>
+          <a data-nav-link href="../host-integration/index.html">Host integration</a>
+          <a data-nav-link href="../../dom-modes/index.html">DOM modes</a>
+        </nav>
+        <div class="header-actions">
+          <button class="theme-toggle" type="button" data-theme-toggle>
+            Tema
+            <span data-theme-label>light</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="hero">
+        <div class="meta-row">
+          <span class="pill">Caso flagship</span>
+          <span class="pill">Persistencia</span>
+          <span class="pill">Retry</span>
+        </div>
+        <div class="section-heading section-heading--wide">
+          <h1>Workspace rollout</h1>
+          <p>
+            Caso completo para evaluar un flujo de integracion: captura de contexto, simulacion de despliegue,
+            timeout, aprobacion pendiente y recuperacion visible sin romper el draft del usuario.
+          </p>
+        </div>
+      </section>
+
+      <p class="demo-error" data-demo-error hidden></p>
+
+      <section class="section two-column case-summary-grid">
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Que valida este caso</h2>
+            <p>La pregunta no es si los componentes se ven bien, sino si el flujo se sostiene cuando aparecen fricciones.</p>
+          </div>
+          <ul class="component-list">
+            <li>Validacion previa al submit.</li>
+            <li>Draft persistido entre recargas.</li>
+            <li>Estado `loading`, `success` y error recuperable.</li>
+            <li>Payload visible preparado por el host.</li>
+            <li>Decision tree para `shadow`, `light` y `mixed`.</li>
+          </ul>
+        </article>
+
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Prueba rapida recomendada</h2>
+            <p>Haz estas tres acciones para percibir la fiabilidad sin leer codigo.</p>
+          </div>
+          <ol class="component-list component-list--ordered">
+            <li>Ejecuta el happy path y revisa el payload.</li>
+            <li>Fuerza un timeout y comprueba el playbook de recuperacion.</li>
+            <li>Recarga la pagina para verificar la restauracion del draft.</li>
+          </ol>
+          <div class="callout callout--soft">
+            Consejo: prueba tambien solo con teclado. El caso gana credibilidad cuando puedes recorrerlo, dispararlo y
+            entender el resultado sin depender del raton.
+          </div>
+        </article>
+      </section>
+
+      <section class="section" data-workspace-demo>
+        <div class="product-demo-grid">
+          <article class="demo-panel product-demo-panel">
+            <div class="section-heading">
+              <h2>Simulador</h2>
+              <p>Usa el mismo contrato de componentes que consumiria una app real.</p>
+            </div>
+
+            <form class="adoption-form" novalidate>
+              <nds-field label="Work email" required description="Owner del rollout en la primera ola.">
+                <nds-input
+                  name="email"
+                  type="email"
+                  placeholder="platform@example.com"
+                  value="platform@example.com"
+                  data-demo-events="nds-input,nds-change"
+                  data-demo-log="#workspace-event-log"
+                ></nds-input>
+              </nds-field>
+
+              <nds-field label="Equipo owner">
+                <nds-select
+                  name="team"
+                  value="platform"
+                  options="platform:Platform|product:Product|growth:Growth|ops:Operations"
+                  data-demo-events="nds-input,nds-change"
+                  data-demo-log="#workspace-event-log"
+                ></nds-select>
+              </nds-field>
+
+              <nds-radio-group
+                label="Stack prioritario"
+                name="stack"
+                value="react"
+                options="html:HTML|react:React|vue:Vue|astro:Astro"
+                data-demo-events="nds-change"
+                data-demo-log="#workspace-event-log"
+              ></nds-radio-group>
+
+              <nds-field label="Modo DOM preferido">
+                <nds-select
+                  name="domMode"
+                  value="mixed"
+                  options="shadow:Shadow por defecto|light:Light para host styles|mixed:Mixed por componente"
+                  data-demo-events="nds-input,nds-change"
+                  data-demo-log="#workspace-event-log"
+                ></nds-select>
+              </nds-field>
+
+              <nds-field label="Escenario de fiabilidad">
+                <nds-select
+                  name="scenario"
+                  value="timeout"
+                  options="success:Happy path con validacion|timeout:Timeout con retry|approval:Bloqueo por aprobacion"
+                  data-demo-events="nds-input,nds-change"
+                  data-demo-log="#workspace-event-log"
+                ></nds-select>
+              </nds-field>
+
+              <nds-field label="Contexto de integracion">
+                <nds-textarea
+                  name="notes"
+                  rows="5"
+                  placeholder="Incluye dependencias del host, restricciones CSS y equipos afectados."
+                  value="El host principal vive en React, pero marketing sigue en Astro y operaciones necesita una consola aislada."
+                  data-demo-events="nds-input,nds-change"
+                  data-demo-log="#workspace-event-log"
+                ></nds-textarea>
+              </nds-field>
+
+              <nds-checkbox
+                name="updates"
+                value="yes"
+                checked
+                label="Guardar draft y playbook"
+                description="Si hay error, el host conserva el estado y sugiere siguientes pasos."
+                data-demo-events="nds-input,nds-change"
+                data-demo-log="#workspace-event-log"
+              ></nds-checkbox>
+
+              <div class="hero-actions hero-actions--compact">
+                <nds-button data-workspace-submit data-demo-events="nds-click" data-demo-log="#workspace-event-log">
+                  Ejecutar simulacion
+                </nds-button>
+                <nds-button
+                  variant="outline"
+                  data-workspace-force-timeout
+                  data-demo-events="nds-click"
+                  data-demo-log="#workspace-event-log"
+                >
+                  Forzar timeout
+                </nds-button>
+                <nds-button
+                  variant="ghost"
+                  data-workspace-dialog-open
+                  data-demo-events="nds-click"
+                  data-demo-log="#workspace-event-log"
+                >
+                  Ver decision tree
+                </nds-button>
+                <button class="copy-button" type="button" data-workspace-reset>Limpiar draft</button>
+              </div>
+            </form>
+          </article>
+
+          <article class="demo-panel product-status-panel">
+            <div class="section-heading">
+              <h2>Estado del host</h2>
+              <p>Badges, alert y payload responden al escenario sin tocar internals del componente.</p>
+            </div>
+
+            <div class="callout callout--soft">
+              La lectura recomendada es: badges para orientarte, alert para entender el outcome, payload para validar el
+              contrato y timeline para seguir la historia del flujo.
+            </div>
+
+            <div class="demo-badge-row">
+              <nds-badge id="home-state-badge" tone="info" emphasis="solid">Estado: Draft</nds-badge>
+              <nds-badge id="home-stack-badge" tone="info">Stack: React</nds-badge>
+              <nds-badge id="home-team-badge" tone="neutral">Team: Platform</nds-badge>
+              <nds-badge id="home-scenario-badge" tone="warning">Escenario: Timeout con retry</nds-badge>
+            </div>
+
+            <div class="demo-preview demo-preview--dense">
+              <nds-alert
+                id="home-adoption-alert"
+                tone="warning"
+                title="Caso listo para una prueba de timeout"
+                message="Lanza la simulacion para ver como el host conserva contexto y propone recuperacion."
+                features="Draft persistido|Retry guiado|Payload observable"
+              ></nds-alert>
+            </div>
+
+            <div class="mini-grid status-grid">
+              <article class="mini-swatch">
+                <strong>Draft</strong>
+                <p class="visually-muted" id="home-draft-status">Guardado y restaurable.</p>
+              </article>
+              <article class="mini-swatch">
+                <strong>Resultado</strong>
+                <p class="visually-muted" id="home-result-status">Pendiente de simulacion.</p>
+              </article>
+              <article class="mini-swatch">
+                <strong>Recuperacion</strong>
+                <p class="visually-muted">Timeout y aprobacion pendiente incluyen siguientes pasos visibles.</p>
+              </article>
+            </div>
+
+            <div class="proof-card">
+              <h4>Checklist</h4>
+              <ul class="component-list" id="home-adoption-summary">
+                <li>Email owner: platform@example.com</li>
+                <li>Equipo owner: Platform</li>
+                <li>Stack prioritario: React</li>
+                <li>Modo DOM: Mixed por componente</li>
+                <li>Escenario: Timeout con retry</li>
+              </ul>
+            </div>
+
+            <div class="snippet-toolbar">
+              <span class="pill">Payload host</span>
+              <span class="visually-muted">Lo que podria viajar a tu API o pipeline</span>
+            </div>
+            <pre class="snippet snippet--compact" id="home-payload-preview"><code>{}</code></pre>
+
+            <div class="snippet-toolbar">
+              <span class="pill">Timeline</span>
+              <span class="visually-muted">Ultimos eventos y transiciones del host</span>
+            </div>
+            <div class="demo-log" id="workspace-event-log">
+              <div data-log-placeholder>Interactua con el simulador para registrar cambios de estado y eventos.</div>
+            </div>
+          </article>
+        </div>
+
+        <nds-dialog
+          id="home-adoption-dialog"
+          title="Decision tree de DOM mode"
+          description="Piensa en aislamiento, estilo del host y necesidad de inspeccionar el DOM final."
+          data-demo-events="nds-open,nds-close"
+          data-demo-log="#workspace-event-log"
+        >
+          <div class="dialog-proof-grid">
+            <article class="stack-chip-card">
+              <strong>Shadow</strong>
+              <span>Recomendado cuando el host es impredecible o compartido entre varios equipos.</span>
+            </article>
+            <article class="stack-chip-card">
+              <strong>Light</strong>
+              <span>Abre el DOM al host si necesitas style hooks, test selectors o herencia de CSS controlada.</span>
+            </article>
+            <article class="stack-chip-card">
+              <strong>Mixed</strong>
+              <span>Mantiene aislamiento general y expone solo componentes concretos al host.</span>
+            </article>
+          </div>
+        </nds-dialog>
+      </section>
+    </main>
+  </body>
+</html>

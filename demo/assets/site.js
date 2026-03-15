@@ -81,6 +81,46 @@ const appendLogEntry = (container, message) => {
   }
 };
 
+const ensureLiveAnnouncer = () => {
+  let announcer = document.querySelector('[data-demo-announcer]');
+
+  if (announcer instanceof HTMLElement) {
+    return announcer;
+  }
+
+  announcer = document.createElement('div');
+  announcer.className = 'sr-only';
+  announcer.setAttribute('aria-live', 'polite');
+  announcer.setAttribute('aria-atomic', 'true');
+  announcer.setAttribute('data-demo-announcer', '');
+  document.body.append(announcer);
+  return announcer;
+};
+
+const announce = (message) => {
+  const announcer = ensureLiveAnnouncer();
+
+  announcer.textContent = '';
+
+  window.setTimeout(() => {
+    announcer.textContent = message;
+  }, 20);
+};
+
+const pulseElement = (element) => {
+  if (!(element instanceof HTMLElement)) {
+    return;
+  }
+
+  element.classList.remove('is-updated');
+  window.requestAnimationFrame(() => {
+    element.classList.add('is-updated');
+    window.setTimeout(() => {
+      element.classList.remove('is-updated');
+    }, 900);
+  });
+};
+
 const bindCopyButtons = () => {
   document.querySelectorAll('[data-copy-target]').forEach((element) => {
     if (!(element instanceof HTMLButtonElement)) {
@@ -198,168 +238,540 @@ const bindAlertPlayground = () => {
   updateStatus();
 };
 
-const bindHomeDemo = () => {
-  const form = document.querySelector('[data-home-demo-form]');
-  const submitButton = document.querySelector('[data-home-demo-submit]');
-  const dialogButton = document.querySelector('[data-home-demo-dialog-open]');
-  const dialog = document.querySelector('#home-adoption-dialog');
-  const alert = document.querySelector('#home-adoption-alert');
-  const stackBadge = document.querySelector('#home-stack-badge');
-  const teamBadge = document.querySelector('#home-team-badge');
-  const summary = document.querySelector('#home-adoption-summary');
-  const log = document.querySelector('#home-event-log');
+const workspaceStorageKey = 'nds-demo-workspace-draft-v2';
 
-  if (
-    !(form instanceof HTMLFormElement) ||
-    !(submitButton instanceof HTMLElement) ||
-    !(dialogButton instanceof HTMLElement) ||
-    !(dialog instanceof HTMLElement) ||
-    !(alert instanceof HTMLElement) ||
-    !(stackBadge instanceof HTMLElement) ||
-    !(teamBadge instanceof HTMLElement) ||
-    !(summary instanceof HTMLElement) ||
-    !(log instanceof HTMLElement)
-  ) {
-    return;
-  }
+const bindWorkspaceDemos = () => {
+  document.querySelectorAll('[data-workspace-demo]').forEach((container) => {
+    const form = container.querySelector('form');
+    const submitButton = container.querySelector('[data-workspace-submit]');
+    const timeoutButton = container.querySelector('[data-workspace-force-timeout]');
+    const dialogButton = container.querySelector('[data-workspace-dialog-open]');
+    const resetButton = container.querySelector('[data-workspace-reset]');
+    const dialog = container.querySelector('#home-adoption-dialog');
+    const alert = container.querySelector('#home-adoption-alert');
+    const stateBadge = container.querySelector('#home-state-badge');
+    const stackBadge = container.querySelector('#home-stack-badge');
+    const teamBadge = container.querySelector('#home-team-badge');
+    const scenarioBadge = container.querySelector('#home-scenario-badge');
+    const summary = container.querySelector('#home-adoption-summary');
+    const log = container.querySelector('.demo-log');
+    const payloadPreview = container.querySelector('#home-payload-preview code');
+    const draftStatus = container.querySelector('#home-draft-status');
+    const resultStatus = container.querySelector('#home-result-status');
 
-  const email = form.querySelector('nds-input[name="email"]');
-  const team = form.querySelector('nds-select[name="team"]');
-  const stack = form.querySelector('nds-radio-group[name="stack"]');
-  const notes = form.querySelector('nds-textarea[name="notes"]');
-  const updates = form.querySelector('nds-checkbox[name="updates"]');
+    if (
+      !(form instanceof HTMLFormElement) ||
+      !(submitButton instanceof HTMLElement) ||
+      !(timeoutButton instanceof HTMLElement) ||
+      !(dialogButton instanceof HTMLElement) ||
+      !(resetButton instanceof HTMLButtonElement) ||
+      !(dialog instanceof HTMLElement) ||
+      !(alert instanceof HTMLElement) ||
+      !(stateBadge instanceof HTMLElement) ||
+      !(stackBadge instanceof HTMLElement) ||
+      !(teamBadge instanceof HTMLElement) ||
+      !(scenarioBadge instanceof HTMLElement) ||
+      !(summary instanceof HTMLElement) ||
+      !(log instanceof HTMLElement) ||
+      !(payloadPreview instanceof HTMLElement) ||
+      !(draftStatus instanceof HTMLElement) ||
+      !(resultStatus instanceof HTMLElement)
+    ) {
+      return;
+    }
 
-  if (!email || !team || !stack || !notes || !updates) {
-    return;
-  }
+    const email = form.querySelector('nds-input[name="email"]');
+    const team = form.querySelector('nds-select[name="team"]');
+    const stack = form.querySelector('nds-radio-group[name="stack"]');
+    const domMode = form.querySelector('nds-select[name="domMode"]');
+    const scenario = form.querySelector('nds-select[name="scenario"]');
+    const notes = form.querySelector('nds-textarea[name="notes"]');
+    const updates = form.querySelector('nds-checkbox[name="updates"]');
 
-  const teamLabels = {
-    growth: 'Growth',
-    ops: 'Operations',
-    platform: 'Platform',
-    product: 'Product'
-  };
-  const stackLabels = {
-    astro: 'Astro',
-    html: 'HTML',
-    react: 'React',
-    vue: 'Vue'
-  };
+    if (!email || !team || !stack || !domMode || !scenario || !notes || !updates) {
+      return;
+    }
 
-  const readState = () => {
-    const teamValue = team.value || 'platform';
-    const stackValue = stack.value || 'astro';
-
-    return {
+    const defaults = {
       email: email.value || '',
+      team: team.value || 'platform',
+      stack: stack.value || 'astro',
+      domMode: domMode.value || 'shadow',
+      scenario: scenario.value || 'success',
       notes: notes.value || '',
-      stackLabel: stackLabels[stackValue] ?? stackValue,
-      teamLabel: teamLabels[teamValue] ?? teamValue,
-      updatesRequested: Boolean(updates.checked)
+      updates: Boolean(updates.checked)
     };
-  };
 
-  const renderSummary = (items) => {
-    summary.replaceChildren(
-      ...items.map((item) => {
-        const element = document.createElement('li');
-        element.textContent = item;
-        return element;
-      })
-    );
-  };
+    const teamLabels = {
+      growth: 'Growth',
+      ops: 'Operations',
+      platform: 'Platform',
+      product: 'Product'
+    };
+    const stackLabels = {
+      astro: 'Astro',
+      html: 'HTML',
+      react: 'React',
+      vue: 'Vue'
+    };
+    const domModeLabels = {
+      light: 'Light para host styles',
+      mixed: 'Mixed por componente',
+      shadow: 'Shadow por defecto'
+    };
+    const scenarioLabels = {
+      approval: 'Bloqueo por aprobacion',
+      success: 'Happy path con validacion',
+      timeout: 'Timeout con retry'
+    };
 
-  const renderState = (mode = 'preview') => {
-    const state = readState();
-    const hasEmail = state.email.trim().length > 0;
+    let lastOutcome = 'pending';
+    let isBusy = false;
 
-    stackBadge.textContent = `Stack: ${state.stackLabel}`;
-    teamBadge.textContent = `Team: ${state.teamLabel}`;
+    const setBusy = (value) => {
+      isBusy = value;
 
-    if (!hasEmail) {
-      alert.setAttribute('tone', 'warning');
-      alert.setAttribute('title', 'Falta una pieza minima para arrancar');
-      alert.setAttribute('message', 'Completa un email de equipo y podras simular una primera adopcion multi-stack.');
-      alert.setAttribute('features', 'Integracion gradual|Contrato estable|Sin runtime extra');
-      renderSummary([
-        'Email de equipo: pendiente',
-        `Equipo principal: ${state.teamLabel}`,
-        `Stack prioritario: ${state.stackLabel}`,
-        `Guia multi-stack: ${state.updatesRequested ? 'solicitada' : 'no solicitada'}`
-      ]);
-      return;
-    }
+      for (const element of [submitButton, timeoutButton, dialogButton]) {
+        if (value) {
+          element.setAttribute('disabled', '');
+        } else {
+          element.removeAttribute('disabled');
+        }
+      }
+    };
 
-    const shortNotes = state.notes.trim().slice(0, 88) || 'Sin notas adicionales.';
+    const readState = () => {
+      const teamValue = team.value || defaults.team;
+      const stackValue = stack.value || defaults.stack;
+      const domModeValue = domMode.value || defaults.domMode;
+      const scenarioValue = scenario.value || defaults.scenario;
 
-    if (mode === 'submitted') {
-      alert.setAttribute('tone', 'success');
-      alert.setAttribute('title', 'Listo para una primera integracion');
-      alert.setAttribute(
-        'message',
-        `El mismo paquete puede arrancar en ${state.stackLabel} y mantenerse util para mas equipos sin rehacer la UI base.`
+      return {
+        domMode: domModeValue,
+        domModeLabel: domModeLabels[domModeValue] ?? domModeValue,
+        email: email.value || '',
+        notes: notes.value || '',
+        scenario: scenarioValue,
+        scenarioLabel: scenarioLabels[scenarioValue] ?? scenarioValue,
+        stack: stackValue,
+        stackLabel: stackLabels[stackValue] ?? stackValue,
+        team: teamValue,
+        teamLabel: teamLabels[teamValue] ?? teamValue,
+        updatesRequested: Boolean(updates.checked)
+      };
+    };
+
+    const persistDraft = (state) => {
+      if (!state.updatesRequested) {
+        window.localStorage.removeItem(workspaceStorageKey);
+        draftStatus.textContent = 'Persistencia desactivada por el usuario.';
+        return;
+      }
+
+      window.localStorage.setItem(
+        workspaceStorageKey,
+        JSON.stringify({
+          domMode: state.domMode,
+          email: state.email,
+          notes: state.notes,
+          scenario: state.scenario,
+          stack: state.stack,
+          team: state.team,
+          updates: state.updatesRequested
+        })
       );
-      alert.setAttribute(
-        'features',
-        [
-          `Team ${state.teamLabel}`,
-          `Stack ${state.stackLabel}`,
-          state.updatesRequested ? 'Guia solicitada' : 'Integracion autonoma'
-        ].join('|')
+      draftStatus.textContent = 'Guardado automaticamente en localStorage.';
+    };
+
+    const restoreDraft = () => {
+      try {
+        const raw = window.localStorage.getItem(workspaceStorageKey);
+
+        if (!raw) {
+          return false;
+        }
+
+        const draft = JSON.parse(raw);
+
+        email.value = draft.email ?? defaults.email;
+        team.value = draft.team ?? defaults.team;
+        stack.value = draft.stack ?? defaults.stack;
+        domMode.value = draft.domMode ?? defaults.domMode;
+        scenario.value = draft.scenario ?? defaults.scenario;
+        notes.value = draft.notes ?? defaults.notes;
+        updates.checked = Boolean(draft.updates ?? defaults.updates);
+        draftStatus.textContent = 'Draft restaurado tras la ultima sesion.';
+        appendLogEntry(log, 'draft-restored');
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
+    const renderSummary = (items) => {
+      summary.replaceChildren(
+        ...items.map((item) => {
+          const element = document.createElement('li');
+          element.textContent = item;
+          return element;
+        })
       );
+    };
+
+    const renderPayload = (state, status) => {
+      payloadPreview.textContent = JSON.stringify(
+        {
+          deployment: {
+            domMode: state.domMode,
+            draftPersistence: state.updatesRequested,
+            ownerEmail: state.email,
+            scenario: state.scenario,
+            stack: state.stack,
+            status,
+            team: state.team
+          },
+          notes: state.notes.trim()
+        },
+        null,
+        2
+      );
+    };
+
+    const validateState = (state) => {
+      if (!state.email.includes('@')) {
+        return 'Necesitas un email valido para asignar ownership al rollout.';
+      }
+
+      if (state.notes.trim().length < 24) {
+        return 'Describe un contexto de integracion un poco mas real para que la simulacion tenga sentido.';
+      }
+
+      return null;
+    };
+
+    const renderState = (mode = 'draft', overrideScenario) => {
+      const state = readState();
+      const activeScenario = overrideScenario ?? state.scenario;
+      const validationError = validateState(state);
+
+      stackBadge.textContent = `Stack: ${state.stackLabel}`;
+      teamBadge.textContent = `Team: ${state.teamLabel}`;
+      scenarioBadge.textContent = `Escenario: ${scenarioLabels[activeScenario] ?? activeScenario}`;
+      summary.setAttribute('aria-live', 'polite');
+      log.setAttribute('aria-live', 'polite');
+      log.setAttribute('aria-atomic', 'false');
+      payloadPreview.parentElement?.setAttribute('aria-live', 'polite');
+
+      persistDraft(state);
+
+      if (validationError) {
+        stateBadge.setAttribute('tone', 'warning');
+        stateBadge.textContent = 'Estado: Revisar input';
+        alert.setAttribute('tone', 'warning');
+        alert.setAttribute('title', 'Faltan datos para una simulacion creible');
+        alert.setAttribute('message', validationError);
+        alert.setAttribute('features', 'Validacion previa|Contrato estable|Sin perder draft');
+        resultStatus.textContent = 'Pendiente de correccion antes de ejecutar.';
+        renderSummary([
+          `Email owner: ${state.email || 'pendiente'}`,
+          `Equipo owner: ${state.teamLabel}`,
+          `Stack prioritario: ${state.stackLabel}`,
+          `Modo DOM: ${state.domModeLabel}`,
+          `Escenario: ${scenarioLabels[activeScenario] ?? activeScenario}`
+        ]);
+        renderPayload(state, 'needs_input');
+        announce('La simulacion necesita mas datos antes de ejecutarse.');
+        return false;
+      }
+
+      const shortNotes = state.notes.trim().slice(0, 92);
       renderSummary([
-        `Email de equipo: ${state.email}`,
-        `Equipo principal: ${state.teamLabel}`,
+        `Email owner: ${state.email}`,
+        `Equipo owner: ${state.teamLabel}`,
         `Stack prioritario: ${state.stackLabel}`,
-        `Contexto: ${shortNotes}`,
-        `Guia multi-stack: ${state.updatesRequested ? 'solicitada' : 'no solicitada'}`
+        `Modo DOM: ${state.domModeLabel}`,
+        `Escenario: ${scenarioLabels[activeScenario] ?? activeScenario}`,
+        `Contexto: ${shortNotes}`
       ]);
-      appendLogEntry(log, `adoption-ready -> ${state.teamLabel} / ${state.stackLabel}`);
-      return;
-    }
 
-    alert.setAttribute('tone', 'info');
-    alert.setAttribute('title', 'Preview de adopcion portable');
-    alert.setAttribute(
-      'message',
-      `Reutiliza la misma base visual para ${state.teamLabel} sin cambiar de design system cuando cambie el stack.`
-    );
-    alert.setAttribute('features', [`Stack ${state.stackLabel}`, 'Zero runtime deps', 'Shadow or light DOM'].join('|'));
-    renderSummary([
-      `Email de equipo: ${state.email}`,
-      `Equipo principal: ${state.teamLabel}`,
-      `Stack prioritario: ${state.stackLabel}`,
-      `Guia multi-stack: ${state.updatesRequested ? 'solicitada' : 'no solicitada'}`
-    ]);
-  };
+      if (mode === 'loading') {
+        form.setAttribute('aria-busy', 'true');
+        stateBadge.setAttribute('tone', 'warning');
+        stateBadge.textContent = 'Estado: Ejecutando';
+        alert.setAttribute('tone', 'info');
+        alert.setAttribute('title', 'Simulacion en curso');
+        alert.setAttribute('message', `Validando rollout para ${state.teamLabel} en ${state.stackLabel} con modo ${state.domMode}.`);
+        alert.setAttribute('features', 'Payload preparado|Eventos del host|Esperando resultado');
+        resultStatus.textContent = 'Simulacion en progreso.';
+        renderPayload(state, 'loading');
+        pulseElement(stateBadge);
+        pulseElement(alert);
+        announce(`Simulacion en curso para ${state.teamLabel} en ${state.stackLabel}.`);
+        return true;
+      }
 
-  const handleLiveUpdate = () => {
-    renderState();
-  };
+      form.setAttribute('aria-busy', 'false');
 
-  for (const element of [email, team, stack, notes, updates]) {
-    element.addEventListener('nds-input', handleLiveUpdate);
-    element.addEventListener('nds-change', handleLiveUpdate);
-  }
+      if (mode === 'success') {
+        stateBadge.setAttribute('tone', 'success');
+        stateBadge.textContent = 'Estado: Rollout valido';
+        alert.setAttribute('tone', 'success');
+        alert.setAttribute('title', 'Rollout listo para la primera ola');
+        alert.setAttribute(
+          'message',
+          `El paquete queda listo para ${state.stackLabel} y mantiene una historia coherente para otros equipos sin rehacer el DS.`
+        );
+        alert.setAttribute('features', ['Validacion OK', `DOM ${state.domMode}`, 'Contrato publico'].join('|'));
+        resultStatus.textContent = 'Simulacion completada con exito.';
+        renderPayload(state, 'ready');
+        lastOutcome = 'success';
+        pulseElement(stateBadge);
+        pulseElement(alert);
+        announce('Simulacion completada con exito. El rollout queda listo para la primera ola.');
+        return true;
+      }
 
-  submitButton.addEventListener('nds-click', (event) => {
-    event.preventDefault();
-    renderState('submitted');
-  });
+      if (mode === 'error' && activeScenario === 'timeout') {
+        stateBadge.setAttribute('tone', 'danger');
+        stateBadge.textContent = 'Estado: Timeout';
+        alert.setAttribute('tone', 'warning');
+        alert.setAttribute('title', 'Timeout recuperable en el rollout');
+        alert.setAttribute('message', 'El host conserva el draft y propone retry sin obligarte a rehacer la configuracion.');
+        alert.setAttribute('features', 'Draft persistido|Retry sugerido|Sin perdida de contexto');
+        resultStatus.textContent = 'Error recuperable: reintentar o ajustar el host.';
+        renderPayload(state, 'timeout');
+        lastOutcome = 'timeout';
+        pulseElement(stateBadge);
+        pulseElement(alert);
+        announce('La simulacion ha terminado con timeout recuperable.');
+        return true;
+      }
 
-  dialogButton.addEventListener('nds-click', (event) => {
-    event.preventDefault();
-    dialog.open = true;
-  });
+      if (mode === 'error' && activeScenario === 'approval') {
+        stateBadge.setAttribute('tone', 'warning');
+        stateBadge.textContent = 'Estado: Pendiente de aprobacion';
+        alert.setAttribute('tone', 'warning');
+        alert.setAttribute('title', 'El rollout queda bloqueado por governance');
+        alert.setAttribute('message', 'No falla el componente: falla la aprobacion. El host puede explicarlo sin perder el payload.');
+        alert.setAttribute('features', 'Payload intacto|Handoff claro|Siguiente paso visible');
+        resultStatus.textContent = 'Esperando aprobacion de seguridad o plataforma.';
+        renderPayload(state, 'awaiting_approval');
+        lastOutcome = 'approval';
+        pulseElement(stateBadge);
+        pulseElement(alert);
+        announce('La simulacion requiere aprobacion antes del rollout.');
+        return true;
+      }
 
-  form.addEventListener('reset', () => {
-    window.setTimeout(() => {
+      stateBadge.setAttribute('tone', 'info');
+      stateBadge.textContent = 'Estado: Draft';
+      alert.setAttribute('tone', 'info');
+      alert.setAttribute('title', 'Draft listo para validar');
+      alert.setAttribute('message', 'El flujo mantiene contexto, payload y decision tree antes de ejecutar la simulacion.');
+      alert.setAttribute('features', 'Persistencia local|Eventos del host|Sin runtime extra');
+      resultStatus.textContent = lastOutcome === 'pending' ? 'Pendiente de simulacion.' : `Ultimo resultado: ${lastOutcome}.`;
+      renderPayload(state, 'draft');
+      return true;
+    };
+
+    const runSimulation = (forcedScenario) => {
+      if (isBusy) {
+        return;
+      }
+
+      if (forcedScenario) {
+        scenario.value = forcedScenario;
+      }
+
+      const canProceed = renderState('draft', forcedScenario);
+
+      if (!canProceed) {
+        appendLogEntry(log, 'simulation-blocked -> invalid-input');
+        return;
+      }
+
+      const state = readState();
+      const activeScenario = forcedScenario ?? state.scenario;
+
+      setBusy(true);
+      renderState('loading', activeScenario);
+      appendLogEntry(log, `simulation-start -> ${state.teamLabel} / ${state.stackLabel} / ${activeScenario}`);
+
+      window.setTimeout(() => {
+        if (activeScenario === 'success') {
+          renderState('success', activeScenario);
+          appendLogEntry(log, `simulation-success -> ${state.domMode}`);
+        } else {
+          renderState('error', activeScenario);
+          appendLogEntry(log, `simulation-${activeScenario} -> recovery-required`);
+        }
+
+        setBusy(false);
+      }, 900);
+    };
+
+    const handleLiveUpdate = () => {
       renderState();
-      appendLogEntry(log, 'demo-reset');
-    }, 0);
-  });
+    };
 
-  renderState();
+    for (const element of [email, team, stack, domMode, scenario, notes, updates]) {
+      element.addEventListener('nds-input', handleLiveUpdate);
+      element.addEventListener('nds-change', handleLiveUpdate);
+    }
+
+    submitButton.addEventListener('nds-click', (event) => {
+      event.preventDefault();
+      runSimulation();
+    });
+
+    timeoutButton.addEventListener('nds-click', (event) => {
+      event.preventDefault();
+      runSimulation('timeout');
+    });
+
+    dialogButton.addEventListener('nds-click', (event) => {
+      event.preventDefault();
+      dialog.open = true;
+    });
+
+    resetButton.addEventListener('click', () => {
+      email.value = defaults.email;
+      team.value = defaults.team;
+      stack.value = defaults.stack;
+      domMode.value = defaults.domMode;
+      scenario.value = defaults.scenario;
+      notes.value = defaults.notes;
+      updates.checked = defaults.updates;
+      window.localStorage.removeItem(workspaceStorageKey);
+      draftStatus.textContent = 'Draft eliminado. Se restauran los valores iniciales.';
+      lastOutcome = 'pending';
+      renderState();
+      appendLogEntry(log, 'draft-reset');
+      announce('Draft eliminado y valores iniciales restaurados.');
+    });
+
+    restoreDraft();
+    renderState();
+  });
+};
+
+const bindOpsConsoleDemos = () => {
+  document.querySelectorAll('[data-ops-demo]').forEach((container) => {
+    const alert = container.querySelector('#ops-alert');
+    const statusBadge = container.querySelector('#ops-status-badge');
+    const severityBadge = container.querySelector('#ops-severity-badge');
+    const checklist = container.querySelector('#ops-checklist');
+    const log = container.querySelector('#ops-event-log');
+    const dialog = container.querySelector('#ops-war-room-dialog');
+
+    if (
+      !(alert instanceof HTMLElement) ||
+      !(statusBadge instanceof HTMLElement) ||
+      !(severityBadge instanceof HTMLElement) ||
+      !(checklist instanceof HTMLElement) ||
+      !(log instanceof HTMLElement) ||
+      !(dialog instanceof HTMLElement)
+    ) {
+      return;
+    }
+
+    const renderChecklist = (items) => {
+      checklist.replaceChildren(
+        ...items.map((item) => {
+          const element = document.createElement('li');
+          element.textContent = item;
+          return element;
+        })
+      );
+    };
+
+    const applyState = (mode) => {
+      log.setAttribute('aria-live', 'polite');
+
+      if (mode === 'ack') {
+        statusBadge.setAttribute('tone', 'info');
+        statusBadge.textContent = 'Estado: Acknowledged';
+        alert.setAttribute('tone', 'info');
+        alert.setAttribute('title', 'Incidente reconocido por el equipo on-call');
+        alert.setAttribute('message', 'La consola registra ownership y prepara rollback sin perder el contexto del incidente.');
+        alert.setAttribute('features', 'Owner asignado|War room abierta|Rollback listo');
+        renderChecklist([
+          'Incidente reconocido por on-call.',
+          'War room preparada para producto, ops y soporte.',
+          'Rollback disponible como siguiente paso.',
+          'Comunicacion externa en preparacion.'
+        ]);
+        appendLogEntry(log, 'ops-acknowledged');
+        pulseElement(statusBadge);
+        pulseElement(alert);
+        announce('Incidente reconocido por el equipo on-call.');
+        return;
+      }
+
+      if (mode === 'rollback') {
+        statusBadge.setAttribute('tone', 'warning');
+        statusBadge.textContent = 'Estado: Rollback en progreso';
+        severityBadge.setAttribute('tone', 'warning');
+        severityBadge.textContent = 'Severidad: Contenida';
+        alert.setAttribute('tone', 'warning');
+        alert.setAttribute('title', 'Rollback iniciado');
+        alert.setAttribute('message', 'La UI mantiene el estado del incidente mientras se ejecuta la mitigacion.');
+        alert.setAttribute('features', 'Rollback activo|Dashboards en revision|Soporte informado');
+        renderChecklist([
+          'Rollback lanzado sobre la release afectada.',
+          'Dashboards observados para confirmar recuperacion.',
+          'Soporte informado con mensaje temporal.',
+          'Postmortem pendiente al cerrar el incidente.'
+        ]);
+        appendLogEntry(log, 'ops-rollback-started');
+        pulseElement(statusBadge);
+        pulseElement(alert);
+        announce('Rollback iniciado para contener el incidente.');
+        return;
+      }
+
+      if (mode === 'resolve') {
+        statusBadge.setAttribute('tone', 'success');
+        statusBadge.textContent = 'Estado: Resuelto';
+        severityBadge.setAttribute('tone', 'success');
+        severityBadge.textContent = 'Severidad: Mitigada';
+        alert.setAttribute('tone', 'success');
+        alert.setAttribute('title', 'Incidente resuelto');
+        alert.setAttribute('message', 'Los componentes dejan una salida clara hacia comunicacion final y aprendizaje operativo.');
+        alert.setAttribute('features', 'Servicio estable|Comunicacion cerrada|Postmortem abierto');
+        renderChecklist([
+          'Rollback verificado y servicio estable.',
+          'Comunicacion externa cerrada.',
+          'Postmortem agendado con owners claros.',
+          'Acciones preventivas pendientes de priorizar.'
+        ]);
+        appendLogEntry(log, 'ops-resolved');
+        pulseElement(statusBadge);
+        pulseElement(alert);
+        announce('Incidente resuelto y comunicacion cerrada.');
+      }
+    };
+
+    container.querySelectorAll('[data-ops-action]').forEach((element) => {
+      if (!(element instanceof HTMLElement)) {
+        return;
+      }
+
+      element.addEventListener('nds-click', () => {
+        applyState(element.dataset.opsAction ?? 'ack');
+      });
+    });
+
+    const dialogButton = container.querySelector('[data-ops-dialog-open]');
+
+    if (dialogButton instanceof HTMLElement) {
+      dialogButton.addEventListener('nds-click', () => {
+        dialog.open = true;
+        appendLogEntry(log, 'ops-war-room-opened');
+        announce('War room abierta para coordinacion de incidente.');
+      });
+    }
+  });
 };
 
 const bindDialogDemos = () => {
@@ -452,7 +864,8 @@ const bootstrap = async () => {
   bindThemeToggle(setTheme);
   bindDemoEventLogs();
   bindAlertPlayground();
-  bindHomeDemo();
+  bindWorkspaceDemos();
+  bindOpsConsoleDemos();
   bindDialogDemos();
 
   document.documentElement.classList.add('nds-demo-ready');

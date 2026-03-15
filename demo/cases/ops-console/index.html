@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="nds-dist-path" content="../../dist/index.js" />
+    <title>no-dep-ds | Ops console</title>
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../../assets/site.css" />
+    <link rel="stylesheet" href="../../dist/styles.css" />
+    <script type="module" src="../../assets/site.js"></script>
+  </head>
+  <body data-theme="light">
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="../../index.html">
+          <span class="site-brand__mark">NDS</span>
+          <span>no-dep-ds</span>
+        </a>
+        <nav class="site-nav" aria-label="Casos reales">
+          <a data-nav-link href="../../index.html">Inicio</a>
+          <a data-nav-link href="../workspace-rollout/index.html">Workspace rollout</a>
+          <a data-nav-link href="./index.html">Ops console</a>
+          <a data-nav-link href="../host-integration/index.html">Host integration</a>
+          <a data-nav-link href="../../components/alert/index.html">Alert</a>
+        </nav>
+        <div class="header-actions">
+          <button class="theme-toggle" type="button" data-theme-toggle>
+            Tema
+            <span data-theme-label>light</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="hero">
+        <div class="meta-row">
+          <span class="pill">Incidentes</span>
+          <span class="pill">Alert + dialog</span>
+          <span class="pill">Rollback</span>
+        </div>
+        <div class="section-heading section-heading--wide">
+          <h1>Ops console</h1>
+          <p>
+            Caso real para feedback operativo: la misma libreria cubre aviso inicial, handoff a war room y resolucion
+            sin reimplementar componentes para cada stack interno.
+          </p>
+        </div>
+      </section>
+
+      <p class="demo-error" data-demo-error hidden></p>
+
+      <section class="section two-column" data-ops-demo>
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Panel de acciones</h2>
+            <p>Simula el ciclo completo: detectar, reconocer, iniciar rollback, resolver y documentar.</p>
+          </div>
+
+          <div class="callout callout--soft">
+            Cada accion actualiza el estado sin recargar la pagina y deja una timeline breve para los equipos que se
+            suman tarde al incidente.
+          </div>
+
+          <div class="demo-badge-row">
+            <nds-badge id="ops-severity-badge" tone="danger" emphasis="solid">Severidad: Alta</nds-badge>
+            <nds-badge id="ops-status-badge" tone="warning">Estado: Investigando</nds-badge>
+            <nds-badge tone="info">Canal: #release-war-room</nds-badge>
+          </div>
+
+          <div class="demo-preview">
+            <nds-alert
+              id="ops-alert"
+              tone="warning"
+              title="Error en rollout de produccion"
+              message="El dashboard principal reporta timeouts tras la release 2026.03.15."
+              features="Triaging abierto|Rollback disponible|Impacto en dashboard"
+            ></nds-alert>
+          </div>
+
+          <div class="hero-actions hero-actions--compact">
+            <nds-button data-ops-action="ack" data-demo-events="nds-click" data-demo-log="#ops-event-log">
+              Reconocer incidente
+            </nds-button>
+            <nds-button variant="outline" data-ops-action="rollback" data-demo-events="nds-click" data-demo-log="#ops-event-log">
+              Iniciar rollback
+            </nds-button>
+            <nds-button variant="ghost" data-ops-action="resolve" data-demo-events="nds-click" data-demo-log="#ops-event-log">
+              Resolver incidente
+            </nds-button>
+            <nds-button variant="ghost" data-ops-dialog-open data-demo-events="nds-click" data-demo-log="#ops-event-log">
+              Abrir war room
+            </nds-button>
+          </div>
+        </article>
+
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Checklist operativo</h2>
+            <p>El host coordina el estado visible y deja una timeline breve para los equipos que llegan tarde.</p>
+          </div>
+
+          <div class="mini-grid status-grid">
+            <article class="mini-swatch">
+              <strong>Lectura rapida</strong>
+              <p class="visually-muted">Empieza por severidad, despues estado y finalmente acciones disponibles.</p>
+            </article>
+            <article class="mini-swatch">
+              <strong>Contrato</strong>
+              <p class="visually-muted">El host decide el mensaje final y solo escucha eventos publicos.</p>
+            </article>
+          </div>
+
+          <ul class="component-list" id="ops-checklist">
+            <li>Incidente abierto en dashboard principal.</li>
+            <li>Equipo on-call pendiente de acknowledgement.</li>
+            <li>Rollback aun no iniciado.</li>
+            <li>Comunicacion externa pendiente.</li>
+          </ul>
+
+          <div class="snippet-toolbar">
+            <span class="pill">Timeline</span>
+            <span class="visually-muted">Historial breve para handoff operativo</span>
+          </div>
+          <div class="demo-log" id="ops-event-log">
+            <div data-log-placeholder>Usa las acciones para registrar el progreso del incidente.</div>
+          </div>
+        </article>
+
+        <nds-dialog
+          id="ops-war-room-dialog"
+          title="War room checklist"
+          description="Resumen rapido para coordinacion entre producto, ops y soporte."
+          data-demo-events="nds-open,nds-close"
+          data-demo-log="#ops-event-log"
+        >
+          <div class="dialog-proof-grid">
+            <article class="stack-chip-card">
+              <strong>Producto</strong>
+              <span>Validar impacto visible y decidir si el feature flag vuelve a baseline.</span>
+            </article>
+            <article class="stack-chip-card">
+              <strong>Ops</strong>
+              <span>Ejecutar rollback, revisar dashboards y confirmar recuperacion.</span>
+            </article>
+            <article class="stack-chip-card">
+              <strong>Soporte</strong>
+              <span>Preparar mensaje de status y responder tickets entrantes.</span>
+            </article>
+          </div>
+        </nds-dialog>
+      </section>
+    </main>
+  </body>
+</html>

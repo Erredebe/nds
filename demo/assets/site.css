@@ -42,6 +42,11 @@ html {
   scroll-behavior: smooth;
 }
 
+:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--demo-highlight) 72%, white 28%);
+  outline-offset: 3px;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -183,6 +188,12 @@ pre {
     var(--demo-panel);
 }
 
+.hero--editorial {
+  background:
+    radial-gradient(circle at top right, rgba(17, 115, 107, 0.18), transparent 34%),
+    linear-gradient(135deg, color-mix(in srgb, var(--demo-panel-strong) 82%, transparent), var(--demo-panel));
+}
+
 .hero h1,
 .section-heading h2,
 .demo-panel h3,
@@ -268,7 +279,9 @@ pre {
 .proof-card,
 .trust-card,
 .stack-chip-card,
-.family-card {
+.family-card,
+.metric-card,
+.case-card {
   border-radius: var(--demo-radius-lg);
   border: 1px solid var(--demo-border);
   background: color-mix(in srgb, var(--demo-bg-alt) 84%, transparent);
@@ -281,6 +294,8 @@ pre {
 .hero-proof strong,
 .stack-chip-card strong,
 .family-card strong,
+.metric-card strong,
+.case-card strong,
 .proof-card h4,
 .trust-card h2 {
   display: block;
@@ -291,6 +306,7 @@ pre {
 .hero-proof span,
 .stack-chip-card span,
 .family-card span,
+.metric-card span,
 .hero-panel__caption {
   color: var(--demo-muted);
   line-height: 1.5;
@@ -315,7 +331,10 @@ pre {
 .family-grid,
 .component-link-grid,
 .product-demo-grid,
-.trust-strip {
+.trust-strip,
+.metric-grid,
+.case-grid,
+.evidence-strip {
   display: grid;
   gap: 18px;
 }
@@ -323,8 +342,46 @@ pre {
 .hero-stack-grid,
 .dialog-proof-grid,
 .stack-proof-grid,
-.trust-strip {
+.trust-strip,
+.metric-grid,
+.case-grid,
+.evidence-strip {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.showcase-grid--hero {
+  align-items: start;
+}
+
+.panel--metrics {
+  display: grid;
+  gap: 18px;
+}
+
+.metric-card {
+  padding: 18px;
+}
+
+.is-updated {
+  animation: demoPulse 720ms ease;
+}
+
+.case-card {
+  display: grid;
+  gap: 10px;
+  padding: 20px;
+  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+
+.case-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--demo-accent) 45%, var(--demo-border));
+}
+
+.case-card p {
+  margin: 0;
+  color: var(--demo-muted);
+  line-height: 1.6;
 }
 
 .stack-chip-card {
@@ -350,6 +407,10 @@ pre {
 
 .trust-card {
   padding: 20px;
+}
+
+.evidence-strip {
+  margin-top: 24px;
 }
 
 .trust-card h2 {
@@ -381,6 +442,13 @@ pre {
   gap: 18px;
 }
 
+.demo-note--strong {
+  padding: 14px 16px;
+  border-radius: var(--demo-radius-md);
+  border: 1px solid var(--demo-border);
+  background: color-mix(in srgb, var(--demo-accent) 9%, var(--demo-panel));
+}
+
 .hero-actions--compact {
   margin-top: 4px;
 }
@@ -399,6 +467,10 @@ pre {
 .proof-card {
   margin-top: 18px;
   padding: 18px;
+}
+
+.status-grid {
+  margin-top: 18px;
 }
 
 .proof-card h4 {
@@ -443,6 +515,10 @@ pre {
 
 .stack-proof-grid {
   margin-top: 8px;
+}
+
+.case-summary-grid {
+  align-items: start;
 }
 
 .stack-proof-grid strong {
@@ -505,6 +581,10 @@ pre {
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.snippet--compact {
+  max-height: 260px;
+}
+
 .snippet code,
 .snippet pre {
   margin: 0;
@@ -539,11 +619,21 @@ pre {
   line-height: 1.7;
 }
 
+.component-list--ordered {
+  list-style: decimal;
+}
+
 .callout {
   padding: 16px 18px;
   border-left: 4px solid var(--demo-highlight);
   border-radius: 0 var(--demo-radius-md) var(--demo-radius-md) 0;
   background: color-mix(in srgb, var(--demo-highlight) 10%, var(--demo-panel));
+}
+
+.callout--soft {
+  margin-top: 18px;
+  border-left-color: color-mix(in srgb, var(--demo-accent) 48%, var(--demo-highlight));
+  background: color-mix(in srgb, var(--demo-accent) 7%, var(--demo-panel));
 }
 
 .demo-frame-grid {
@@ -580,6 +670,35 @@ pre {
 
 .visually-muted {
   color: var(--demo-muted);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes demoPulse {
+  0% {
+    transform: translateY(0);
+    box-shadow: var(--demo-shadow);
+  }
+
+  35% {
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--demo-accent) 14%, transparent), var(--demo-shadow);
+  }
+
+  100% {
+    transform: translateY(0);
+    box-shadow: var(--demo-shadow);
+  }
 }
 
 @media (min-width: 920px) {
@@ -619,5 +738,19 @@ pre {
 
   .final-cta {
     padding: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

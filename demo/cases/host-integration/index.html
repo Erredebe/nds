@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="nds-dist-path" content="../../dist/index.js" />
+    <title>no-dep-ds | Host integration</title>
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../../assets/site.css" />
+    <link rel="stylesheet" href="../../dist/styles.css" />
+    <script type="module" src="../../assets/site.js"></script>
+  </head>
+  <body data-theme="light">
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="../../index.html">
+          <span class="site-brand__mark">NDS</span>
+          <span>no-dep-ds</span>
+        </a>
+        <nav class="site-nav" aria-label="Casos reales">
+          <a data-nav-link href="../../index.html">Inicio</a>
+          <a data-nav-link href="../workspace-rollout/index.html">Workspace rollout</a>
+          <a data-nav-link href="../ops-console/index.html">Ops console</a>
+          <a data-nav-link href="./index.html">Host integration</a>
+          <a data-nav-link href="../../dom-modes/index.html">DOM modes</a>
+        </nav>
+        <div class="header-actions">
+          <button class="theme-toggle" type="button" data-theme-toggle>
+            Tema
+            <span data-theme-label>light</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="hero">
+        <div class="meta-row">
+          <span class="pill">Integracion host</span>
+          <span class="pill">Shadow vs light</span>
+          <span class="pill">Decision tree</span>
+        </div>
+        <div class="section-heading section-heading--wide">
+          <h1>Host integration lab</h1>
+          <p>
+            Este caso resume cuando conviene mantener aislamiento y cuando abrir el DOM al host. La idea no es elegir
+            un modo por gusto, sino por restricciones reales de integracion.
+          </p>
+        </div>
+      </section>
+
+      <p class="demo-error" data-demo-error hidden></p>
+
+      <section class="section demo-frame-grid">
+        <article class="frame-card">
+          <h2>Shadow por defecto</h2>
+          <p>Ideal cuando el host comparte CSS entre muchos equipos y no puedes garantizar estabilidad.</p>
+          <iframe class="demo-frame" src="../../dom-modes/shadow.html" title="Shadow DOM preview"></iframe>
+        </article>
+        <article class="frame-card">
+          <h2>Mixed / light selectivo</h2>
+          <p>Util cuando solo uno o dos componentes necesitan heredar estilos del host o exponer su DOM final.</p>
+          <iframe class="demo-frame" src="../../dom-modes/mixed.html" title="Mixed DOM preview"></iframe>
+        </article>
+      </section>
+
+      <section class="section evidence-strip">
+        <article class="trust-card">
+          <h2>Empieza por shadow</h2>
+          <p>Es el default recomendado cuando todavia no conoces del todo el host y quieres aislamiento estable.</p>
+        </article>
+        <article class="trust-card">
+          <h2>Abre light con motivo</h2>
+          <p>Usalo cuando el host necesita hooks de estilo, tracking o inspeccion del DOM final.</p>
+        </article>
+        <article class="trust-card">
+          <h2>Mixed como compromiso</h2>
+          <p>Evita decisiones globales y abre solo las piezas que de verdad necesitan convivir con el host.</p>
+        </article>
+      </section>
+
+      <section class="section two-column">
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Cuadro de decision</h2>
+            <p>Una regla simple: empieza en `shadow`; abre `light` solo cuando el host lo justifique de verdad.</p>
+          </div>
+          <div class="callout callout--soft">
+            Si dudas, la opcion mas segura sigue siendo `shadow`. Cambia a `light` solo cuando puedas nombrar la
+            necesidad de integracion con una frase concreta.
+          </div>
+          <ul class="component-list">
+            <li>Usa `shadow` si el host tiene CSS global agresivo o varios equipos tocan la misma pagina.</li>
+            <li>Usa `light` si necesitas style hooks externos o inspeccion del DOM final por parte del host.</li>
+            <li>Usa `mixed` si solo ciertos componentes requieren apertura y el resto debe seguir aislado.</li>
+          </ul>
+        </article>
+
+        <article class="demo-panel">
+          <div class="section-heading">
+            <h2>Que demuestra este caso</h2>
+            <p>No basta con decir que existen dos modos. La demo debe explicar por que y cuando cambia la decision.</p>
+          </div>
+          <div class="metric-grid">
+            <article class="metric-card">
+              <strong>Aislamiento</strong>
+              <span>Protege el componente cuando el host no es fiable.</span>
+            </article>
+            <article class="metric-card">
+              <strong>Integracion</strong>
+              <span>Permite heredar estilos o exponer nodos cuando el host lo necesita.</span>
+            </article>
+            <article class="metric-card">
+              <strong>Gradualidad</strong>
+              <span>Mixed evita decisiones globales cuando solo hay excepciones puntuales.</span>
+            </article>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>
