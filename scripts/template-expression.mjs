@@ -16,6 +16,8 @@ const binaryPrecedence = new Map([
   ['%', 6]
 ]);
 
+const blockedMemberNames = new Set(['__proto__', 'constructor', 'prototype']);
+
 const isIdentifierStart = (value) => /[A-Za-z_$]/.test(value);
 const isIdentifierPart = (value) => /[A-Za-z0-9_$]/.test(value);
 const isDigit = (value) => /[0-9]/.test(value);
@@ -385,6 +387,54 @@ class Parser {
   }
 }
 
+const assertSafeMemberName = (name) => {
+  if (blockedMemberNames.has(name)) {
+    throw new Error(`Access to ${name} is not allowed.`);
+  }
+};
+
+const validateNode = (node, mode) => {
+  switch (node.kind) {
+    case 'literal':
+      return;
+    case 'identifier':
+      assertSafeMemberName(node.name);
+      return;
+    case 'member':
+      validateNode(node.object, mode);
+      assertSafeMemberName(node.property);
+      return;
+    case 'call':
+      validateNode(node.callee, mode);
+      node.arguments.forEach((argument) => validateNode(argument, mode));
+      return;
+    case 'unary':
+      validateNode(node.argument, mode);
+      return;
+    case 'binary':
+      validateNode(node.left, mode);
+      validateNode(node.right, mode);
+      return;
+    case 'conditional':
+      validateNode(node.test, mode);
+      validateNode(node.consequent, mode);
+      validateNode(node.alternate, mode);
+      return;
+    case 'assignment':
+      if (mode !== 'statement') {
+        throw new Error('Assignments are only allowed in event statements.');
+      }
+
+      validateNode(node.left, mode);
+      validateNode(node.right, mode);
+      return;
+  }
+};
+
 export const validateExpressionSource = (source) => {
-  new Parser(source).parse();
+  validateNode(new Parser(source).parse(), 'expression');
+};
+
+export const validateStatementSource = (source) => {
+  validateNode(new Parser(source).parse(), 'statement');
 };

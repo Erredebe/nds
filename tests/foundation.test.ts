@@ -8,6 +8,7 @@ import {
   type NDSComponentDefinition
 } from '../dist/foundation/component.js';
 import { createThemeCss, createTokenCss, defineComponent, setTheme } from '../dist/foundation/index.js';
+import { validateExpressionSource, validateStatementSource } from '../src/foundation/expression.ts';
 import type { CompiledTemplateDefinition } from '../dist/foundation/template.js';
 import { renderTemplate } from '../dist/foundation/template.js';
 
@@ -213,5 +214,51 @@ describe('foundation component configuration', () => {
     expect(document.body.textContent).not.toContain('Ignored');
 
     document.body.replaceChildren();
+  });
+
+  it('rejects unsafe property bindings at render time', () => {
+    const host = Object.assign(document.createElement('div'), {
+      htmlSnippet: '<strong>Unsafe</strong>',
+      refs: {} as Record<string, Element>
+    });
+
+    expect(() =>
+      renderTemplate(
+        host as unknown as HTMLElement & Record<string, unknown> & { refs: Record<string, Element> },
+        {
+          sourcePath: 'inline',
+          tagName: 'nds-inline-unsafe-prop',
+          nodes: [
+            {
+              attributeBindings: [],
+              children: [],
+              classBindings: [],
+              eventBindings: [],
+              kind: 'element',
+              propertyBindings: [['innerHTML', 'htmlSnippet']],
+              staticAttributes: [],
+              styleBindings: [],
+              tagName: 'div'
+            }
+          ]
+        } as CompiledTemplateDefinition,
+        'light'
+      )
+    ).toThrow('Unsafe property binding is not allowed: innerHTML');
+  });
+});
+
+describe('foundation expression security', () => {
+  it('rejects assignments in non-event expressions', () => {
+    expect(() => validateExpressionSource('count = count + 1')).toThrow('Assignments are only allowed in event statements.');
+  });
+
+  it('allows assignments in event statements', () => {
+    expect(() => validateStatementSource('count = count + 1')).not.toThrow();
+  });
+
+  it('rejects dangerous member names', () => {
+    expect(() => validateExpressionSource('item.constructor')).toThrow('Access to constructor is not allowed.');
+    expect(() => validateStatementSource('item.__proto__ = value')).toThrow('Access to __proto__ is not allowed.');
   });
 });

@@ -75,8 +75,10 @@ Notas importantes:
 
 - `{{ }}` siempre escapa texto.
 - `[innerHTML]` sanea strings antes de insertarlos y elimina tags/atributos inseguros; no lo uses como canal para HTML arbitrario de terceros.
+- `[prop]` bloquea propiedades DOM peligrosas como `innerHTML`, `outerHTML`, `srcdoc` y cualquier `on*`.
+- Las asignaciones (`=`) quedan reservadas para handlers de eventos; en interpolaciones y bindings solo se admiten expresiones de lectura.
 - `trackBy` hoy expone claves estables en `data-nds-key` para cada item repetido.
-- Las expresiones del template se interpretan en un scope limitado al componente, locals y `$event`; no dependen de `unsafe-eval` ni acceden a globals arbitrarios.
+- Las expresiones del template se interpretan en un scope limitado al componente, locals y `$event`; no dependen de `unsafe-eval`, no acceden a globals arbitrarios y bloquean miembros peligrosos como `constructor`, `prototype` y `__proto__`.
 
 ## Semantica y accesibilidad
 

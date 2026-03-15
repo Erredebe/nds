@@ -135,7 +135,8 @@ console.log(themes.dark.color.background.canvas);
 
 - `{{ expr }}` siempre escapa texto.
 - `[innerHTML]` sanea strings antes de renderizar y elimina markup/atributos inseguros.
-- El runtime de templates ya no depende de `unsafe-eval`; las expresiones se interpretan dentro de un scope acotado al componente, locals y `$event`.
+- `[prop]` bloquea sinks DOM peligrosos como `innerHTML`, `outerHTML`, `srcdoc` y cualquier `on*`.
+- El runtime de templates ya no depende de `unsafe-eval`; las expresiones se interpretan dentro de un scope acotado al componente, locals y `$event`, bloquean miembros peligrosos (`constructor`, `prototype`, `__proto__`) y reservan asignaciones para handlers de eventos.
 - `nds-input` mantiene `value` como propiedad reactiva, pero no lo refleja de vuelta al atributo host; para `type="password"` tampoco reexpone el valor en `nds-input`/`nds-change`.
 - `nds-alert` usa `message` para texto simple y slot/default content para markup authored por la app.
 

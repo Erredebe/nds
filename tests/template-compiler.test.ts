@@ -36,6 +36,60 @@ describe('template compiler diagnostics', () => {
     }
   });
 
+  it('fails when a non-event binding contains an assignment', async () => {
+    const temporaryDirectory = await mkdtemp(resolve(tmpdir(), 'nds-template-'));
+    const scriptPath = resolve(process.cwd(), 'scripts/generate-component-templates.mjs');
+
+    try {
+      await mkdir(resolve(temporaryDirectory, 'src/components/bad'), { recursive: true });
+      await writeFile(resolve(temporaryDirectory, 'src/components/bad/template.html'), '<div [value]="count = 1"></div>', 'utf8');
+
+      let failure: Error | null = null;
+
+      try {
+        await execFileAsync(process.execPath, [scriptPath], {
+          cwd: temporaryDirectory
+        });
+      } catch (error) {
+        failure = error as Error;
+      }
+
+      expect(failure).not.toBeNull();
+      expect((failure as Error & { stderr?: string }).stderr || String(failure)).toContain(
+        'Assignments are only allowed in event statements.'
+      );
+    } finally {
+      await rm(temporaryDirectory, { force: true, recursive: true });
+    }
+  });
+
+  it('fails when a template uses blocked property bindings', async () => {
+    const temporaryDirectory = await mkdtemp(resolve(tmpdir(), 'nds-template-'));
+    const scriptPath = resolve(process.cwd(), 'scripts/generate-component-templates.mjs');
+
+    try {
+      await mkdir(resolve(temporaryDirectory, 'src/components/bad'), { recursive: true });
+      await writeFile(resolve(temporaryDirectory, 'src/components/bad/template.html'), '<iframe [srcdoc]="html"></iframe>', 'utf8');
+
+      let failure: Error | null = null;
+
+      try {
+        await execFileAsync(process.execPath, [scriptPath], {
+          cwd: temporaryDirectory
+        });
+      } catch (error) {
+        failure = error as Error;
+      }
+
+      expect(failure).not.toBeNull();
+      expect((failure as Error & { stderr?: string }).stderr || String(failure)).toContain(
+        'Binding de propiedad no permitido'
+      );
+    } finally {
+      await rm(temporaryDirectory, { force: true, recursive: true });
+    }
+  });
+
   it('generates templates for valid Angular-like bindings', async () => {
     const temporaryDirectory = await mkdtemp(resolve(tmpdir(), 'nds-template-'));
     const scriptPath = resolve(process.cwd(), 'scripts/generate-component-templates.mjs');

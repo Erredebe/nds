@@ -109,5 +109,6 @@
 
 - Todos los componentes soportan `shadow` y `light` DOM via `defineX({ dom })` o `defineAllComponents({ ... })`.
 - Cualquier `[innerHTML]` se sanitiza antes de renderizar; el runtime conserva solo un subconjunto seguro de tags y atributos.
+- Los property bindings bloquean sinks DOM peligrosos como `innerHTML`, `outerHTML`, `srcdoc` y cualquier `on*`; las asignaciones quedan reservadas para handlers de eventos.
 - `nds-alert` usa `message` para texto plano y slot content para contenido enriquecido authored por la app.
 - Los controles de formulario nuevos priorizan elementos nativos (`textarea`, `select`, `input[type="checkbox"]`, radios con `fieldset`/`legend`) para alinearse con WAI-ARIA/APG y con la documentacion del repo.

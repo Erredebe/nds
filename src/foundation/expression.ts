@@ -70,6 +70,8 @@ export interface ExpressionEvaluationContext {
   locals: Record<string, unknown>;
 }
 
+export type ExpressionValidationMode = 'expression' | 'statement';
+
 const binaryPrecedence = new Map<BinaryOperator, number>([
   ['||', 1],
   ['&&', 2],
@@ -487,6 +489,7 @@ class Parser {
 }
 
 const expressionCache = new Map<string, ExpressionNode>();
+const blockedMemberNames = new Set(['__proto__', 'constructor', 'prototype']);
 
 const parseExpression = (source: string): ExpressionNode => {
   const cached = expressionCache.get(source);
@@ -502,7 +505,53 @@ const parseExpression = (source: string): ExpressionNode => {
 
 const hasOwn = (value: object, property: string): boolean => Object.prototype.hasOwnProperty.call(value, property);
 
+const assertSafeMemberName = (name: string): void => {
+  if (blockedMemberNames.has(name)) {
+    throw new Error(`Access to ${name} is not allowed.`);
+  }
+};
+
+const validateNode = (node: ExpressionNode, mode: ExpressionValidationMode): void => {
+  switch (node.kind) {
+    case 'literal':
+      return;
+    case 'identifier':
+      assertSafeMemberName(node.name);
+      return;
+    case 'member':
+      validateNode(node.object, mode);
+      assertSafeMemberName(node.property);
+      return;
+    case 'call':
+      validateNode(node.callee, mode);
+      node.arguments.forEach((argument) => validateNode(argument, mode));
+      return;
+    case 'unary':
+      validateNode(node.argument, mode);
+      return;
+    case 'binary':
+      validateNode(node.left, mode);
+      validateNode(node.right, mode);
+      return;
+    case 'conditional':
+      validateNode(node.test, mode);
+      validateNode(node.consequent, mode);
+      validateNode(node.alternate, mode);
+      return;
+    case 'assignment':
+      if (mode !== 'statement') {
+        throw new Error('Assignments are only allowed in event statements.');
+      }
+
+      validateNode(node.left, mode);
+      validateNode(node.right, mode);
+      return;
+  }
+};
+
 const resolveIdentifier = (context: ExpressionEvaluationContext, name: string): unknown => {
+  assertSafeMemberName(name);
+
   if (name === '$event') {
     return context.event;
   }
@@ -575,6 +624,7 @@ const evaluateNode = (node: ExpressionNode, context: ExpressionEvaluationContext
     case 'identifier':
       return resolveIdentifier(context, node.name);
     case 'member': {
+      assertSafeMemberName(node.property);
       const target = evaluateNode(node.object, context) as Record<string, unknown> | null | undefined;
 
       if (target === null || target === undefined) {
@@ -636,6 +686,7 @@ const evaluateNode = (node: ExpressionNode, context: ExpressionEvaluationContext
         return assignIdentifier(context, node.left.name, value);
       }
 
+      assertSafeMemberName(node.left.property);
       const target = evaluateNode(node.left.object, context) as Record<string, unknown> | null | undefined;
 
       if (target !== null && target !== undefined) {
@@ -648,7 +699,11 @@ const evaluateNode = (node: ExpressionNode, context: ExpressionEvaluationContext
 };
 
 export const validateExpressionSource = (source: string): void => {
-  parseExpression(source);
+  validateNode(parseExpression(source), 'expression');
+};
+
+export const validateStatementSource = (source: string): void => {
+  validateNode(parseExpression(source), 'statement');
 };
 
 export const evaluateExpressionSource = (source: string, context: ExpressionEvaluationContext): unknown =>

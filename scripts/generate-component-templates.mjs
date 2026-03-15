@@ -2,13 +2,14 @@ import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 import { JSDOM } from 'jsdom';
-import { validateExpressionSource } from './template-expression.mjs';
+import { validateExpressionSource, validateStatementSource } from './template-expression.mjs';
 
 const rootDirectory = process.cwd();
 const componentsDirectory = resolve(rootDirectory, 'src/components');
 const outputFilePath = resolve(rootDirectory, 'src/generated/component-templates.generated.ts');
 
 const interpolationPattern = /{{([\s\S]+?)}}/g;
+const blockedPropertyBindingNames = new Set(['innerHTML', 'outerHTML', 'srcdoc']);
 
 const validateExpression = (expression, context) => {
   try {
@@ -20,9 +21,15 @@ const validateExpression = (expression, context) => {
 
 const validateStatement = (statement, context) => {
   try {
-    validateExpressionSource(statement);
+    validateStatementSource(statement);
   } catch (error) {
     throw new Error(`Statement invalido en ${context}: ${statement}\n${error instanceof Error ? error.message : String(error)}`);
+  }
+};
+
+const validatePropertyBindingName = (name, context) => {
+  if (blockedPropertyBindingNames.has(name) || /^on/i.test(name)) {
+    throw new Error(`Binding de propiedad no permitido en ${context}: [${name}]`);
   }
 };
 
@@ -165,6 +172,7 @@ const compileNode = (node, contextPath) => {
         continue;
       }
 
+      validatePropertyBindingName(bindingName, contextPath);
       validateExpression(value.trim(), `${contextPath} [${bindingName}]`);
       propertyBindings.push([bindingName, value.trim()]);
       continue;

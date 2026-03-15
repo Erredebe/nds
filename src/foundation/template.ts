@@ -54,6 +54,7 @@ type ScopeLocals = Record<string, unknown>;
 type TemplateHost = HTMLElement & Record<string, unknown> & { refs: Record<string, Element> };
 const listenerControllerSymbol = Symbol('nds.template.listenerController');
 const reuseKeyAttribute = 'data-nds-key';
+const blockedPropertyBindingNames = new Set(['innerHTML', 'outerHTML', 'srcdoc']);
 
 type BoundElement = HTMLElement & {
   [listenerControllerSymbol]?: AbortController;
@@ -103,6 +104,12 @@ const asIterable = (value: unknown): unknown[] => {
 };
 
 const toReuseKey = (tagName: string, key: string): string => `${tagName}::${key}`;
+
+const assertSafePropertyBindingName = (name: string): void => {
+  if (blockedPropertyBindingNames.has(name) || /^on/i.test(name)) {
+    throw new Error(`Unsafe property binding is not allowed: ${name}`);
+  }
+};
 
 const createReusePool = (root: ParentNode): ReusePool => {
   const pool: ReusePool = new Map();
@@ -167,6 +174,7 @@ const applyElementBindings = (
   }
 
   for (const [name, expression] of node.propertyBindings) {
+    assertSafePropertyBindingName(name);
     (element as unknown as Record<string, unknown>)[name] = evaluateExpression(component, expression, locals);
   }
 
